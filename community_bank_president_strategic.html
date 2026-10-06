@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank | President Strategic Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --ok-bg: rgba(61, 214, 140, 0.12);
+      --watch: #f5b942;
+      --watch-bg: rgba(245, 185, 66, 0.12);
+      --bad: #f07178;
+      --bad-bg: rgba(240, 113, 120, 0.12);
+      --peer: #f5b942;
+      --actual: #6eb6ff;
+      --loans: #3dd68c;
+      --target: #f07178;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .spacer { flex: 1; }
+    .topbar a { color: #cfe0ff; text-decoration: none; font-size: 12px; }
+    .topbar a:hover { text-decoration: underline; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 16px 20px 48px; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .asof { color: var(--muted); font-size: 12px; }
+    .period-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+      font-weight: 600;
+    }
+
+    .briefing {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: start;
+    }
+    @media (max-width: 900px) { .briefing { grid-template-columns: 1fr; } }
+    .counts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .stat {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat .value { font-size: 1.35rem; font-weight: 700; margin-top: 2px; letter-spacing: -0.03em; }
+    .stat .value.ok { color: var(--ok); }
+    .stat .value.watch { color: var(--watch); }
+    .stat .value.bad { color: var(--bad); }
+    .exceptions {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    h2.section {
+      margin: 0 0 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .ex-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px 12px;
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .ex-row:last-child { border-bottom: 0; }
+    .ex-row:hover { color: #cfe0ff; }
+    .hint { color: var(--muted); font-size: 12px; margin: 0; }
+    .caption { color: var(--muted); font-size: 11px; margin: 6px 0 0; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 1200px) { .cards { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 720px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+    .card:hover, .card.selected { border-color: #2563eb; }
+    .card-head { display: flex; justify-content: space-between; gap: 6px; align-items: flex-start; }
+    .card h3 { margin: 0; font-size: 12px; font-weight: 600; }
+    .badge {
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.watch { background: var(--watch-bg); color: var(--watch); }
+    .badge.bad { background: var(--bad-bg); color: var(--bad); }
+    .actual { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em; }
+    .meta { color: var(--muted); font-size: 11px; }
+    .objective { font-size: 12px; color: var(--ink); line-height: 1.35; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .pair .box {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 7px;
+    }
+    .pair .box.target-box { border-color: #f07178; background: rgba(240, 113, 120, 0.1); }
+    .pair .k {
+      color: var(--muted);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+    .pair .box.target-box .k { color: #f07178; }
+    .pair .v { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.03em; margin-top: 2px; }
+    .vs-plan { font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .vs-plan.ok { color: var(--ok); }
+    .vs-plan.bad { color: var(--bad); }
+    .trend-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 20px;
+    }
+    .trend-icon svg { width: 32px; height: 20px; display: block; }
+    .secondary { color: var(--muted); font-size: 10px; }
+    .gauge { height: 44px; }
+    .gauge svg { width: 100%; height: 44px; display: block; }
+
+    .middle {
+      display: grid;
+      grid-template-columns: 1.4fr 0.8fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 900px) { .middle { grid-template-columns: 1fr; } }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 11px; color: var(--muted); margin-top: 8px; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .action-banner {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    @media (max-width: 720px) { .action-banner { grid-template-columns: 1fr; } }
+    .action-banner .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .action-banner .v { font-size: 14px; font-weight: 600; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      z-index: 20;
+    }
+    .overlay.open { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: min(560px, 100%);
+      background: var(--bg);
+      border-left: 1px solid var(--line);
+      z-index: 21;
+      display: none;
+      overflow: auto;
+      padding: 18px 20px 40px;
+    }
+    .drawer.open { display: block; }
+    .drill-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .drill-head h2 { margin: 0; font-size: 1.1rem; flex: 1; }
+    .levels { display: flex; gap: 6px; flex-wrap: wrap; }
+    .level-btn, button.ghost {
+      border: 1px solid var(--line);
+      background: var(--elevated);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .level-btn.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 88px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .bar-track { height: 10px; background: #0b0d10; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .bar-track > span { display: block; height: 100%; }
+    .bar-track > span.actual { background: var(--actual); }
+    .bar-track > span.target { background: var(--target); }
+    .bar-track > span.peer { background: var(--peer); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+    tr.ours td { color: #cfe0ff; font-weight: 600; }
+    .driver-list { margin: 0; padding: 0; list-style: none; }
+    .driver-list li { padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .d-title { font-weight: 600; font-size: 13px; }
+    .d-meta { color: var(--muted); font-size: 12px; }
+    .gap-card {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .gap-card .k { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+    .gap-card .v { font-size: 1.1rem; font-weight: 700; margin-top: 2px; }
+    .gap-card .v.ok { color: var(--ok); }
+    .gap-card .v.bad { color: var(--bad); }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="brand">Community Bank | President</div>
+      <div class="sub">Strategic dashboard · franchise health · actual vs target vs peer vs last year</div>
+    </div>
+    <div class="spacer"></div>
+    <a href="./community_fi_working_monitor.html">Working monitor</a>
+    <span class="sub">Sample data · as of Aug 2026</span>
+  </div>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="asof">Reporting period · as of <strong style="color:var(--ink)">Aug 2026</strong></div>
+      <div class="period-picks" role="radiogroup" aria-label="Time period" id="periodPicks">
+        <button class="tab active" type="button" data-period="month">Month</button>
+        <button class="tab" type="button" data-period="quarter">Quarter</button>
+        <button class="tab" type="button" data-period="ytd">YTD</button>
+        <button class="tab" type="button" data-period="t12">Trailing 12 months</button>
+      </div>
+    </div>
+
+    <div class="briefing">
+      <div class="counts" id="counts"></div>
+      <div class="exceptions" id="exceptions"></div>
+    </div>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="middle">
+      <div class="panel">
+        <h2 class="section">Deposits &amp; loans · actual vs prior year</h2>
+        <div id="franchiseChart"></div>
+        <p class="caption">Same chart, this year vs last year. Sample $1B–$3B community bank. No CU curve.</p>
+      </div>
+      <div class="panel">
+        <h2 class="section">On track vs target</h2>
+        <div id="statusChart"></div>
+        <p class="caption" id="statusCaption"></p>
+      </div>
+    </div>
+
+    <div class="action-banner" id="actionBanner"></div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="KPI drill">
+    <div class="drill-head">
+      <h2 id="drillTitle"></h2>
+      <span class="badge" id="drillBadge"></span>
+      <div class="levels">
+        <button class="level-btn active" data-level="1" type="button">1 · KPI &amp; gaps</button>
+        <button class="level-btn" data-level="2" type="button">2 · Trend</button>
+        <button class="level-btn" data-level="3" type="button">3 · Drivers &amp; action</button>
+      </div>
+      <button class="ghost" type="button" id="closeDrill">Close</button>
+    </div>
+    <div id="drillBody"></div>
+    <p class="caption">Board conversation stops at level 3. Working session: <a href="./community_fi_working_monitor.html" style="color:#cfe0ff">open monitor</a>.</p>
+  </aside>
+
+  <script>
+    const MONTHS = ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
+    const Q_IDX = [2, 5, 8, 11];
+    const Q_LABELS = ["Q4 '25", "Q1 '26", "Q2 '26", "Q3 '26"];
+    const YTD_LABELS = ["2021", "2022", "2023", "2024", "2025", "2026 YTD"];
+    const PEERS = ["Lakeshore Community", "Northridge State", "Twin Ports National", "Harbor Trust"];
+
+    const KPIS = [
+      {
+        id: "deposits",
+        metric: "Total Deposits",
+        unit: "$B",
+        objective: "Expand deposit franchise for funding",
+        owner: "Retail / Treasury",
+        target: 1.45,
+        peer: 1.36,
+        direction: "higher",
+        footnote: "",
+        monthly: [1.18, 1.20, 1.22, 1.24, 1.26, 1.27, 1.28, 1.30, 1.33, 1.35, 1.38, 1.41],
+        prior: [1.10, 1.12, 1.14, 1.16, 1.18, 1.19, 1.21, 1.23, 1.25, 1.27, 1.30, 1.32],
+        ytd: [1.12, 1.18, 1.24, 1.29, 1.34, 1.41],
+        ytdPrior: [1.05, 1.10, 1.16, 1.22, 1.27, 1.32],
+        peerSource: "FDIC SOD / peer median deposits, assets $1B–$3B",
+        drivers: [
+          { title: "Consumer DDA growth", meta: "Primary low-cost funding source" },
+          { title: "Business deposits", meta: "Treasury management opportunity" },
+          { title: "Branch vs digital mix", meta: "Omni-channel acquisition" }
+        ],
+        action: { what: "Add $40MM core DDA before year-end (no wholesale substitution)", owner: "Retail / Treasury", due: "Dec 2026" }
+      },
+      {
+        id: "loans",
+        metric: "Total Loans",
+        unit: "$B",
+        objective: "Grow earning assets with credit discipline",
+        owner: "CRO / Commercial",
+        target: 1.2,
+        peer: 1.10,
+        direction: "higher",
+        footnote: "",
+        monthly: [0.94, 0.96, 0.98, 0.99, 1.00, 1.01, 1.02, 1.05, 1.08, 1.10, 1.13, 1.16],
+        prior: [0.88, 0.90, 0.91, 0.93, 0.94, 0.95, 0.96, 0.98, 1.00, 1.02, 1.04, 1.06],
+        ytd: [0.86, 0.92, 0.98, 1.04, 1.10, 1.16],
+        ytdPrior: [0.80, 0.86, 0.92, 0.98, 1.02, 1.06],
+        peerSource: "Peer median loan book $1B–$3B",
+        drivers: [
+          { title: "Commercial pipeline", meta: "Capstone priority process" },
+          { title: "Past due / NPL watch", meta: "Asset quality constraint on growth" },
+          { title: "Retail / mortgage book", meta: "Steady origination" }
+        ],
+        action: { what: "Convert commercial pipeline without lifting past-due limit", owner: "CRO / Commercial", due: "Sep 2026" }
+      },
+      {
+        id: "households",
+        metric: "Households (CIF)",
+        unit: "k",
+        objective: "Grow household relationships, not account records",
+        owner: "Retail Banking",
+        target: 19.0,
+        peer: 17.2,
+        direction: "higher",
+        footnote: "Households (CIF), not account records.",
+        monthly: [17.60, 17.70, 17.80, 17.90, 18.00, 18.05, 18.10, 18.15, 18.22, 18.28, 18.35, 18.40],
+        prior: [16.80, 16.90, 17.00, 17.10, 17.15, 17.20, 17.28, 17.35, 17.42, 17.50, 17.58, 17.65],
+        ytd: [16.2, 16.7, 17.1, 17.6, 18.0, 18.4],
+        ytdPrior: [15.6, 16.0, 16.5, 16.9, 17.3, 17.65],
+        peerSource: "Peer household CIF count, assets $1B–$3B",
+        drivers: [
+          { title: "Net new households", meta: "New CIF minus closed — not product count" },
+          { title: "Household depth", meta: "Deposits + loans per CIF" },
+          { title: "Attrition of 7-year relationships", meta: "Retention constraint" }
+        ],
+        action: { what: "Add 600 net households via primary-bank relationships, not CD specials", owner: "Retail Banking", due: "Dec 2026" }
+      },
+      {
+        id: "roa",
+        metric: "ROA",
+        unit: "%",
+        objective: "Deliver top-quartile peer ROA",
+        owner: "CEO / CFO",
+        target: 1.5,
+        peer: 1.19,
+        direction: "higher",
+        footnote: "",
+        monthly: [1.10, 1.13, 1.16, 1.18, 1.19, 1.20, 1.21, 1.28, 1.32, 1.35, 1.37, 1.39],
+        prior: [1.02, 1.05, 1.08, 1.10, 1.12, 1.13, 1.15, 1.18, 1.20, 1.22, 1.24, 1.26],
+        ytd: [1.05, 1.12, 1.20, 1.28, 1.34, 1.39],
+        ytdPrior: [0.98, 1.04, 1.10, 1.16, 1.21, 1.26],
+        peerSource: "Call Report peer median, assets $1B–$3B",
+        drivers: [
+          { title: "Net interest income run-rate", meta: "Primary earnings driver · watch funding cost" },
+          { title: "Fee income mix", meta: "Noninterest income below plan by ~4%" },
+          { title: "Average assets growth", meta: "Dilutes ROA if earnings lag asset growth" }
+        ],
+        action: { what: "Close the remaining gap to 1.50% via NII run-rate, not asset stretch", owner: "CFO", due: "Sep 2026" }
+      },
+      {
+        id: "noi",
+        metric: "Net Operating Income",
+        unit: "$MM",
+        objective: "Grow operating income to plan",
+        owner: "CFO",
+        target: 19,
+        peer: 17.8,
+        direction: "higher",
+        footnote: "",
+        monthly: [13.2, 13.6, 14.0, 14.4, 14.7, 15.0, 15.2, 16.1, 16.8, 17.4, 18.1, 18.6],
+        prior: [12.0, 12.4, 12.8, 13.1, 13.4, 13.7, 14.0, 14.5, 15.0, 15.5, 16.0, 16.4],
+        ytd: [11.2, 13.0, 14.6, 16.1, 17.4, 18.6],
+        ytdPrior: [10.4, 12.0, 13.4, 14.8, 15.8, 16.4],
+        peerSource: "Peer median annualized NOI",
+        drivers: [
+          { title: "Commercial loan yields", meta: "Core profitability engine per Capstone" },
+          { title: "Deposit cost of funds", meta: "Rising rates pressure NII" },
+          { title: "Operating expense run-rate", meta: "Tied to efficiency ratio goal" }
+        ],
+        action: { what: "Hold OpEx flat while commercial yields recover $0.4MM to plan", owner: "CFO", due: "Q4 2026" }
+      },
+      {
+        id: "efficiency",
+        metric: "Efficiency Ratio",
+        unit: "%",
+        objective: "Operate at 52% efficiency or better",
+        owner: "COO / CFO",
+        target: 52,
+        peer: 63.2,
+        direction: "lower",
+        footnote: "",
+        monthly: [61.4, 60.6, 59.8, 59.2, 58.8, 58.5, 58.2, 57.1, 56.4, 55.2, 54.6, 53.8],
+        prior: [64.0, 63.6, 63.2, 62.8, 62.5, 62.2, 61.8, 61.2, 60.6, 60.0, 59.4, 58.8],
+        ytd: [64.8, 62.1, 59.6, 57.4, 55.6, 53.8],
+        ytdPrior: [67.0, 64.5, 62.4, 60.8, 59.6, 58.8],
+        peerSource: "UBPR efficiency median $1B–$3B",
+        drivers: [
+          { title: "Noninterest expense", meta: "Staffing and overhead" },
+          { title: "Revenue growth", meta: "Denominator leverage" },
+          { title: "Branch transaction cost", meta: "Facility / channel strategy" }
+        ],
+        action: { what: "Cut 180 bps of efficiency via OpEx, not a bank-curve peer chase", owner: "COO / CFO", due: "Q4 2026" }
+      },
+      {
+        id: "past_due",
+        metric: "Past Due 30+",
+        unit: "%",
+        objective: "Hold past due 30+ inside credit limit",
+        owner: "CRO / Collections",
+        target: 1.5,
+        peer: 1.25,
+        direction: "lower",
+        footnote: "",
+        monthly: [1.62, 1.58, 1.54, 1.50, 1.46, 1.44, 1.42, 1.38, 1.32, 1.28, 1.22, 1.18],
+        prior: [1.70, 1.66, 1.62, 1.58, 1.54, 1.50, 1.48, 1.44, 1.40, 1.36, 1.32, 1.30],
+        ytd: [1.72, 1.58, 1.46, 1.36, 1.26, 1.18],
+        ytdPrior: [1.80, 1.66, 1.54, 1.44, 1.36, 1.30],
+        peerSource: "Peer past-due 30+ / gross loans",
+        drivers: [
+          { title: "Commercial 30–89 day roll", meta: "Watch list conversion" },
+          { title: "Consumer delinquency", meta: "Branch collections capacity" },
+          { title: "Work-out cycle time", meta: "Credit admin throughput" }
+        ],
+        action: { what: "Keep past due inside 1.50% while converting the loan pipeline", owner: "CRO / Collections", due: "Sep 2026" }
+      }
+    ];
+
+    let period = "month";
+    let selectedId = null;
+    let drillLevel = 1;
+
+    function viewOf(k) {
+      if (period === "quarter") {
+        return { labels: Q_LABELS, series: Q_IDX.map((i) => k.monthly[i]), prior: Q_IDX.map((i) => k.prior[i]) };
+      }
+      if (period === "ytd") {
+        return { labels: YTD_LABELS, series: k.ytd, prior: k.ytdPrior };
+      }
+      if (period === "t12") {
+        return { labels: MONTHS, series: k.monthly, prior: k.prior };
+      }
+      return { labels: MONTHS.slice(-6), series: k.monthly.slice(-6), prior: k.prior.slice(-6) };
+    }
+
+    function actual(k) {
+      const s = viewOf(k).series;
+      return s[s.length - 1];
+    }
+
+    function priorActual(k) {
+      const s = viewOf(k).prior;
+      return s[s.length - 1];
+    }
+
+    function statusAt(k, value) {
+      const t = k.target;
+      if (k.direction === "higher") {
+        if (value >= t) return "ok";
+        const watchFloor = t >= 0 ? t * 0.95 : t * 1.05;
+        if (value >= watchFloor) return "watch";
+        return "bad";
+      }
+      if (value <= t) return "ok";
+      const watchCeil = t >= 0 ? t * 1.05 : t * 0.95;
+      if (value <= watchCeil) return "watch";
+      return "bad";
+    }
+
+    function statusOf(k) { return statusAt(k, actual(k)); }
+    function statusLabel(s) { return s === "ok" ? "On track" : s === "watch" ? "At risk" : "Off track"; }
+    function beatsPeer(k) {
+      return k.direction === "higher" ? actual(k) >= k.peer : actual(k) <= k.peer;
+    }
+
+    function formatValue(v, unit) {
+      if (unit === "$MM" || unit === "$B" || unit === "k") return Number(v).toFixed(2);
+      if (Number.isInteger(v)) return String(v);
+      return Number(v).toFixed(2);
+    }
+
+    function unitSuffix(unit) {
+      if (unit === "k") return "k HH";
+      return unit;
+    }
+
+    function progressPct(k) {
+      const a = actual(k), t = k.target;
+      if (k.direction === "higher") return Math.max(0, Math.min(100, (a / t) * 100));
+      return Math.max(0, Math.min(100, (t / a) * 100));
+    }
+
+    function gapLabel(k, compare) {
+      const delta = actual(k) - compare;
+      const favorable = k.direction === "higher" ? delta >= 0 : delta <= 0;
+      const abs = Math.abs(delta);
+      let amount;
+      if (k.unit === "%") {
+        const bps = Math.round(abs * 100);
+        amount = bps >= 100 ? abs.toFixed(2) + " pts" : bps + " bps";
+      } else {
+        amount = formatValue(abs, k.unit) + " " + unitSuffix(k.unit);
+      }
+      if (Math.abs(delta) < 0.0005) return { text: "In line", favorable: true };
+      return { text: (favorable ? "Ahead " : "Behind ") + amount, favorable };
+    }
+
+    function yoyLabel(k) {
+      const a = actual(k), p = priorActual(k);
+      if (!p) return { text: "—", favorable: true };
+      const pct = ((a - p) / Math.abs(p)) * 100;
+      const favorable = k.direction === "higher" ? pct >= 0 : pct <= 0;
+      const sign = pct >= 0 ? "+" : "";
+      return { text: sign + pct.toFixed(1) + "% vs last year", favorable };
+    }
+
+    function trendOf(k) {
+      const s = viewOf(k).series;
+      const first = s[0], last = s[s.length - 1];
+      const base = Math.abs(first) || 1;
+      const pct = (last - first) / base;
+      let dir = "flat";
+      if (Math.abs(pct) >= 0.01) dir = last > first ? "rising" : "falling";
+      const favorable = dir === "flat" ? true : (k.direction === "higher" ? dir === "rising" : dir === "falling");
+      const label = dir === "rising" ? "Rising" : dir === "falling" ? "Falling" : "Flat";
+      return { dir, label, favorable };
+    }
+
+    function trendIcon(trend) {
+      const color = trend.favorable ? "#3dd68c" : "#f07178";
+      let path;
+      if (trend.dir === "rising") {
+        path = `<polyline points="2,16 10,12 16,13 26,4" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="20,4 26,4 26,10" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />`;
+      } else if (trend.dir === "falling") {
+        path = `<polyline points="2,4 10,8 16,7 26,16" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="20,16 26,16 26,10" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />`;
+      } else {
+        path = `<polyline points="2,10 10,10 18,10 26,10" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />`;
+      }
+      return `<span class="trend-icon" title="${trend.label}" aria-label="${trend.label}">
+        <svg viewBox="0 0 28 20" role="img">${path}</svg>
+      </span>`;
+    }
+
+    function counts() {
+      return KPIS.reduce((acc, k) => { acc[statusOf(k)] += 1; return acc; }, { ok: 0, watch: 0, bad: 0 });
+    }
+
+    function gaugeSvg(k) {
+      const pct = progressPct(k);
+      const st = statusOf(k);
+      const color = st === "ok" ? "#3dd68c" : st === "watch" ? "#f5b942" : "#f07178";
+      const w = 120, h = 44, cx = 60, cy = 42, r = 34;
+      const start = Math.PI, end = 0;
+      const ang = start + (end - start) * (pct / 100);
+      const sx = cx + r * Math.cos(start), sy = cy + r * Math.sin(start);
+      const ex = cx + r * Math.cos(ang), ey = cy + r * Math.sin(ang);
+      const large = pct > 50 ? 1 : 0;
+      const tx = cx + r * Math.cos(end), ty = cy + r * Math.sin(end);
+      return `<svg viewBox="0 0 ${w} ${h}">
+        <path d="M ${sx} ${sy} A ${r} ${r} 0 0 0 ${tx} ${ty}" fill="none" stroke="#2a3140" stroke-width="7" />
+        <path d="M ${sx} ${sy} A ${r} ${r} 0 ${large} 0 ${ex} ${ey}" fill="none" stroke="${color}" stroke-width="7" stroke-linecap="round" />
+      </svg>`;
+    }
+
+    function lineChart(seriesList, labels, colors, dashes) {
+      const w = 640, h = 200, padX = 36, padY = 22;
+      const all = seriesList.flat();
+      const min = Math.min(...all), max = Math.max(...all);
+      const span = max - min || 1;
+      const pad = span * 0.12;
+      const lo = min - pad, hi = max + pad;
+      const denom = Math.max(1, labels.length - 1);
+      const x = (i) => padX + (i / denom) * (w - padX * 2);
+      const y = (v) => h - padY - ((v - lo) / (hi - lo)) * (h - padY * 2);
+      const line = (arr) => arr.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+      const font = labels.length > 8 ? 9 : 11;
+      const ticks = labels.map((m, i) =>
+        `<text x="${x(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" fill="#9aa3b2" font-size="${font}">${m}</text>`
+      ).join("");
+      const paths = seriesList.map((arr, si) => {
+        const dash = dashes[si] ? `stroke-dasharray="${dashes[si]}"` : "";
+        return `<path d="${line(arr)}" fill="none" stroke="${colors[si]}" stroke-width="${dashes[si] ? 1.8 : 2.5}" ${dash} />`;
+      }).join("");
+      return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:200px">${paths}${ticks}</svg>`;
+    }
+
+    function renderCounts() {
+      const c = counts();
+      document.getElementById("counts").innerHTML = `
+        <div class="stat"><div class="label">KPIs</div><div class="value">${KPIS.length}</div></div>
+        <div class="stat"><div class="label">On track</div><div class="value ok">${c.ok}</div></div>
+        <div class="stat"><div class="label">At risk</div><div class="value watch">${c.watch}</div></div>
+        <div class="stat"><div class="label">Off track</div><div class="value bad">${c.bad}</div></div>`;
+    }
+
+    function renderExceptions() {
+      const list = KPIS.filter((k) => statusOf(k) !== "ok")
+        .sort((a, b) => (statusOf(a) === "bad" ? 0 : 1) - (statusOf(b) === "bad" ? 0 : 1));
+      const el = document.getElementById("exceptions");
+      if (!list.length) {
+        el.innerHTML = `<h2 class="section">Needs attention</h2><p class="hint">All seven franchise KPIs are on track this period.</p>`;
+        return;
+      }
+      el.innerHTML = `<h2 class="section">Needs attention · ${list.length}</h2>
+        ${list.map((k) => {
+          const st = statusOf(k);
+          const vsT = gapLabel(k, k.target);
+          return `<button class="ex-row" type="button" data-id="${k.id}">
+            <span>${k.metric}</span>
+            <span class="badge ${st}">${statusLabel(st)}</span>
+            <span class="meta">${vsT.text} vs plan</span>
+          </button>`;
+        }).join("")}`;
+      el.querySelectorAll(".ex-row").forEach((btn) => {
+        btn.addEventListener("click", () => openDrill(btn.dataset.id));
+      });
+    }
+
+    function renderCards() {
+      document.getElementById("cards").innerHTML = KPIS.map((k) => {
+        const st = statusOf(k);
+        const a = actual(k);
+        const yoy = yoyLabel(k);
+        const vsT = gapLabel(k, k.target);
+        const vsP = gapLabel(k, k.peer);
+        const trend = trendOf(k);
+        return `<article class="card ${selectedId === k.id ? "selected" : ""}" data-id="${k.id}">
+          <div class="card-head">
+            <h3>${k.metric}</h3>
+            <span class="badge ${st}">${statusLabel(st)}</span>
+          </div>
+          <div class="objective">${k.objective}</div>
+          <div class="pair">
+            <div class="box">
+              <div class="k">Actual</div>
+              <div class="v">${formatValue(a, k.unit)} <span style="font-size:11px;font-weight:500;color:var(--muted)">${unitSuffix(k.unit)}</span></div>
+            </div>
+            <div class="box target-box">
+              <div class="k">Target</div>
+              <div class="v">${formatValue(k.target, k.unit)} <span style="font-size:11px;font-weight:500;color:#f07178">${unitSuffix(k.unit)}</span></div>
+            </div>
+          </div>
+          <div class="vs-plan ${vsT.favorable ? "ok" : "bad"}">${vsT.text} vs target ${trendIcon(trend)}</div>
+          <div class="secondary" style="color:${yoy.favorable ? "var(--ok)" : "var(--bad)"}">${yoy.text}</div>
+          <div class="secondary">${vsP.text} vs peer</div>
+          ${k.footnote ? `<div class="caption">${k.footnote}</div>` : ""}
+        </article>`;
+      }).join("");
+      document.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("click", () => openDrill(card.dataset.id));
+      });
+    }
+
+    function renderFranchise() {
+      const dep = viewOf(KPIS[0]);
+      const loan = viewOf(KPIS[1]);
+      document.getElementById("franchiseChart").innerHTML =
+        lineChart(
+          [dep.series, dep.prior, loan.series, loan.prior],
+          dep.labels,
+          ["#6eb6ff", "#6eb6ff", "#3dd68c", "#3dd68c"],
+          [null, "5 4", null, "5 4"]
+        ) + `<div class="chart-legend">
+          <span><i class="dot" style="background:#6eb6ff"></i>Deposits</span>
+          <span><i class="dot" style="background:#6eb6ff;opacity:.45"></i>Deposits last year</span>
+          <span><i class="dot" style="background:#3dd68c"></i>Loans</span>
+          <span><i class="dot" style="background:#3dd68c;opacity:.45"></i>Loans last year</span>
+        </div>`;
+    }
+
+    function renderStatus() {
+      const c = counts();
+      const total = KPIS.length;
+      const size = 140, cx = 70, cy = 70, r = 46, stroke = 16;
+      let angle = -Math.PI / 2;
+      const parts = [
+        { n: c.ok, color: "#3dd68c" },
+        { n: c.watch, color: "#f5b942" },
+        { n: c.bad, color: "#f07178" }
+      ];
+      const arcs = parts.filter((p) => p.n > 0).map((p) => {
+        const sweep = (p.n / total) * Math.PI * 2;
+        const x1 = cx + r * Math.cos(angle);
+        const y1 = cy + r * Math.sin(angle);
+        angle += sweep;
+        const x2 = cx + r * Math.cos(angle);
+        const y2 = cy + r * Math.sin(angle);
+        const large = sweep > Math.PI ? 1 : 0;
+        return `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}" fill="none" stroke="${p.color}" stroke-width="${stroke}" />`;
+      }).join("");
+      const onTrackPct = Math.round((c.ok / total) * 100);
+      const bars = KPIS.map((k) => {
+        const st = statusOf(k);
+        const pct = progressPct(k);
+        const color = st === "ok" ? "#3dd68c" : st === "watch" ? "#f5b942" : "#f07178";
+        const short = k.metric.replace("Net Operating Income", "NOI").replace("Efficiency Ratio", "Efficiency").replace("Households (CIF)", "Households").replace("Past Due 30+", "Past due");
+        return `<div class="bar-row"><span>${short}</span><div class="bar-track"><span class="actual" style="width:${pct}%;background:${color}"></span></div><span>${Math.round(pct)}%</span></div>`;
+      }).join("");
+      document.getElementById("statusChart").innerHTML = `
+        <svg viewBox="0 0 ${size} ${size}" style="height:110px;margin:0 auto;display:block">
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a3140" stroke-width="${stroke}" />
+          ${arcs}
+          <text x="${cx}" y="${cy - 2}" text-anchor="middle" fill="#f2f4f7" font-size="16" font-weight="700">${onTrackPct}%</text>
+          <text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#9aa3b2" font-size="10">on track</text>
+        </svg>
+        ${bars}`;
+      document.getElementById("statusCaption").textContent =
+        `${c.ok} on track · ${c.watch} at risk · ${c.bad} off track · progress to own target`;
+    }
+
+    function renderAction() {
+      const ranked = KPIS.slice().sort((a, b) => {
+        const rank = { bad: 0, watch: 1, ok: 2 };
+        return rank[statusOf(a)] - rank[statusOf(b)];
+      });
+      const worst = ranked.find((k) => statusOf(k) !== "ok") || ranked[0];
+      const st = statusOf(worst);
+      document.getElementById("actionBanner").innerHTML = `
+        <div><span class="badge ${st}">${statusLabel(st)}</span></div>
+        <div>
+          <div class="k">What we are doing · ${worst.metric}</div>
+          <div class="v">${worst.action.what}</div>
+          <div class="caption">Owner: ${worst.action.owner} · Due: ${worst.action.due}</div>
+        </div>
+        <button class="ghost" type="button" id="openWorst">View ${worst.metric}</button>`;
+      document.getElementById("openWorst").addEventListener("click", () => openDrill(worst.id));
+    }
+
+    function compareBars(k) {
+      const a = actual(k);
+      const maxAbs = Math.max(Math.abs(a), Math.abs(k.target), Math.abs(k.peer), 0.01) * 1.15;
+      const pct = (v) => Math.max(3, Math.min(100, (Math.abs(v) / maxAbs) * 100));
+      return `
+        <div class="bar-row"><span>Actual</span><div class="bar-track"><span class="actual" style="width:${pct(a)}%"></span></div><span>${formatValue(a, k.unit)} ${unitSuffix(k.unit)}</span></div>
+        <div class="bar-row"><span>Target</span><div class="bar-track"><span class="target" style="width:${pct(k.target)}%"></span></div><span>${formatValue(k.target, k.unit)} ${unitSuffix(k.unit)}</span></div>
+        <div class="bar-row"><span>Peer</span><div class="bar-track"><span class="peer" style="width:${pct(k.peer)}%"></span></div><span>${formatValue(k.peer, k.unit)} ${unitSuffix(k.unit)}</span></div>
+        <p class="caption">${k.direction === "higher" ? "Higher is better." : "Lower is better."} ${k.footnote}</p>`;
+    }
+
+    function peerRows(k) {
+      const spread = Math.abs(k.peer) * 0.08 + 0.02;
+      const vals = [k.peer - spread * 1.1, k.peer - spread * 0.3, k.peer + spread * 0.4, k.peer + spread * 1.0];
+      const rows = PEERS.map((name, i) => ({ name, value: Number(vals[i].toFixed(2)), ours: false }));
+      rows.push({ name: "Community Bank (us)", value: actual(k), ours: true });
+      rows.sort((a, b) => k.direction === "higher" ? b.value - a.value : a.value - b.value);
+      return rows;
+    }
+
+    function renderDrill() {
+      const k = KPIS.find((x) => x.id === selectedId);
+      if (!k) return;
+      const st = statusOf(k);
+      document.getElementById("drillTitle").textContent = k.metric + " · " + k.objective;
+      const badge = document.getElementById("drillBadge");
+      badge.className = "badge " + st;
+      badge.textContent = statusLabel(st);
+      document.querySelectorAll(".level-btn").forEach((b) => {
+        b.classList.toggle("active", Number(b.dataset.level) === drillLevel);
+      });
+      const body = document.getElementById("drillBody");
+      if (drillLevel === 1) {
+        const vsT = gapLabel(k, k.target);
+        const vsP = gapLabel(k, k.peer);
+        const yoy = yoyLabel(k);
+        body.innerHTML = `${compareBars(k)}
+          <div class="gauge" style="height:56px">${gaugeSvg(k)}</div>
+          <div class="gap-card"><div class="k">Vs target</div><div class="v ${vsT.favorable ? "ok" : "bad"}">${vsT.text}</div></div>
+          <div class="gap-card"><div class="k">Vs last year</div><div class="v ${yoy.favorable ? "ok" : "bad"}">${yoy.text}</div></div>
+          <div class="gap-card"><div class="k">Vs peer median</div><div class="v ${vsP.favorable ? "ok" : "bad"}">${vsP.text}</div>
+            <div class="caption">${k.peerSource}</div></div>`;
+      } else if (drillLevel === 2) {
+        const v = viewOf(k);
+        const rows = peerRows(k);
+        body.innerHTML = `${lineChart([v.series, v.prior], v.labels, ["#6eb6ff", "#f5b942"], [null, "5 4"])}
+          <div class="chart-legend">
+            <span><i class="dot" style="background:#6eb6ff"></i>Actual</span>
+            <span><i class="dot" style="background:#f5b942"></i>Last year</span>
+          </div>
+          <h2 class="section" style="margin-top:14px">Named peers (sample)</h2>
+          <table>
+            <thead><tr><th>Institution</th><th>${k.metric}</th></tr></thead>
+            <tbody>${rows.map((r) => `<tr class="${r.ours ? "ours" : ""}"><td>${r.name}</td><td>${formatValue(r.value, k.unit)} ${unitSuffix(k.unit)}</td></tr>`).join("")}</tbody>
+          </table>
+          <p class="caption">${k.peerSource}. Ranked ${k.direction === "higher" ? "high to low" : "low to high"}.</p>`;
+      } else {
+        body.innerHTML = `<h2 class="section">Why it moved</h2>
+          <ul class="driver-list">
+            ${k.drivers.map((d) => `<li><div class="d-title">${d.title}</div><div class="d-meta">${d.meta}</div></li>`).join("")}
+          </ul>
+          <h2 class="section" style="margin-top:14px">Named action</h2>
+          <div class="gap-card">
+            <div class="k">What we are doing</div>
+            <div class="v">${k.action.what}</div>
+            <div class="caption">Owner: ${k.action.owner} · Due: ${k.action.due}</div>
+          </div>`;
+      }
+    }
+
+    function openDrill(id) {
+      selectedId = id;
+      drillLevel = 1;
+      document.getElementById("overlay").classList.add("open");
+      document.getElementById("drawer").classList.add("open");
+      renderCards();
+      renderDrill();
+    }
+
+    function closeDrill() {
+      selectedId = null;
+      document.getElementById("overlay").classList.remove("open");
+      document.getElementById("drawer").classList.remove("open");
+      renderCards();
+    }
+
+    function render() {
+      renderCounts();
+      renderExceptions();
+      renderCards();
+      renderFranchise();
+      renderStatus();
+      renderAction();
+      if (selectedId) renderDrill();
+    }
+
+    document.querySelectorAll("#periodPicks .tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        period = btn.dataset.period;
+        document.querySelectorAll("#periodPicks .tab").forEach((b) => b.classList.toggle("active", b === btn));
+        render();
+      });
+    });
+    document.querySelectorAll(".level-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        drillLevel = Number(btn.dataset.level);
+        renderDrill();
+      });
+    });
+    document.getElementById("closeDrill").addEventListener("click", closeDrill);
+    document.getElementById("overlay").addEventListener("click", closeDrill);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && selectedId) closeDrill();
+    });
+
+    render();
+  </script>
+</body>
+</html>

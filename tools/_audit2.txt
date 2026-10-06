@@ -1,0 +1,8 @@
+L1_Executive_Dashboard_Suite_Demo_Notes_Bank.docx flags=['Credit-union', 'Financial Performance Report']
+T5R2 metric col0: Return on Equity
+T5R2 def: Shareholder return on equity capital.
+T1R1 metrics: Return on Assets; Efficiency ratio; Loan growth; Customer Satisfaction Index; Retention; Core fundin
+L1_Executive_Dashboard_Suite_Demo_Notes_Credit_Union.docx flags=['Uniform Bank Performance Report', 'Tier 1 leverage', 'Commercial pipeline', 'Customer Satisfaction Index']
+T5R2 metric col0: Net worth growth
+T5R2 def: Growth in retained earnings / net worth — the credit-union substitute for Return
+T1R1 metrics: Return on Assets; Efficiency ratio; Loan growth; Net Promoter Score; Retention; Core funding mix; Ne

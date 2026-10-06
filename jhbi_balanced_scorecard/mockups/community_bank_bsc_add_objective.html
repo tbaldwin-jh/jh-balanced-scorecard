@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank | Add Objective</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --ok-bg: rgba(61, 214, 140, 0.12);
+      --watch: #f5b942;
+      --bad: #f07178;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .spacer { flex: 1; }
+    .topbar a { color: #cfe0ff; text-decoration: none; font-size: 12px; }
+    .topbar a:hover { text-decoration: underline; }
+
+    .wrap { max-width: 880px; margin: 0 auto; padding: 18px 20px 64px; }
+
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #2563eb;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      color: #cfe0ff;
+      font-size: 13px;
+    }
+    .callout strong { color: var(--ink); }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .step.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+    .step.done {
+      border-color: #2f9e68;
+      color: #b8f0d2;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .panel h1 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+    .panel .lede {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field { margin-bottom: 14px; }
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      padding: 10px 12px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    textarea { min-height: 88px; resize: vertical; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 6px; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    button {
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: var(--elevated);
+      color: var(--ink);
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: #2563eb;
+      color: #fff;
+    }
+    button.ghost { background: transparent; color: var(--muted); }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .review {
+      display: grid;
+      gap: 8px;
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .review div {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px;
+    }
+    .review .k { color: var(--muted); }
+
+    .toast {
+      display: none;
+      margin-top: 14px;
+      background: var(--ok-bg);
+      border: 1px solid #2f9e68;
+      color: #b8f0d2;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+    .toast.show { display: block; }
+    .toast a { color: #cfe0ff; }
+
+    .saved {
+      margin-top: 22px;
+    }
+    .saved h2 {
+      margin: 0 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .saved-list {
+      display: grid;
+      gap: 8px;
+    }
+    .saved-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+    }
+    .saved-item strong { display: block; margin-bottom: 4px; }
+    .saved-item span { color: var(--muted); font-size: 12px; }
+
+    .qa-box {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .qa-card {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .qa-card .n {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .pass { color: var(--ok); }
+
+    .error {
+      color: var(--bad);
+      font-size: 12px;
+      margin-top: 8px;
+      display: none;
+    }
+    .error.show { display: block; }
+
+    @media (max-width: 700px) {
+      .row-2, .qa-box { grid-template-columns: 1fr; }
+      .review div { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Community Bank | Add Objective</div>
+    <div class="sub">New objective entry UI (mock)</div>
+    <div class="spacer"></div>
+    <a href="./community_bank_bsc_planning.html">Planning workspace</a>
+    <a href="./community_bank_executive_scorecard.html">Executive scorecard</a>
+  </div>
+
+  <div class="wrap">
+    <div class="callout">
+      <strong>Instructions.</strong>
+      Use this screen to create a new balanced scorecard objective.
+      Complete each step, then Save draft or Publish after calc QA.
+      Data stays in this browser only (demo). It does not write to BigQuery.
+    </div>
+
+    <div class="steps" id="steps"></div>
+
+    <div class="panel">
+      <h1 id="stepTitle">1. Objective</h1>
+      <p class="lede" id="stepLede">Name the outcome, pick a perspective, and assign an owner.</p>
+
+      <form id="objForm" novalidate>
+        <!-- Step 0: Objective -->
+        <div class="step-pane" data-step="0">
+          <div class="row-2">
+            <div class="field">
+              <label for="code">Objective code</label>
+              <input id="code" name="code" placeholder="e.g. CUS_DIG" maxlength="24" />
+              <div class="hint">Short unique id. Letters, numbers, underscore.</div>
+            </div>
+            <div class="field">
+              <label for="perspective">Perspective</label>
+              <select id="perspective" name="perspective">
+                <option value="">Select…</option>
+                <option>Financial</option>
+                <option>Customer</option>
+                <option>Risk</option>
+                <option>Capability</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="name">Objective name</label>
+            <input id="name" name="name" placeholder="e.g. Increase digital engagement" />
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="owner">Owner</label>
+              <input id="owner" name="owner" placeholder="e.g. Digital / Retail" />
+            </div>
+            <div class="field">
+              <label for="cadence">Review cadence</label>
+              <select id="cadence" name="cadence">
+                <option>Month-end</option>
+                <option>Quarter-end</option>
+                <option>YTD</option>
+                <option>Trailing 90 days</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="description">Intent / description</label>
+            <textarea id="description" name="description" placeholder="What success looks like, and what is out of scope."></textarea>
+          </div>
+        </div>
+
+        <!-- Step 1: Metric -->
+        <div class="step-pane" data-step="1" hidden>
+          <div class="field">
+            <label for="metricCatalog">Metric from catalog</label>
+            <select id="metricCatalog" name="metricCatalog">
+              <option value="">Select a catalog metric…</option>
+              <option value="digital_active">Digital active users</option>
+              <option value="nim">Net interest margin</option>
+              <option value="roa">Return on assets</option>
+              <option value="efficiency">Efficiency ratio</option>
+              <option value="loan_growth">Loan growth</option>
+              <option value="core_deposits">Core deposit growth / mix</option>
+              <option value="products_per_hh">Products per household</option>
+              <option value="criticized">Criticized assets</option>
+              <option value="past_due">Past due 30+</option>
+              <option value="wholesale">Wholesale funding reliance</option>
+              <option value="bsa_aging">BSA alert aging</option>
+              <option value="decision_cycle">Loan decision cycle time</option>
+              <option value="custom">Other / new metric</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="metricName">Metric display name</label>
+            <input id="metricName" name="metricName" placeholder="Filled from catalog, or type a new name" />
+          </div>
+          <div class="field">
+            <label for="formula">Locked formula</label>
+            <textarea id="formula" name="formula" placeholder="e.g. Digital Active Rate = Digital Active Users / Eligible Customers"></textarea>
+          </div>
+          <div class="field">
+            <label for="inputs">Source inputs (one per line)</label>
+            <textarea id="inputs" name="inputs" placeholder="Digital channel event log&#10;Eligible customer base"></textarea>
+          </div>
+          <div class="field">
+            <label for="direction">Direction</label>
+            <select id="direction" name="direction">
+              <option value="higher">Higher is better</option>
+              <option value="lower">Lower is better</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 2: Target -->
+        <div class="step-pane" data-step="2" hidden>
+          <div class="row-2">
+            <div class="field">
+              <label for="targetValue">Plan target / limit</label>
+              <input id="targetValue" name="targetValue" placeholder="e.g. 45% or <= 5.0 days" />
+            </div>
+            <div class="field">
+              <label for="targetLabel">Target label (shown on scorecard)</label>
+              <input id="targetLabel" name="targetLabel" placeholder="e.g. Target 45%" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="targetNotes">Target notes</label>
+            <textarea id="targetNotes" name="targetNotes" placeholder="Why this target, and any exclusions (one-time costs, etc.)."></textarea>
+          </div>
+        </div>
+
+        <!-- Step 3: Peer -->
+        <div class="step-pane" data-step="3" hidden>
+          <div class="row-2">
+            <div class="field">
+              <label for="peerSet">Peer set</label>
+              <select id="peerSet" name="peerSet">
+                <option>Assets $1B-$3B community banks</option>
+                <option>Same-state peers</option>
+                <option>Custom peer list</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="peerStat">Peer statistic</label>
+              <select id="peerStat" name="peerStat">
+                <option>Median</option>
+                <option>25th percentile</option>
+                <option>75th percentile</option>
+              </select>
+            </div>
+          </div>
+          <div class="row-2">
+            <div class="field">
+              <label for="peerValue">Peer value</label>
+              <input id="peerValue" name="peerValue" placeholder="e.g. 38%" />
+            </div>
+            <div class="field">
+              <label for="peerAsOf">Peer as-of date</label>
+              <input id="peerAsOf" name="peerAsOf" type="date" value="2026-07-31" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="peerSource">Peer source</label>
+            <input id="peerSource" name="peerSource" placeholder="e.g. Internal peer pack / call-report sample" />
+          </div>
+          <p class="hint">Peers pressure-test the plan. They do not replace the bank target.</p>
+        </div>
+
+        <!-- Step 4: Calc QA -->
+        <div class="step-pane" data-step="4" hidden>
+          <div class="row-2">
+            <div class="field">
+              <label for="engineValue">Scorecard engine value (as-of)</label>
+              <input id="engineValue" name="engineValue" placeholder="e.g. 41%" />
+            </div>
+            <div class="field">
+              <label for="replayValue">Source-grain replay value</label>
+              <input id="replayValue" name="replayValue" placeholder="Same period, hand or SQL replay" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="qaNotes">QA notes</label>
+            <textarea id="qaNotes" name="qaNotes" placeholder="Grain, annualization, inclusions/exclusions, and who signed off."></textarea>
+          </div>
+          <div class="qa-box">
+            <div class="qa-card">
+              <div class="hint">Engine</div>
+              <div class="n" id="qaEngine">—</div>
+            </div>
+            <div class="qa-card">
+              <div class="hint">Replay</div>
+              <div class="n" id="qaReplay">—</div>
+            </div>
+            <div class="qa-card">
+              <div class="hint">Match</div>
+              <div class="n" id="qaMatch">—</div>
+            </div>
+          </div>
+          <p class="hint">Publish stays disabled until engine and replay values match (trimmed, case-insensitive).</p>
+        </div>
+
+        <!-- Step 5: Review -->
+        <div class="step-pane" data-step="5" hidden>
+          <div class="review" id="review"></div>
+        </div>
+
+        <div class="error" id="formError"></div>
+
+        <div class="actions">
+          <button type="button" class="ghost" id="btnBack" disabled>Back</button>
+          <div class="spacer"></div>
+          <button type="button" id="btnSaveDraft">Save draft</button>
+          <button type="button" class="primary" id="btnNext">Continue</button>
+          <button type="button" class="primary" id="btnPublish" hidden disabled>Publish objective</button>
+        </div>
+      </form>
+
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="saved">
+      <h2>Saved in this browser</h2>
+      <div class="saved-list" id="savedList">
+        <div class="saved-item"><span>No drafts yet. Complete the form and Save draft or Publish.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STEP_META = [
+      { title: "1. Objective", lede: "Name the outcome, pick a perspective, and assign an owner." },
+      { title: "2. Metric", lede: "Bind the proving KPI and lock formula plus source inputs." },
+      { title: "3. Target", lede: "Enter the bank plan target or limit the scorecard will use." },
+      { title: "4. Peer", lede: "Attach an external bar to pressure-test the plan." },
+      { title: "5. Calc QA", lede: "Confirm the engine matches a source-grain replay before publish." },
+      { title: "6. Review & publish", lede: "Check the package, save a draft, or publish to the scorecard queue." }
+    ];
+
+    const CATALOG = {
+      digital_active: {
+        name: "Digital active users",
+        formula: "Digital Active Rate = Digital Active Users / Eligible Customers",
+        inputs: "Digital channel event log\nEligible customer base",
+        direction: "higher",
+        targetValue: "45%",
+        targetLabel: "Target 45%",
+        peerValue: "38%"
+      },
+      nim: {
+        name: "Net interest margin",
+        formula: "NIM = (Interest Income - Interest Expense) / Average Earning Assets",
+        inputs: "Interest income\nInterest expense\nAverage earning assets",
+        direction: "higher",
+        targetValue: "3.50%",
+        targetLabel: "Target 3.50%",
+        peerValue: "3.35%"
+      },
+      roa: {
+        name: "Return on assets",
+        formula: "ROA = Net Income / Average Total Assets",
+        inputs: "GL net income (YTD annualized)\nAverage total assets",
+        direction: "higher",
+        targetValue: "1.05%",
+        targetLabel: "Target 1.05%",
+        peerValue: "0.95%"
+      },
+      efficiency: {
+        name: "Efficiency ratio",
+        formula: "Efficiency = Noninterest Expense / (NII + Noninterest Income)",
+        inputs: "Noninterest expense\nNII\nNoninterest income",
+        direction: "lower",
+        targetValue: "60%",
+        targetLabel: "Target <= 60%",
+        peerValue: "63.5%"
+      },
+      loan_growth: {
+        name: "Loan growth",
+        formula: "Loan Growth = (Ending Gross Loans - Beginning Gross Loans) / Beginning Gross Loans",
+        inputs: "Gross loans begin\nGross loans end",
+        direction: "higher",
+        targetValue: "7.0%",
+        targetLabel: "Plan +7.0%",
+        peerValue: "4.8%"
+      },
+      core_deposits: {
+        name: "Core deposit growth / mix",
+        formula: "Growth = (Ending Core - Beginning Core) / Beginning Core; Mix = Core / Total Deposits",
+        inputs: "Core deposits begin/end\nTotal deposits",
+        direction: "higher",
+        targetValue: "5.0%",
+        targetLabel: "Growth plan +5%",
+        peerValue: "3.5%"
+      },
+      products_per_hh: {
+        name: "Products per household",
+        formula: "Products per Household = Active Product Relationships / Households",
+        inputs: "Active product relationships\nHousehold count",
+        direction: "higher",
+        targetValue: "2.6",
+        targetLabel: "Target 2.6",
+        peerValue: "2.35"
+      },
+      criticized: {
+        name: "Criticized assets",
+        formula: "Criticized = (SM + Substandard + Doubtful + Loss) / Gross Loans",
+        inputs: "Risk ratings\nGross loans",
+        direction: "lower",
+        targetValue: "4.0%",
+        targetLabel: "Limit <= 4.0%",
+        peerValue: "3.4%"
+      },
+      past_due: {
+        name: "Past due 30+",
+        formula: "Past Due 30+ = UPB >= 30 DPD / Gross Loans",
+        inputs: "Past due balances\nGross loans",
+        direction: "lower",
+        targetValue: "1.50%",
+        targetLabel: "Limit <= 1.50%",
+        peerValue: "1.25%"
+      },
+      wholesale: {
+        name: "Wholesale funding reliance",
+        formula: "Wholesale Reliance = Wholesale Funding / Total Liabilities",
+        inputs: "Wholesale funding\nTotal liabilities",
+        direction: "lower",
+        targetValue: "15%",
+        targetLabel: "Limit <= 15%",
+        peerValue: "14%"
+      },
+      bsa_aging: {
+        name: "BSA alert aging",
+        formula: "Avg Alert Age = Sum(Age Days) / Open Alerts",
+        inputs: "Open BSA alerts\nAlert ages",
+        direction: "lower",
+        targetValue: "20 days",
+        targetLabel: "SLA <= 20 days",
+        peerValue: "21 days"
+      },
+      decision_cycle: {
+        name: "Loan decision cycle time",
+        formula: "Median(Decision Timestamp - Application Received Timestamp)",
+        inputs: "LOS application received\nLOS decision timestamp",
+        direction: "lower",
+        targetValue: "5.0 days",
+        targetLabel: "Target <= 5.0 days",
+        peerValue: "5.8 days"
+      }
+    };
+
+    const STORAGE_KEY = "cb_bsc_objectives_v1";
+    let step = 0;
+
+    const $ = (id) => document.getElementById(id);
+
+    function readForm() {
+      return {
+        code: $("code").value.trim(),
+        perspective: $("perspective").value,
+        name: $("name").value.trim(),
+        owner: $("owner").value.trim(),
+        cadence: $("cadence").value,
+        description: $("description").value.trim(),
+        metricCatalog: $("metricCatalog").value,
+        metricName: $("metricName").value.trim(),
+        formula: $("formula").value.trim(),
+        inputs: $("inputs").value.trim(),
+        direction: $("direction").value,
+        targetValue: $("targetValue").value.trim(),
+        targetLabel: $("targetLabel").value.trim(),
+        targetNotes: $("targetNotes").value.trim(),
+        peerSet: $("peerSet").value,
+        peerStat: $("peerStat").value,
+        peerValue: $("peerValue").value.trim(),
+        peerAsOf: $("peerAsOf").value,
+        peerSource: $("peerSource").value.trim(),
+        engineValue: $("engineValue").value.trim(),
+        replayValue: $("replayValue").value.trim(),
+        qaNotes: $("qaNotes").value.trim(),
+        savedAt: new Date().toISOString(),
+        status: "draft"
+      };
+    }
+
+    function qaPasses(data) {
+      if (!data.engineValue || !data.replayValue) return false;
+      return data.engineValue.toLowerCase() === data.replayValue.toLowerCase();
+    }
+
+    function validateStep(i, data) {
+      if (i === 0) {
+        if (!data.code || !data.perspective || !data.name || !data.owner || !data.description) {
+          return "Enter code, perspective, name, owner, and description.";
+        }
+        if (!/^[A-Za-z][A-Za-z0-9_]{1,23}$/.test(data.code)) {
+          return "Code must start with a letter and use only letters, numbers, underscore.";
+        }
+      }
+      if (i === 1) {
+        if (!data.metricName || !data.formula || !data.inputs) {
+          return "Enter metric name, formula, and at least one source input.";
+        }
+      }
+      if (i === 2) {
+        if (!data.targetValue || !data.targetLabel) {
+          return "Enter plan target value and scorecard target label.";
+        }
+      }
+      if (i === 3) {
+        if (!data.peerValue || !data.peerSource) {
+          return "Enter peer value and peer source.";
+        }
+      }
+      if (i === 4) {
+        if (!data.engineValue || !data.replayValue) {
+          return "Enter both engine and replay values for calc QA.";
+        }
+      }
+      return "";
+    }
+
+    function showError(msg) {
+      const el = $("formError");
+      if (!msg) {
+        el.classList.remove("show");
+        el.textContent = "";
+        return;
+      }
+      el.textContent = msg;
+      el.classList.add("show");
+    }
+
+    function renderSteps() {
+      $("steps").innerHTML = STEP_META.map((s, i) => {
+        const cls = i === step ? "active" : i < step ? "done" : "";
+        return `<button type="button" class="step ${cls}" data-step="${i}">${i + 1}. ${["Objective","Metric","Target","Peer","Calc QA","Review"][i]}</button>`;
+      }).join("");
+      $("steps").querySelectorAll(".step").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = Number(btn.getAttribute("data-step"));
+          if (target <= step) {
+            step = target;
+            render();
+          }
+        });
+      });
+    }
+
+    function renderPanes() {
+      document.querySelectorAll(".step-pane").forEach((pane) => {
+        pane.hidden = Number(pane.getAttribute("data-step")) !== step;
+      });
+      $("stepTitle").textContent = STEP_META[step].title;
+      $("stepLede").textContent = STEP_META[step].lede;
+      $("btnBack").disabled = step === 0;
+      $("btnNext").hidden = step === 5;
+      $("btnPublish").hidden = step !== 5;
+
+      const data = readForm();
+      $("btnPublish").disabled = !qaPasses(data);
+
+      if (step === 4) {
+        $("qaEngine").textContent = data.engineValue || "—";
+        $("qaReplay").textContent = data.replayValue || "—";
+        const pass = qaPasses(data);
+        $("qaMatch").textContent = !data.engineValue || !data.replayValue ? "—" : pass ? "PASS" : "FAIL";
+        $("qaMatch").className = "n" + (pass ? " pass" : "");
+      }
+
+      if (step === 5) {
+        const pass = qaPasses(data);
+        $("review").innerHTML = [
+          ["Code", data.code],
+          ["Name", data.name],
+          ["Perspective", data.perspective],
+          ["Owner", data.owner],
+          ["Cadence", data.cadence],
+          ["Description", data.description],
+          ["Metric", data.metricName],
+          ["Formula", data.formula],
+          ["Inputs", data.inputs.replace(/\n/g, " · ")],
+          ["Direction", data.direction === "higher" ? "Higher is better" : "Lower is better"],
+          ["Target", data.targetLabel + " (" + data.targetValue + ")"],
+          ["Peer", data.peerValue + " · " + data.peerStat + " · " + data.peerSet],
+          ["Peer source", data.peerSource + " · as of " + data.peerAsOf],
+          ["Calc QA", pass ? "PASS (" + data.engineValue + ")" : "FAIL / incomplete"],
+          ["QA notes", data.qaNotes || "(none)"]
+        ].map(([k, v]) => `<div><span class="k">${k}</span><span>${v || "—"}</span></div>`).join("");
+      }
+    }
+
+    function render() {
+      showError("");
+      renderSteps();
+      renderPanes();
+      renderSaved();
+    }
+
+    function loadSaved() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function persist(item) {
+      const all = loadSaved().filter((x) => x.code !== item.code);
+      all.unshift(item);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all.slice(0, 20)));
+    }
+
+    function renderSaved() {
+      const all = loadSaved();
+      if (!all.length) {
+        $("savedList").innerHTML = `<div class="saved-item"><span>No drafts yet. Complete the form and Save draft or Publish.</span></div>`;
+        return;
+      }
+      $("savedList").innerHTML = all.map((o) => `
+        <div class="saved-item">
+          <strong>${o.code} · ${o.name}</strong>
+          <span>${o.perspective} · ${o.owner} · ${o.status.toUpperCase()} · metric ${o.metricName} · target ${o.targetLabel} · peer ${o.peerValue}</span>
+        </div>
+      `).join("");
+    }
+
+    function showToast(html) {
+      const t = $("toast");
+      t.innerHTML = html;
+      t.classList.add("show");
+    }
+
+    $("metricCatalog").addEventListener("change", () => {
+      const key = $("metricCatalog").value;
+      if (!key || key === "custom") return;
+      const m = CATALOG[key];
+      if (!m) return;
+      $("metricName").value = m.name;
+      $("formula").value = m.formula;
+      $("inputs").value = m.inputs;
+      $("direction").value = m.direction;
+      if (!$("targetValue").value) $("targetValue").value = m.targetValue;
+      if (!$("targetLabel").value) $("targetLabel").value = m.targetLabel;
+      if (!$("peerValue").value) $("peerValue").value = m.peerValue;
+    });
+
+    ["engineValue", "replayValue"].forEach((id) => {
+      $(id).addEventListener("input", () => {
+        if (step === 4 || step === 5) renderPanes();
+      });
+    });
+
+    $("btnBack").addEventListener("click", () => {
+      if (step > 0) {
+        step -= 1;
+        render();
+      }
+    });
+
+    $("btnNext").addEventListener("click", () => {
+      const data = readForm();
+      const err = validateStep(step, data);
+      if (err) {
+        showError(err);
+        return;
+      }
+      step += 1;
+      render();
+    });
+
+    $("btnSaveDraft").addEventListener("click", () => {
+      const data = readForm();
+      if (!data.code || !data.name) {
+        showError("Enter at least objective code and name before saving a draft.");
+        step = 0;
+        render();
+        return;
+      }
+      data.status = "draft";
+      persist(data);
+      showToast("Draft saved in this browser for <strong>" + data.code + "</strong>.");
+      renderSaved();
+    });
+
+    $("btnPublish").addEventListener("click", () => {
+      const data = readForm();
+      for (let i = 0; i <= 4; i++) {
+        const err = validateStep(i, data);
+        if (err) {
+          showError("Cannot publish yet: " + err);
+          step = i;
+          render();
+          return;
+        }
+      }
+      if (!qaPasses(data)) {
+        showError("Calc QA must PASS (engine and replay values must match) before publish.");
+        step = 4;
+        render();
+        return;
+      }
+      data.status = "published";
+      persist(data);
+      showToast(
+        "Published <strong>" + data.code + "</strong> to the local demo queue. " +
+        "In production this would insert <code>dim_objective</code>, bridge the metric, and refresh the " +
+        "<a href='./community_bank_executive_scorecard.html'>Executive Scorecard</a>."
+      );
+      renderSaved();
+    });
+
+    render();
+  </script>
+</body>
+</html>

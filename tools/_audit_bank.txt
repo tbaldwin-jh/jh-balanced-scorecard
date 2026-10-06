@@ -1,0 +1,33 @@
+﻿python : Traceback (most recent call last):
+At C:\Users\TBaldwin\AppData\Local\Temp\ps-script-977df747-6e00-46eb-8ed2-597465b114bf.ps1:109 char:1
++ python -c "
++ ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  File "<string>", line 12, in <module>
+    print('T', ti, ri, ci, c.text[:100].replace(chr(10),' | '))
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TBaldwin\AppData\Local\Python\pythoncore-3.14-64\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\u2212' in position 39: character maps to <undefined>
+P 32 Committees map to reports, not the other way around. Asset-Liability Committee looks at Level 1-4 plus Net Interest Marg
+P 47 Nine proving tiles (this yearÆs board pack): Return on Assets; Efficiency ratio; Tier 1 leverage / Net worth; Customer S
+P 65 The page is organized the way an Asset-Liability Committee / risk committee thinks, even though the mockup is a single g
+P 107 Return on Assets, efficiency, capital, loan growth, core mix, past due, and the rest of the Level 1-4 constraint ratios 
+T 5 1 4 Earnings on the asset base ù primary shareholder profitability key performance indicator. | Credit uni
+T 5 1 6 General Ledger / Call Report ╖ Uniform Bank Performance Report peer median, assets $1 billionû$3 bil
+T 5 2 4 Shareholder return on equity capital. | Credit union: Growth in retained earnings / net worth ù the cr
+T 5 2 5 Return on Equity = Net Income / Average Equity Capital | Credit union: Net worth growth = (Net Worth t
+T 5 2 6 General Ledger / Call Report | Credit union: 5300 Call Report ╖ retained earnings only
+T 5 3 4 Spread between earning-asset yield and cost of funds. | Credit union: Spread while returning member va
+T 5 3 6 General Ledger / Asset-Liability Management ╖ Uniform Bank Performance Report | Credit union: 5300 Cal
+T 5 4 4 Cost to produce a dollar of revenue. Lower is better. | Credit union: Cost to produce a dollar of reve
+T 5 4 6 General Ledger ╖ Uniform Bank Performance Report efficiency median ù bank curve (about 52% target) | C
+T 5 5 4 Operating profit after interest and operating expense, before extraordinary items. | Credit union: Ope
+T 5 5 6 General Ledger ╖ peer median annualized Net Operating Income | Credit union: General Ledger ╖ credit-u
+T 5 6 4 Year-over-year growth in gross loans held for investment. | Credit union: Year-over-year loan growth i
+T 5 6 6 Core / Call Report | Credit union: Core / 5300 Call Report
+T 5 7 4 Year-over-year growth in the deposit franchise. | Credit union: Year-over-year growth in member shares
+T 5 7 5 

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank | BSC Planning Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --watch: #f5b942;
+      --bad: #f07178;
+      --info: #6eb6ff;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: center;
+    }
+    .topbar .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .topbar .sub { color: var(--muted); font-size: 12px; }
+    .topbar .spacer { flex: 1; }
+    .topbar .meta { color: var(--muted); font-size: 12px; }
+    .topbar a { color: #cfe0ff; text-decoration: none; font-size: 12px; }
+    .topbar a:hover { text-decoration: underline; }
+
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 18px 20px 56px; }
+
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #2563eb;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      color: #cfe0ff;
+      font-size: 13px;
+    }
+    .callout strong { color: var(--ink); }
+    .callout.ok {
+      background: rgba(61, 214, 140, 0.12);
+      border-color: #2f9e68;
+      color: #b8f0d2;
+    }
+    .callout.neutral {
+      background: #12161e;
+      border-color: var(--line);
+      color: var(--muted);
+    }
+
+    .steps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .step {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .step.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+
+    .step-banner {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .step-banner .t { font-weight: 600; margin-bottom: 4px; }
+    .step-banner .q { color: var(--muted); font-size: 13px; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .stat .n {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .stat .l { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .tone-ok { color: var(--ok); }
+    .tone-watch { color: var(--watch); }
+    .tone-info { color: var(--info); }
+
+    h2 {
+      margin: 22px 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .hint { color: var(--muted); font-size: 12px; margin: 0 0 12px; }
+
+    .obj-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .obj-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      width: 100%;
+    }
+    .obj-card:hover { border-color: #3a4458; }
+    .obj-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+      background: var(--elevated);
+    }
+    .obj-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .code { font-weight: 700; font-size: 13px; }
+    .pill {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #222833;
+      color: var(--muted);
+    }
+    .obj-name { font-weight: 600; font-size: 14px; margin: 0 0 6px; }
+    .obj-meta { color: var(--muted); font-size: 12px; }
+
+    .inspector {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .inspector h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+    .formula {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      margin: 8px 0 12px;
+      white-space: pre-wrap;
+    }
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .panel {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .panel .big {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 9px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #12161e;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    footer a { color: #cfe0ff; }
+
+    @media (max-width: 800px) {
+      .summary, .obj-grid, .pair { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Community Bank | BSC Planning Workspace</div>
+    <div class="sub">Objectives · Metrics · Targets · Peers · Calc QA</div>
+    <div class="spacer"></div>
+    <a href="./l1_1_enterprise_strategy.html">Back to L1-1</a>
+    <a href="../jhbi_balanced_scorecard/mockups/community_bank_bsc_add_objective.html">Add objective</a>
+    <a href="../jhbi_balanced_scorecard/mockups/community_bank_executive_scorecard.html">Executive scorecard</a>
+    <div class="meta">FY2026 plan cycle · Sample</div>
+  </div>
+
+  <div class="wrap">
+    <div class="callout">
+      <strong>How to enter a plan.</strong>
+      Work the steps in order for each objective you own.
+      (1) Create or update the objective (name, perspective, owner, intent).
+      (2) Bind the proving metric and lock its formula and source inputs.
+      (3) Enter the bank plan target or limit and cadence.
+      (4) Attach the peer benchmark (peer set, median or percentile, as-of date).
+      (5) Run calc QA and confirm engine value matches your source-grain replay.
+      (6) Publish only after QA passes so the executive scorecard shows Actual, Target, and Peer correctly.
+      New objective form: <a href="../jhbi_balanced_scorecard/mockups/community_bank_bsc_add_objective.html" style="color:#fff">Add Objective UI</a>.
+    </div>
+
+    <div class="steps" id="steps" role="tablist" aria-label="Planning steps"></div>
+    <div class="step-banner" id="stepBanner"></div>
+    <div class="summary" id="summary"></div>
+
+    <h2>Objective library</h2>
+    <p class="hint">Select an objective to inspect metric binding, target, peer, and calc QA for the current step.</p>
+    <div class="obj-grid" id="objGrid"></div>
+
+    <h2>Inspector</h2>
+    <div class="inspector" id="inspector" aria-live="polite"></div>
+
+    <h2>Planning vs monitoring</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>Primary job</th>
+          <th>Key screens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Planning (this page)</td>
+          <td>Enter objectives, bind metrics, set targets, attach peers, prove calcs</td>
+          <td>Objective editor, metric catalog, peer attach, calc QA gate</td>
+        </tr>
+        <tr>
+          <td>Monitoring (executive scorecard)</td>
+          <td>Read Actual vs Target vs Peer and drill drivers</td>
+          <td>President scorecard, variance table, ROA drill</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Recommended control loop</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>Action</th>
+          <th>Exit criteria</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Enter / refresh objectives by BSC perspective</td>
+          <td>Owner, description, and success intent clear</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Bind metric(s) and lock formula + inputs</td>
+          <td>Single dictionary definition; no competing formulas</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Set plan target or limit</td>
+          <td>Numeric target with cadence</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Attach peer benchmark</td>
+          <td>Peer set, percentile, and as-of date documented</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Run calc QA (engine vs replay)</td>
+          <td>Match within tolerance; definition notes filed</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Publish to executive scorecard</td>
+          <td>Appears as Actual / Target / Peer on president view</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer>
+      Sample planning mockup for Community Bank balanced scorecard work.
+      Not a live workflow app.
+      Related: <a href="../jhbi_balanced_scorecard/mockups/community_bank_executive_scorecard.html">Executive Scorecard (monitor)</a>
+    </footer>
+  </div>
+
+  <script>
+    const STEPS = [
+      { id: "objectives", label: "1. Objectives", question: "What outcomes does leadership own this year?" },
+      { id: "metrics", label: "2. Metrics", question: "Which KPI proves each objective, and what is the formula?" },
+      { id: "targets", label: "3. Targets", question: "What plan / limit do we commit to?" },
+      { id: "peers", label: "4. Peers", question: "What peer median or percentile is the external bar?" },
+      { id: "calcQa", label: "5. Calc QA", question: "Does the engine match a hand replay from source grains?" },
+      { id: "publish", label: "6. Publish", question: "Promote locked defs into the executive scorecard." }
+    ];
+
+    const OBJECTIVES = [
+      {
+        id: "fin_roa",
+        code: "FIN_ROA",
+        name: "Deliver target return on assets",
+        perspective: "Financial",
+        owner: "CEO / CFO",
+        description: "Translate margin and fee income into sustainable ROA without stretching credit or wholesale funding.",
+        metricName: "Return on assets",
+        formula: "ROA = Net Income / Average Total Assets",
+        inputs: ["GL net income (YTD annualized)", "Average total assets (daily or monthly avg)"],
+        target: "1.05%",
+        peerMedian: "0.95%",
+        peerSource: "Assets $1B-$3B peer median (sample)",
+        calcCheck: {
+          engineValue: "0.98%",
+          replayValue: "0.98%",
+          match: true,
+          notes: "Replay: $21.756M NI / $2.220B avg assets = 0.980%. Annualization method locked to ALCO policy."
+        }
+      },
+      {
+        id: "fin_nim",
+        code: "FIN_NIM",
+        name: "Sustain net interest margin",
+        perspective: "Financial",
+        owner: "CFO / ALCO",
+        description: "Protect earning-asset yield and funding cost discipline through the rate cycle.",
+        metricName: "Net interest margin",
+        formula: "NIM = (Interest Income - Interest Expense) / Average Earning Assets",
+        inputs: ["Interest income", "Interest expense", "Average earning assets"],
+        target: "3.50%",
+        peerMedian: "3.35%",
+        peerSource: "Assets $1B-$3B peer median (sample)",
+        calcCheck: {
+          engineValue: "3.42%",
+          replayValue: "3.42%",
+          match: true,
+          notes: "NII / AEA run-rate matches GL extract for Jul 2026 sample month."
+        }
+      },
+      {
+        id: "rsk_credit",
+        code: "RSK_CREDIT",
+        name: "Maintain credit quality",
+        perspective: "Risk",
+        owner: "CRO / Credit",
+        description: "Keep criticized and past-due levels inside board limits while growing loans.",
+        metricName: "Criticized assets",
+        formula: "Criticized = (SM + Substandard + Doubtful + Loss) / Gross Loans",
+        inputs: ["Risk ratings from LOS", "Gross loans HFI", "Special mention included (not classified-only)"],
+        target: "<= 4.0% of loans",
+        peerMedian: "3.4%",
+        peerSource: "Assets $1B-$3B peer median (sample)",
+        calcCheck: {
+          engineValue: "3.1%",
+          replayValue: "3.1%",
+          match: true,
+          notes: "Definition check: criticized includes special mention. Classified-only would read lower and fail peer compare."
+        }
+      },
+      {
+        id: "cap_cycle",
+        code: "CAP_CYCLE",
+        name: "Shorten loan decision cycle time",
+        perspective: "Capability",
+        owner: "Lending Ops",
+        description: "Reduce median time from application to decision for competitive speed.",
+        metricName: "Loan decision cycle time",
+        formula: "Median(Decision Timestamp - Application Received Timestamp)",
+        inputs: ["LOS application received", "LOS decision timestamp", "Clock-stop rules documented"],
+        target: "<= 5.0 days median",
+        peerMedian: "5.8 days",
+        peerSource: "Assets $1B-$3B peer median (sample)",
+        calcCheck: {
+          engineValue: "6.5 days",
+          replayValue: "6.5 days",
+          match: true,
+          notes: "Median (not mean). Borrower doc gaps pause the clock per policy version 2026-03."
+        }
+      }
+    ];
+
+    let stepId = "objectives";
+    let objId = "fin_roa";
+
+    function stepMeta() {
+      return STEPS.find((s) => s.id === stepId);
+    }
+
+    function obj() {
+      return OBJECTIVES.find((o) => o.id === objId) || OBJECTIVES[0];
+    }
+
+    function renderSteps() {
+      document.getElementById("steps").innerHTML = STEPS.map((s) => `
+        <button class="step ${s.id === stepId ? "active" : ""}" type="button" data-step="${s.id}">${s.label}</button>
+      `).join("");
+      document.querySelectorAll(".step").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          stepId = btn.getAttribute("data-step");
+          render();
+        });
+      });
+      const s = stepMeta();
+      document.getElementById("stepBanner").innerHTML = `
+        <div class="t">${s.label}</div>
+        <div class="q">${s.question}</div>
+      `;
+    }
+
+    function renderSummary() {
+      const qaPass = OBJECTIVES.filter((o) => o.calcCheck.match).length;
+      document.getElementById("summary").innerHTML = `
+        <div class="stat"><div class="n">${OBJECTIVES.length}</div><div class="l">Sample objectives</div></div>
+        <div class="stat"><div class="n tone-info">12</div><div class="l">Scorecard metrics catalog</div></div>
+        <div class="stat"><div class="n tone-ok">${qaPass} / ${OBJECTIVES.length}</div><div class="l">Calc QA passed</div></div>
+        <div class="stat"><div class="n tone-watch">Draft</div><div class="l">Plan cycle FY2026</div></div>
+      `;
+    }
+
+    function renderObjGrid() {
+      document.getElementById("objGrid").innerHTML = OBJECTIVES.map((o) => `
+        <button class="obj-card ${o.id === objId ? "selected" : ""}" type="button" data-id="${o.id}">
+          <div class="obj-head">
+            <span class="code">${o.code}</span>
+            <span class="pill">${o.perspective}</span>
+          </div>
+          <p class="obj-name">${o.name}</p>
+          <div class="obj-meta">Owner: ${o.owner}</div>
+          <div class="obj-meta">Metric: ${o.metricName}</div>
+        </button>
+      `).join("");
+      document.querySelectorAll(".obj-card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          objId = btn.getAttribute("data-id");
+          render();
+        });
+      });
+    }
+
+    function fieldTable(rows) {
+      return `
+        <table>
+          <thead><tr><th>Field</th><th>Value</th></tr></thead>
+          <tbody>
+            ${rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderInspector() {
+      const o = obj();
+      const showObj = stepId === "objectives" || stepId === "publish";
+      const showMetrics = stepId === "metrics" || stepId === "calcQa" || stepId === "publish";
+      const showTargets = stepId === "targets" || stepId === "peers" || stepId === "publish";
+      const showPeersNote = stepId === "peers";
+      const showQa = stepId === "calcQa" || stepId === "publish";
+      const showPublish = stepId === "publish";
+
+      let html = `
+        <div class="obj-head">
+          <h3>${o.code} · ${o.name}</h3>
+          <span class="pill">${o.perspective}</span>
+        </div>
+        <p class="muted">${o.description}</p>
+      `;
+
+      if (showObj) {
+        html += `
+          <div class="section-label">Objective fields</div>
+          ${fieldTable([
+            ["Code", o.code],
+            ["Name", o.name],
+            ["Perspective", o.perspective],
+            ["Owner", o.owner],
+            ["Status", stepId === "publish" ? "Ready to publish" : "Draft"]
+          ])}
+        `;
+      }
+
+      if (showMetrics) {
+        html += `
+          <div class="section-label">Metric binding</div>
+          <div class="formula">${o.formula}</div>
+          ${fieldTable(o.inputs.map((i) => ["Input", i]))}
+        `;
+      }
+
+      if (showTargets) {
+        html += `
+          <div class="section-label">Plan target and peer</div>
+          <div class="pair">
+            <div class="panel">
+              <div class="obj-meta">Plan target</div>
+              <div class="big">${o.target}</div>
+            </div>
+            <div class="panel">
+              <div class="obj-meta">${o.peerSource}</div>
+              <div class="big tone-info">${o.peerMedian}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (showPeersNote) {
+        html += `
+          <div class="callout neutral" style="margin-top:14px">
+            <strong style="color:var(--ink)">Peer use in planning.</strong>
+            Peers do not replace targets. Use peer median to pressure-test whether the plan is ambitious or soft, then lock the bank target separately. The executive scorecard later shows Actual vs both.
+          </div>
+        `;
+      }
+
+      if (showQa) {
+        html += `
+          <div class="section-label">Calculation QA</div>
+          <div class="pair" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            <div class="panel"><div class="obj-meta">Scorecard engine</div><div class="big">${o.calcCheck.engineValue}</div></div>
+            <div class="panel"><div class="obj-meta">Source-grain replay</div><div class="big">${o.calcCheck.replayValue}</div></div>
+            <div class="panel"><div class="obj-meta">Match</div><div class="big ${o.calcCheck.match ? "tone-ok" : ""}">${o.calcCheck.match ? "PASS" : "FAIL"}</div></div>
+          </div>
+          <p class="muted" style="margin-top:10px">${o.calcCheck.notes}</p>
+          <div class="callout ok" style="margin-top:12px">
+            <strong style="color:var(--ink)">Gate before publish.</strong>
+            Do not promote an objective to the Bank President scorecard until formula, grain, annualization, and peer definition all pass QA for the same as-of date.
+          </div>
+        `;
+      }
+
+      if (showPublish) {
+        html += `
+          <div class="callout" style="margin-top:14px">
+            <strong>Publish checklist.</strong>
+            Objective owner signed · Metric formula locked · Target locked · Peer source cited · Calc QA pass · Appears on Executive Scorecard next refresh.
+          </div>
+        `;
+      }
+
+      document.getElementById("inspector").innerHTML = html;
+    }
+
+    function render() {
+      renderSteps();
+      renderSummary();
+      renderObjGrid();
+      renderInspector();
+    }
+
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+# Metric Formulas & Definitions — Combined Analysis
+
+Formulas lock for this bank — UBPR / Call Report sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is Call Report via UBPR; never mix UBPR and FPR.
+
+**Scorecard:** 25 yes · 6 partial · 8 no
+
+| AVAILABLE | Meaning |
+| --- | --- |
+| **yes** | Calculable from in-scope catalogs (reasonable proxies / bank code definitions OK) |
+| **partial** | Some inputs exist; gap remains |
+| **no** | Critical inputs not in current catalogs |
+
+---
+
+## Catalogs analyzed
+
+| Catalog file | System | Role in this pass |
+| --- | --- | --- |
+| `CoreData.xlsx` | Banking core (Jack Henry-style) | Restricted to the **Core shortlist** below (not the full ~10k-table catalog) |
+| `SynapsysData.xlsx` | Synapsys CRM / MCIF / householding (`synapsys.jha`) | Full catalog (101 tables) — joins to Core on CIF / account / officer |
+| `TellerData.xlsx` | Jack Henry Teller / Vertex (`vertex.jha`) | Full catalog (32 tables) |
+| `ffiecData.xlsx` | FFIEC Call Report + UBPR (`ffiec.jha`) | Full catalog (41 tables) — MDRM-coded columns |
+
+### Rules used when scoring
+
+- **Financial GL metrics** → Core **`GLMAST`** primary; FFIEC/UBPR for regulatory definitions and peers
+- **Dating** → any reporting period (day, MTD, EOM, EOQ, YTD, YoY, custom) can be derived from dated fields / history
+- **Synapsys** → CRM / householding (not bank GL); People attrition is CRM-officer proxy only
+- **FFIEC** → usable with an MDRM codebook (columns are codes like `RCON7204`, not plain-English names)
+
+---
+
+### Core tables analyzed (shortlist)
+
+| Role | Tables |
+| --- | --- |
+| Masters | `ACMAST`, `APMAST`, `CDMAST`, `DDMAST`, `LNMAST`, `GLMAST`, `CFACCT`, `CFMAST_T`, `HBACCT`, `HBMAST`, `JHOFFR` |
+| Delinquency / items | `LNPDUE`, `ARITEM_T`, `DDFEES` |
+| Posting / history | `DDPOST`, `DEPOSIT_HISTORY_TABLE`, `DEPOSIT_EFT_HISTORY_TABLE`, `GLHIST`, `LOAN_HISTORY_TABLE`, `TIME_DEPOSIT_HISTORY_TABLE`, `WTHIST_T` |
+
+**All 21 names confirmed present** in `CoreData.xlsx`.
+
+| Core table | Useful for (examples) |
+| --- | --- |
+| `GLMAST` | ROA, ROE, NIM, Efficiency, NOI, fee mix; optional LTD / loan / deposit via GL controls (`CURBAL`, `*AVG`, `CALRP*`, `COND*`) |
+| `GLHIST` | GL transaction-level support |
+| `LNMAST` | Loan growth, LTD, originations, yield, criticized/watch/risk, nonaccrual |
+| `LNPDUE` | Past due 30+ (`PDDAYS`, balances due) |
+| `LOAN_HISTORY_TABLE` | Loan period activity / history |
+| `DDMAST` | Deposit growth, core funding mix, LTD, fees/YTD activity |
+| `CDMAST` | Time deposits / funding mix / LTD |
+| `DEPOSIT_HISTORY_TABLE` / `DEPOSIT_EFT_HISTORY_TABLE` / `TIME_DEPOSIT_HISTORY_TABLE` | Deposit activity; channel / self-service proxies |
+| `DDFEES` / `DDPOST` | Fee and posting detail |
+| `CFMAST_T` / `CFACCT` | CIF dating; CIF↔account; retention / cross-sell assist |
+| `HBMAST` / `HBACCT` | Digital active / digital channel (`LACDT*` last access) |
+| `ACMAST` | ACH activity (txn counts) |
+| `WTHIST_T` | Wire activity (not wholesale funding ratio) |
+| `ARITEM_T` | Official checks/items (limited metric use) |
+| `APMAST` | A/P vendors (not CAC/marketing) |
+| `JHOFFR` | Officer directory/limits (not HR turnover) |
+
+---
+
+### Synapsys tables analyzed
+
+Full `SynapsysData.xlsx` catalog (**101 tables**). Primary areas used for scoring:
+
+| Area | Example tables |
+| --- | --- |
+| Householding / CIF | `CIS`, `HeadofHousehold`, `HouseholdProfile`, `HouseholdProfitability`, `SuperHousehold_Master`, `SuperHousehold_Relations`, `Demographics` |
+| Products | `Deposits`, `Loans`, `Credit_Card`, `Trust`, `Annuities`, `Insurance`, `Investments`, `Applications`, `Types` |
+| CRM / sales | `CMReferral`, `CMSalesEvents`, `CMIncentiveEvents`, `SalePlan`, `SaleGoals`, `PotentialSalesDetail`, `MCIF_Main` |
+| Campaign / CAC spend | `MCIF_Actual_Budget`, `MCIF_Estimated_Budget` (`TotalBudget`, `AdvExpDoll*`, `MarkExpDoll*`) |
+| Officers / People proxy | `Officer` (`DateDeleted`, `Visible`, `isQueueOfficer`, `LobbyQueueDefaultBranch`, `OfficerEmployeeID`) |
+| Profitability (CRM, not GL) | `Profitability`, `Profit_History`, `Bank` (`Ave_Yield`, `Cost_Funds`) |
+| Service | `Service_Session`, `CMServiceEventMain` / Detail, `ValueListSatisfactionRating` (config only — not CSI survey) |
+
+---
+
+### Teller tables analyzed
+
+Full `TellerData.xlsx` catalog (**32 tables**, schema `vertex.jha`). Most relevant:
+
+| Table | Why it matters |
+| --- | --- |
+| `PTSUM` / `PTSUMJhaKnowBase` | Teller txns: drawer, amount, **`TSDATE`/`TSTIME`**, user |
+| `PTDETL` / `PTDETLJhaKnowBase` | Transaction detail |
+| `CTSESS` / `CTSESSJhaKnowBase` | Session timestamps (`CSDATE`, `CSTIME`, `CSTIMCRT`, `CSTIMUPD`) |
+| `PTDWR` / `PTDWRT` / `PTDWRF` / `PTDWRA` | Drawer / cash in-out; user↔drawer |
+| `VTHSTATF` | Hourly teller volume buckets |
+| `PGUSER` / `PGPRSN` | Teller users / persons (IDs/titles — no hire/term dates) |
+| `CKTRN` | Check txns with time stamps |
+| `PTOVSH` / `PTXCPT` / `PTVOLR` | Over/short, exceptions, volume |
+| Others | `FMFORM`, `ICTYPEMS`, `PAPOL`, `PGIENV`, `PGINST`, `PGWS`, `PTCPAAL3`, `PTCPTD`, `PTCURF`, `PTDBAL`, `PTFRPT`, `PTNCCT`, `PTTCDT`, `PTTCMS`, `PTWVRS`, … |
+
+**Unlocks:** Teller SLA; stronger digital-vs-teller channel mix; better txn counts for cost/txn.
+
+---
+
+### FFIEC tables analyzed
+
+Full `ffiecData.xlsx` catalog (**41 tables**, schema `ffiec.jha`):
+
+| Group | Tables |
+| --- | --- |
+| Call Report 031 | `CallReport31_1` … `CallReport31_6`, `CallReport31_Text_1`, `CallReport31_UBPR_1` … `CallReport31_UBPR_8` |
+| Call Report 041 | `CallReport41_1` … `CallReport41_5`, `CallReport41_Text_1`, `CallReport41_UBPR_1` … `CallReport41_UBPR_8` |
+| Call Report 051 | `CallReport51_1` … `CallReport51_3`, `CallReport51_Text_1`, `CallReport51_UBPR_1` … `CallReport51_UBPR_7` |
+| Panel | `PanelOfReporters` |
+
+Columns are mostly **MDRM codes** (`RCON*`, `RCFD*`, `RIAD*`, `UBPR*`, …) keyed by `FdicCertNumber` + `FileDate`.
+
+| Topic | Example columns found |
+| --- | --- |
+| Capital ratios | `RCON7204` / `RCFD7204` / `RCOA7204` / `UBPR7204` (+ `7205`, `7206`) |
+| Allowance | `RCON3123` / `RIAD3123` / `UBPR3123` |
+| Past-due style items | `RCON1403`, `1406`, `1407` |
+| Deposits / brokered-related | `RCON2200`, `RCONB995`, `RCONHK05`, `RCONK223` (+ UBPR peers) |
+| Income | `RIAD4073`, `4074`, `4093`, `4340` |
+
+**Unlocks:** Tier 1 leverage, wholesale/brokered reliance, ACL/NPL-style coverage, UBPR peer context.  
+**Does not unlock:** CSI/NPS, BSA aging, IRR +200 ALCO shock, HR/LMS People, LOS app→decision. Plan on an **MDRM codebook** for readability.
+
+---
+
+## Combined metric chart
+
+| L1 TAB | METRIC | PERSPECTIVE | CAMELS | DEFINITION | FORMULA | SOURCE (screenshots) | AVAILABLE | SOURCE TABLE | NOTES |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Financial | ROA | Financial | E | Earnings on the asset base — primary shareholder profitability KPI. | ROA = Net Income / Average Total Assets | GL / Call Report · UBPR peer median $1B–$3B | yes | Core **`GLMAST`** (NI ÷ avg assets). Peers: ffiec/UBPR | Bank calc from GL; FFIEC for Call/UBPR definition & peers. |
+| Financial | ROE | Financial | E | Shareholder return on equity capital. | ROE = Net Income / Average Equity Capital | GL / Call Report | yes | **`GLMAST`** (NI ÷ equity/capital). Peers: ffiec/UBPR | Same COA pattern as ROA. |
+| Financial | NIM | Financial | E | Spread between earning-asset yield and cost of funds. | NIM = Net Interest Income / Average Earning Assets | GL / ALM · UBPR | yes | **`GLMAST`** (NII ÷ earning-asset `*AVG`). Peers: ffiec `RIAD4073`/`4074` / UBPR | Map interest and earning-asset accounts in COA. |
+| Financial | Efficiency | Financial | E | Cost to produce a dollar of revenue. Lower is better. | Efficiency = Noninterest Expense / (NII + Noninterest Income) | GL · UBPR efficiency median — bank curve (~52% target) | yes | **`GLMAST`**. Peers: ffiec `RIAD4093` / UBPR | Noninterest vs operating revenue from chart of accounts. |
+| Financial | NOI vs budget | Financial | E | Operating profit after interest and operating expense, before extraordinary items. | NOI = NII + Noninterest Income − Noninterest Expense (annualized) | GL · peer median annualized NOI | yes | **`GLMAST`** for NOI; budget per bank GL practice | FFIEC is actuals, not budget. |
+| Financial | Loan growth | Financial | A | Year-over-year growth in gross loans held for investment. | Loan growth = (Loans_t − Loans_t−1) / Loans_t−1 | Core / Call Report | yes | **`LNMAST`** / `LOAN_HISTORY_TABLE` | Alternate: `GLMAST` loan controls; ffiec loan totals. |
+| Financial | Deposit growth | Financial | L | Year-over-year growth in the deposit franchise. | Deposit growth = (Deposits_t − Deposits_t−1) / Deposits_t−1 | Core / FDIC SOD | yes | **`DDMAST`** + **`CDMAST`** | Alternate: `GLMAST`; ffiec `RCON2200` / UBPR. |
+| Financial | Noninterest income mix | Financial | E | Share of revenue that is not spread income. | Fee mix = Noninterest Income / (NII + Noninterest Income) | GL | yes | **`GLMAST`** (+ `DDFEES`). FFIEC income MDRMs | Fee vs interest income account split. |
+| Franchise | CSI / NPS | Customer | M | Customer experience score from the bank's satisfaction survey (Capstone CSI / NPS). | CSI = Mean survey score (vendor scale; target > 7.2) | Survey platform · community bank CSAT sample | no | — | Synapsys `ValueListSatisfactionRating` is config only, not survey responses. |
+| Franchise | Retention | Customer | M | Share of customer relationships that remain open over the period. | Retention = 1 − (Closed CIF / Beginning CIF) | Core CIF · household retention | yes | Synapsys HH (`CIS`, `HeadofHousehold`, `HouseholdProfile`); Core `CFMAST_T` / `CFACCT` / account closes | Prefer household retention via Synapsys. |
+| Franchise | Customer growth | Customer | M | Net growth in household relationships, not account records. | Customer growth = (CIF_t − CIF_t−1) / CIF_t−1 | Core CIF | yes | Synapsys `HeadofHousehold` / `HouseholdKey`; Core `CFMAST_T` | Count distinct households by period. |
+| Franchise | Core funding mix | Customer | L | Share of funding that is sticky core deposits (DDA + savings + MMDA). | Core mix = Core deposits / Total deposits | Core / Treasury | yes | **`DDMAST`** + **`CDMAST`** (type/call-report codes); Synapsys `Deposits`/`Types` if needed | Bank defines “core” product set. |
+| Franchise | Products per household | Customer | M | Products attached to each household relationship. | Products / HH = Open products / Households (CIF) | Core CIF | yes | Synapsys `HouseholdProfile` + product tables; Core `CFACCT` | Synapsys is primary for householding. |
+| Franchise | Digital active | Customer | M | Share of eligible customers with a 90-day digital login. | Digital active = 90-day active digital users / Eligible customers | Digital analytics | yes | Core **`HBMAST`/`HBACCT`** (`LACDT*` last access) | Eligible = enrolled HB users; 90-day from last access. |
+| Franchise | Cross-sell | Customer | M | Attach rate of a second (or additional) product to existing households. | Cross-sell = Households with 2+ products / Households | Core / CRM | yes | Synapsys HH product counts; Core `CFACCT` + masters | Open products per HH ≥ 2. |
+| Franchise | CAC | Customer | M | Cost to acquire a funded household — do not buy volume. | CAC = Acquisition spend / Net new funded households | Marketing + core | partial | New HH: Synapsys/Core. Spend: Synapsys `MCIF_Actual_Budget` / `MCIF_Estimated_Budget` (`AdvExpDoll*`, `MarkExpDoll*`) if used for acquisition | Denominator solid; numerator depends on MCIF campaign budgets being populated/used that way. |
+| Risk | Tier 1 leverage | Risk | C | Leverage capital adequacy vs PCA / CBLR well-capitalized levels. | Tier 1 Leverage = Tier 1 Capital / Average Total Assets | Call Report / capital calculator · UBPR | yes | **ffiec** `RCON/RCFD/RCOA/UBPR7204` (+ `7205`/`7206`) | Primary regulatory source = Call/UBPR (MDRM map recommended). |
+| Risk | Past due 30+ | Risk | A | Early asset-quality signal: unpaid balance 30 or more days past due. | Past Due 30+ = UPB ≥ 30 DPD / Gross Loans | Servicing / core · peer past-due / gross loans | yes | **`LNPDUE`** (`PDDAYS`) + **`LNMAST`**. Cross-check: ffiec `RCON1403`/`1406`/`1407` | UPB with days past due ≥ 30 ÷ gross loans. |
+| Risk | Criticized assets | Risk | A | Watchlist and classified credits as a share of loans or assets. | Criticized = (Special mention + Substandard + Doubtful) / Loans | Credit admin / ALLL | yes | **`LNMAST`**: `PRMRSKRAT`, `WCHCOD`, `NACDT`, class/exam fields | Bank defines which codes = SM / Substandard / Doubtful (business map, not missing data). |
+| Risk | ACL coverage | Risk | A | Allowance coverage of nonperforming loans (CECL). | ACL coverage = ACL / Nonperforming loans | CECL / GL | yes | **ffiec** allowance `*3123` ÷ NPL/past-due MDRMs; Core `LNMAST.NACDT` nonaccrual proxy | Call Report is the practical ACL/NPL source in this set. |
+| Risk | LTD | Risk | L | How much of the deposit base is deployed in loans (liquidity utilization). | LTD = Total Loans / Total Deposits | Core / Call Report · policy band 80–90% | yes | `LNMAST` ÷ (`DDMAST`+`CDMAST`) or `GLMAST`; ffiec loan/deposit totals | Straightforward from Core or Call. |
+| Risk | IRR NII +200 bp | Risk | S | Sensitivity of net interest income to a parallel +200 bp rate shock. | IRR NII shock = ΔNII under +200 bp / Base NII (must stay ≥ ALCO floor −8%) | ALM model · ALCO policy | no | — | Needs ALM model; Call Report is not an ALCO +200 shock file. |
+| Risk | Wholesale reliance | Risk | L | Reliance on FHLB, brokers, and other non-core funding. | Wholesale = Wholesale liabilities / Total liabilities | Treasury / Call Report | yes | **ffiec** e.g. `RCONB995`, `RCONHK05`, `RCONK223` (+ UBPR) | Not in Core shortlist liability masters; `WTHIST_T` is wires, not wholesale. |
+| Risk | BSA aging | Risk | M | Average age of open BSA/AML alerts — exam talking point. | BSA aging = Mean days open for unresolved alerts | AML case system | no | — | No AML case aging in current catalogs. |
+| Process | Decision cycle | Internal Process | M | Elapsed days from commercial application to credit decision. | Decision cycle = Median days (application → decision) | LOS / credit admin | partial | Synapsys `CMReferral` / `CMSalesEvents` start→qualify/close dates | CRM proxy only; no LOS application table in Core shortlist. To go **yes**: accept CRM dates or add LOS. |
+| Process | Funnel conversion | Internal Process | M | Share of applications that become booked loans. | Funnel conversion = Booked loans / Applications | LOS | partial | Synapsys `CMReferral`/`CMSalesEvents` + Core `LNMAST` booked | Feasible if commercial flow is consistently captured in Synapsys. |
+| Process | Yield on new originations | Internal Process | E | Coupon on newly originated loans vs the existing book. | New-money yield = Weighted average note rate on originations in period | LOS / core | yes | **`LNMAST`** (`ORGDT`, `RATE`, `ORGAMT`) | Weight by booked principal in period. |
+| Process | Origination volume | Internal Process | A | Dollar volume of loans booked in the period. | Origination volume = Sum of booked principal | LOS | yes | **`LNMAST`** (`ORGDT`, `ORGAMT`) | Prefer original amount over current balance. |
+| Process | Cost per transaction | Internal Process | E | Fully loaded cost to process one customer transaction. | Cost / txn = Transaction-processing expense / Transaction count | Ops / GL | yes | **Teller** `PTSUM`/`PTDETL`/`CTSESS` counts; cost from **`GLMAST`** | Counts solid; fully loaded cost needs expense allocation rules. |
+| Process | Digital self-service | Internal Process | M | Share of eligible transactions completed without a banker (ops lens). | Self-service = STP / digital txns / Eligible txns | Core / digital ops | yes | `HBMAST`/`HBACCT` + deposit history channels vs **Teller** `PTSUM`/`PTDETL` | Self-service = non-teller digital ÷ eligible txns. |
+| Process | Commercial pipeline | Internal Process | A | Commercial pipeline conversion — applications that become booked C&I. | Pipeline conversion = Booked C&I / Weighted pipeline | LOS / CRM | partial | Synapsys `CMSalesEvents` (`ProjectedBalance`, `ProbabilityToClose`) + `LNMAST` booked C&I | Weighted pipeline fields exist in CRM; confirm they are populated for commercial. |
+| Process | Teller SLA | Internal Process | M | Time to complete a teller transaction at the window. | Teller SLA = Average minutes per teller transaction | Branch ops / queue system | yes | **Teller** `PTSUM` (`TSDATE`/`TSTIME`), `CTSESS`, `PTDETL` | Avg minutes from session/txn timestamps (drawer/user). |
+| People | Engagement | Learning Growth | M | Associate engagement index (Emplify or successor) in the Engaged band. | Engagement = Vendor engagement index (participation ≥ 80%) | HR survey (Emplify) | no | — | Needs HR survey platform. |
+| People | Voluntary turnover | Learning Growth | M | Organization-wide voluntary turnover. | Voluntary turnover = Voluntary separations / Average headcount | HRIS | partial | Synapsys `Officer` (`DateDeleted`, `Visible`) | CRM officer attrition only — not org-wide HRIS; no voluntary vs involuntary flag. |
+| People | Teller / frontline turnover | Learning Growth | M | Annualized turnover in the teller / frontline job family. | Teller turnover = Teller separations / Average teller headcount | HRIS · segment tellers vs rest of staff | partial | Synapsys queue/lobby flags; Teller `PGUSER`/`PTDWR` | Can identify tellers; **no hire/separation dates** in Teller/Synapsys catalogs. |
+| People | Time-to-fill critical roles | Learning Growth | M | Calendar days to fill examiner-sensitive seats (BSA, credit, CFO-1). | Time-to-fill = Offer accept date − Requisition open date | ATS / HRIS | no | — | Needs ATS/HRIS. |
+| People | Required training completion | Learning Growth | M | Completion of required risk and compliance modules. | Training completion = Completed required modules / Assigned modules | LMS | no | — | Needs LMS. |
+| People | Succession coverage | Learning Growth | M | Ready-now backup coverage for CEO-1, BSA, credit, and CFO. | Succession coverage = Named ready-now seats / Critical seats | Talent review | no | — | Needs talent process. |
+| People | Commercial skill coverage | Learning Growth | M | Share of commercial lenders holding required credentials. | Skill coverage = Credentialed commercial lenders / Commercial lenders | LMS / credit admin | no | — | Synapsys can show commercial assignment, not credentials. |
+
+---
+
+## Still no (need other systems)
+
+CSI/NPS · IRR NII +200 bp · BSA aging · Engagement · Time-to-fill · Required training · Succession · Commercial skill coverage
+
+---
+
+*Sources: L1 metric PNG definitions + Core shortlist + SynapsysData + TellerData + ffiecData.*

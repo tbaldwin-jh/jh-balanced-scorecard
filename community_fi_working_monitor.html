@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community FI | Working Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --ok-bg: rgba(61, 214, 140, 0.12);
+      --watch: #f5b942;
+      --watch-bg: rgba(245, 185, 66, 0.12);
+      --bad: #f07178;
+      --bad-bg: rgba(240, 113, 120, 0.12);
+      --peer: #f5b942;
+      --actual: #6eb6ff;
+      --target: #f07178;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .spacer { flex: 1; }
+    .topbar a { color: #cfe0ff; text-decoration: none; font-size: 12px; }
+    .topbar a:hover { text-decoration: underline; }
+    .charter {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .charter button {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      padding: 6px 14px;
+      cursor: pointer;
+    }
+    .charter button.active {
+      background: var(--accent-soft);
+      color: #cfe0ff;
+      font-weight: 600;
+    }
+    .wrap { max-width: 1360px; margin: 0 auto; padding: 14px 20px 48px; }
+    .viewing {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .viewing-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .topbar .modes { margin: 0; }
+    .session-hint { margin: 0 0 12px; }
+    .session-hint[hidden] { display: none; }
+    [hidden] { display: none !important; }
+
+    .briefing {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: start;
+    }
+    @media (max-width: 960px) { .briefing { grid-template-columns: 1fr; } }
+    .counts-inline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .counts-inline .stat { padding: 8px 10px; }
+    .counts-inline .stat .value { font-size: 1.2rem; margin-top: 2px; }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .panel h1 { margin: 0 0 6px; font-size: 1.35rem; letter-spacing: -0.02em; }
+    h2.section {
+      margin: 0 0 10px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .lede { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+    .modes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .mode-btn, button.ghost, .level-btn {
+      border: 1px solid var(--line);
+      background: var(--elevated);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .mode-btn.active, .level-btn.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+    button.primary {
+      background: var(--accent);
+      border: 1px solid #2563eb;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 900px) { .summary { grid-template-columns: repeat(2, 1fr); } }
+    .stat {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; letter-spacing: -0.03em; }
+    .stat .value.ok { color: var(--ok); }
+    .stat .value.watch { color: var(--watch); }
+    .stat .value.bad { color: var(--bad); }
+
+    .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+      font-weight: 600;
+    }
+    .tab .count {
+      display: inline-block;
+      min-width: 18px;
+      text-align: center;
+      margin-left: 6px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      font-size: 11px;
+    }
+
+    .rollup { margin-bottom: 12px; }
+    .rollup-toggle {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .rollup-toggle:hover { color: var(--ink); border-color: #3a4558; }
+    .agg {
+      display: grid;
+      grid-template-columns: 0.9fr 1fr 1fr 1.2fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .agg[hidden] { display: none; }
+    @media (max-width: 1100px) { .agg { grid-template-columns: 1fr 1fr; } }
+    .agg-box {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+    .agg-box svg { width: 100%; display: block; }
+    .caption { color: var(--muted); font-size: 11px; margin-top: 6px; }
+    .stack-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 40px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+    .stack-bar {
+      display: flex;
+      height: 14px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #0b0d10;
+    }
+    .stack-bar > i { display: block; height: 100%; }
+    .stack-bar > i.ok { background: var(--ok); }
+    .stack-bar > i.watch { background: var(--watch); }
+    .stack-bar > i.bad { background: var(--bad); }
+
+    .work {
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
+      gap: 14px;
+      align-items: start;
+    }
+    @media (max-width: 1100px) { .work { grid-template-columns: 1fr; } }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 1600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .work.has-selection .card:not(.selected) { opacity: 0.62; }
+    .card.selected { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; opacity: 1; }
+    .card-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .card h3 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+    .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.watch { background: var(--watch-bg); color: var(--watch); }
+    .badge.bad { background: var(--bad-bg); color: var(--bad); }
+    .peer-chip { font-size: 11px; color: var(--muted); }
+
+    .metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .metric-box {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .metric-box .k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .metric-box .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .metric-box input {
+      width: 100%;
+      margin-top: 2px;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 6px 8px;
+    }
+    .obj-input {
+      width: 100%;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+
+    .chart-wrap {
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 8px 4px;
+    }
+    .chart-wrap svg { width: 100%; height: 72px; display: block; }
+    .chart-legend {
+      display: flex;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .dot.actual { background: var(--accent); }
+    .dot.goal { background: var(--watch); }
+
+    .progress {
+      height: 6px;
+      background: #0f131a;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .progress > span { display: block; height: 100%; border-radius: 999px; }
+    .progress > span.ok { background: var(--ok); }
+    .progress > span.watch { background: var(--watch); }
+    .progress > span.bad { background: var(--bad); }
+
+    .drill-pane { position: sticky; top: 12px; }
+    .detail { margin-top: 0; display: none; }
+    .detail.open { display: block; }
+    .drill-empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 28px 16px;
+      text-align: center;
+    }
+    .drill-pane .detail-grid { grid-template-columns: 1fr; }
+    .drill-head h2 { font-size: 0.95rem; line-height: 1.3; }
+    .detail-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; }
+    @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+    .drill-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .drill-head h2 { margin: 0; font-size: 1.1rem; }
+    .levels { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .form-row label { color: var(--muted); font-size: 12px; }
+    .form-row select, .form-row input, .form-row textarea {
+      width: 100%;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+    .form-row textarea { min-height: 72px; resize: vertical; }
+    .period-block { margin: 4px 0 14px; }
+    .period-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+    .period-picks .tab { padding: 7px 12px; font-size: 12px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .hint { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 88px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    .bar-track {
+      height: 12px;
+      background: #0b0d10;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-track > span { display: block; height: 100%; }
+    .bar-track > span.actual { background: var(--actual); }
+    .bar-track > span.target { background: var(--target); }
+    .bar-track > span.peer { background: var(--peer); }
+    .gap-card {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .gap-card .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .gap-card .v { font-size: 1.15rem; font-weight: 700; margin-top: 4px; }
+    .gap-card .v.ok { color: var(--ok); }
+    .gap-card .v.bad { color: var(--bad); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    tr.ours { background: var(--accent-soft); }
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #2563eb;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-top: 16px;
+      color: #cfe0ff;
+      font-size: 13px;
+    }
+
+    .exception-strip {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    .ex-row {
+      display: grid;
+      grid-template-columns: 1.3fr auto 1fr 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: 12px;
+      width: 100%;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      background: transparent;
+    }
+    .ex-row:last-child { margin-bottom: 0; }
+    .ex-row { padding: 6px 8px; margin-bottom: 4px; font-size: 11px; }
+    .ex-row:hover { background: var(--elevated); border-color: var(--line); }
+    .ex-row.selected { background: var(--accent-soft); border-color: #2563eb; }
+    .ex-row.bad { box-shadow: inset 3px 0 0 var(--bad); }
+    .ex-row.watch { box-shadow: inset 3px 0 0 var(--watch); }
+    .ex-row .ex-metric { font-weight: 600; }
+    .ex-row .ex-muted { color: var(--muted); }
+    @media (max-width: 900px) {
+      .ex-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    .map-wrap { margin-bottom: 14px; }
+    .strategy-row {
+      display: grid;
+      grid-template-columns: 1fr 170px;
+      gap: 10px;
+      align-items: stretch;
+    }
+    @media (max-width: 960px) {
+      .strategy-row { grid-template-columns: 1fr; }
+    }
+    .strategy-map {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 960px) {
+      .strategy-map { grid-template-columns: 1fr 1fr; }
+    }
+    .map-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      width: 100%;
+    }
+    .map-card:hover { border-color: #3a4558; }
+    .map-card.active {
+      border-color: var(--accent);
+      background: var(--elevated);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+    .map-card.rail {
+      border-style: dashed;
+      height: 100%;
+    }
+    #riskMapSlot { min-height: 100%; }
+    .map-card .tier {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+    .map-card .name {
+      font-weight: 600;
+      font-size: 14px;
+      margin: 4px 0 6px;
+    }
+    .map-card .pulse {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+    .map-arrow {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin: 8px 0 0;
+    }
+
+    .driver-list { list-style: none; margin: 0; padding: 0; }
+    .driver-list li {
+      border: 1px solid var(--line);
+      background: var(--elevated);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .driver-list .d-title { font-weight: 600; }
+    .driver-list .d-meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .action-card .v { font-size: 15px; font-weight: 600; line-height: 1.35; }
+
+    .defs-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .defs-panel table { font-size: 12px; }
+    .defs-panel td { vertical-align: top; }
+    .defs-panel .formula { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 11px; color: #cfe0ff; }
+    .defs-panel th:nth-child(4), .defs-panel td:nth-child(4),
+    .defs-panel th:nth-child(5), .defs-panel td:nth-child(5) { min-width: 180px; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="brand" id="brandTitle">Community Bank | Working Monitor</div>
+      <div class="sub" id="brandSub">Balanced Scorecard · set goals · track actual vs target vs peer</div>
+    </div>
+    <div class="viewing">
+      <span class="viewing-label">Viewing as</span>
+      <div class="charter" role="group" aria-label="Charter">
+        <button type="button" class="active" data-charter="bank">Bank</button>
+        <button type="button" data-charter="cu">Credit union</button>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode-btn active" data-mode="monitor" type="button">Monitor</button>
+      <button class="mode-btn" data-mode="edit" type="button">Edit</button>
+      <button class="mode-btn" data-mode="add" type="button">Add</button>
+      <button class="mode-btn" data-mode="defs" type="button">Definitions</button>
+    </div>
+    <div class="spacer"></div>
+    <a href="./community_fi_objective_monitor.html">Stacked monitor</a>
+    <a href="./community_bank_president_strategic.html">President</a>
+    <a href="./community_bank_objective_aggregates.html">Aggregates</a>
+    <span class="sub">Sample data · Capstone KPIs</span>
+  </div>
+
+  <div class="wrap">
+    <p class="hint session-hint" id="modeHint" hidden></p>
+
+    <div class="briefing session-ui" id="briefing">
+      <div class="exception-strip" id="exceptionStrip"></div>
+      <div class="counts-inline" id="summaryStats"></div>
+    </div>
+
+    <div class="map-wrap session-ui">
+      <h2 class="section">Strategy map · click a perspective to focus</h2>
+      <div class="strategy-row">
+        <div class="strategy-map" id="strategyMap"></div>
+        <div id="riskMapSlot"></div>
+      </div>
+      <p class="map-arrow" id="mapCaption"></p>
+      <p class="caption" id="mapCausal"></p>
+      <div class="filter-pills" id="perspectiveTabs"></div>
+    </div>
+
+    <div class="rollup session-ui">
+      <button class="rollup-toggle" type="button" id="rollupToggle">Show roll-up charts</button>
+      <div class="agg" id="aggStrip" hidden></div>
+    </div>
+
+    <div class="work session-ui" id="workArea">
+      <div class="grid" id="cardGrid"></div>
+      <div class="drill-pane">
+        <div class="detail open" id="detailPanel">
+          <div class="panel detail-panel-inner">
+            <div id="drillEmpty" class="drill-empty">Select an exception or a card.</div>
+            <div id="drillActive" hidden>
+              <div class="drill-head">
+                <h2 id="detailTitle"></h2>
+                <span class="badge" id="drillBadge"></span>
+                <div class="levels">
+                  <button class="level-btn active" data-level="1" type="button">1 · KPI &amp; gaps</button>
+                  <button class="level-btn" data-level="2" type="button">2 · Trend &amp; peers</button>
+                  <button class="level-btn" data-level="3" type="button">3 · Drivers &amp; action</button>
+                </div>
+                <button class="ghost" type="button" id="closeDetail">Close</button>
+              </div>
+              <div id="drillBody"></div>
+              <div id="editBlock" style="display:none;margin-top:14px">
+                <p class="hint">Adjust the objective and target. Changes update status and trend immediately (demo; not persisted).</p>
+                <div class="form-row">
+                  <label for="editObjective">Objective</label>
+                  <textarea id="editObjective"></textarea>
+                </div>
+                <div class="form-row">
+                  <label for="editTarget">Target</label>
+                  <input id="editTarget" type="number" step="any" />
+                </div>
+                <div class="form-row">
+                  <label for="editDirection">Direction</label>
+                  <select id="editDirection">
+                    <option value="higher">Higher is better</option>
+                    <option value="lower">Lower is better</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label for="editOwner">Owner</label>
+                  <input id="editOwner" type="text" />
+                </div>
+                <p class="caption" id="editPeriodNote"></p>
+                <div class="actions">
+                  <button class="primary" type="button" id="saveDetail">Apply changes</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail session-ui" id="addPanel">
+      <div class="panel">
+        <h2 style="margin:0 0 6px;font-size:1.1rem;">Add a new objective</h2>
+        <p class="hint">New objectives appear on the monitor with a generated sample trend so you can see goal tracking immediately.</p>
+        <div class="form-row">
+          <label for="addPerspective">Perspective</label>
+          <select id="addPerspective"></select>
+        </div>
+        <div class="form-row">
+          <label for="addMetric">Metric</label>
+          <input id="addMetric" type="text" placeholder="e.g. Fee income growth %" />
+        </div>
+        <div class="form-row">
+          <label for="addObjective">Objective</label>
+          <textarea id="addObjective" placeholder="What outcome does leadership own?"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="addTarget">Target</label>
+          <input id="addTarget" type="number" step="any" placeholder="e.g. 8" />
+        </div>
+        <div class="period-block">
+          <h2 class="section" style="margin-bottom:4px">Choose your time period</h2>
+          <p class="caption" style="margin:0 0 8px">How this objective is scored on the monitor. The sample trend follows this grain.</p>
+          <div class="period-picks" role="radiogroup" aria-label="Time period" id="addPeriodPicks">
+            <button class="tab active" type="button" data-period="month" aria-pressed="true">Month</button>
+            <button class="tab" type="button" data-period="quarter" aria-pressed="false">Quarter</button>
+            <button class="tab" type="button" data-period="ytd" aria-pressed="false">YTD</button>
+            <button class="tab" type="button" data-period="t12" aria-pressed="false">Trailing 12 months</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="addUnit">Unit</label>
+          <input id="addUnit" type="text" placeholder="%, days, $MM, score" />
+        </div>
+        <div class="form-row">
+          <label for="addDirection">Direction</label>
+          <select id="addDirection">
+            <option value="higher">Higher is better</option>
+            <option value="lower">Lower is better</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="addOwner">Owner</label>
+          <input id="addOwner" type="text" placeholder="CEO / CFO" />
+        </div>
+        <div class="actions">
+          <button class="primary" type="button" id="createObjective">Create &amp; monitor</button>
+          <button class="ghost" type="button" id="cancelAdd">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout session-ui" id="peerNote"></div>
+
+    <div class="defs-panel" id="defsPanel" hidden>
+      <h2 class="section" style="margin-bottom:6px">Metric formulas &amp; definitions</h2>
+      <p class="caption" id="defsCaption">Formulas lock for this charter · sample</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Perspective</th>
+            <th>CAMELS</th>
+            <th>Definition</th>
+            <th>Formula</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="defsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const MONTHS = ["Mar", "Apr", "May", "Jun", "Jul", "Aug"];
+    const PERIODS = {
+      month: {
+        id: "month",
+        label: "Month",
+        legend: "Month",
+        labels: MONTHS
+      },
+      quarter: {
+        id: "quarter",
+        label: "Quarter",
+        legend: "Quarter",
+        labels: ["Q4 '25", "Q1 '26", "Q2 '26", "Q3 '26"]
+      },
+      ytd: {
+        id: "ytd",
+        label: "YTD",
+        legend: "YTD",
+        labels: ["2021", "2022", "2023", "2024", "2025", "2026 YTD"]
+      },
+      t12: {
+        id: "t12",
+        label: "Trailing 12 months",
+        legend: "T12",
+        labels: ["Sep", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"]
+      }
+    };
+    const BANK_PEERS = ["Lakeshore Community", "Northridge State", "Twin Ports National", "Harbor Trust"];
+    const CU_PEERS = ["North Shore CU", "Harborlight FCU", "Lakeside Members CU", "Pioneer Community CU"];
+
+    const bankObjectives = [
+      { id: "roa", perspective: "Financial", camels: "E", metric: "ROA", unit: "%", objective: "Deliver top-quartile peer ROA", owner: "CEO / CFO", target: 1.5, peer: 1.19, direction: "higher", series: [1.21, 1.28, 1.32, 1.35, 1.37, 1.39], peerSeries: [1.12, 1.13, 1.15, 1.16, 1.18, 1.19], peerSource: "Call Report peer median, assets $1B–$3B" },
+      { id: "noi", perspective: "Financial", camels: "E", metric: "Net Operating Income", unit: "$MM", objective: "Grow operating income to plan", owner: "CFO", target: 19, peer: 17.8, direction: "higher", series: [15.2, 16.1, 16.8, 17.4, 18.1, 18.6], peerSeries: [16.4, 16.7, 17.0, 17.2, 17.5, 17.8], peerSource: "Peer median annualized NOI" },
+      { id: "deposits", perspective: "Financial", camels: "L", metric: "Total Deposits", unit: "$B", objective: "Expand deposit franchise for funding", owner: "Retail / Treasury", target: 1.45, peer: 1.36, direction: "higher", series: [1.28, 1.30, 1.33, 1.35, 1.38, 1.41], peerSeries: [1.30, 1.31, 1.32, 1.33, 1.35, 1.36], peerSource: "FDIC SOD / peer median deposits" },
+      { id: "loans", perspective: "Financial", camels: "A", metric: "Total Loans", unit: "$B", objective: "Grow earning assets with credit discipline", owner: "CRO / Commercial", target: 1.2, peer: 1.10, direction: "higher", series: [1.02, 1.05, 1.08, 1.10, 1.13, 1.16], peerSeries: [1.02, 1.04, 1.06, 1.07, 1.09, 1.10], peerSource: "Peer median loan book" },
+      { id: "csi", perspective: "Customer", camels: "M", metric: "Customer Satisfaction Index", unit: "score", objective: "Enhance customer experience (CSI > 7)", owner: "COO / Retail", target: 7, peer: 6.8, direction: "higher", series: [6.4, 6.5, 6.7, 6.8, 6.9, 7.1], peerSeries: [6.5, 6.55, 6.6, 6.65, 6.7, 6.8], peerSource: "Community bank CSAT median" },
+      { id: "retention", perspective: "Customer", camels: "M", metric: "Customer Retention", unit: "%", objective: "Keep CIF retention at or above 92%", owner: "Retail Banking", target: 92, peer: 90.5, direction: "higher", series: [90.2, 90.5, 90.8, 91.0, 91.4, 91.6], peerSeries: [89.6, 89.8, 90.0, 90.2, 90.4, 90.5], peerSource: "Peer household retention median" },
+      { id: "channel", perspective: "Customer", camels: "M", metric: "Channel Usage", unit: "%", objective: "Drive omni-channel delivery above 75%", owner: "Digital / Ops", target: 75, peer: 68, direction: "higher", series: [62, 65, 68, 70, 72, 74], peerSeries: [61, 62, 64, 65, 67, 68], peerSource: "Peer omni-channel mix" },
+      { id: "efficiency", perspective: "Internal Process", camels: "E", metric: "Efficiency Ratio", unit: "%", objective: "Operate at 52% efficiency or better", owner: "COO / CFO", target: 52, peer: 63.2, direction: "lower", series: [58.2, 57.1, 56.4, 55.2, 54.6, 53.8], peerSeries: [64.8, 64.4, 64.1, 63.8, 63.5, 63.2], peerSource: "UBPR efficiency median $1B–$3B" },
+      { id: "loan_sla", perspective: "Internal Process", camels: "M", metric: "Commercial Loan SLA", unit: "days", objective: "Close commercial loans in 60 days or less", owner: "Credit Admin", target: 60, peer: 70, direction: "lower", series: [78, 74, 71, 68, 66, 64], peerSeries: [76, 74, 73, 72, 71, 70], peerSource: "Peer commercial close cycle" },
+      { id: "teller_sla", perspective: "Internal Process", camels: "M", metric: "Teller Transaction SLA", unit: "min", objective: "Complete teller transactions under 2 minutes", owner: "Branch Ops", target: 2, peer: 2.4, direction: "lower", series: [2.8, 2.6, 2.5, 2.4, 2.3, 2.2], peerSeries: [2.7, 2.6, 2.55, 2.5, 2.45, 2.4], peerSource: "Peer branch ops sample" },
+      { id: "emplify", perspective: "Learning & Development", camels: "M", metric: "Emplify Participation", unit: "%", objective: "Reach 80% associate survey participation", owner: "HR", target: 80, peer: 72, direction: "higher", series: [61, 64, 68, 71, 74, 77], peerSeries: [66, 67, 68, 70, 71, 72], peerSource: "Peer engagement participation" },
+      { id: "teller_to", perspective: "Learning & Development", camels: "M", metric: "Teller Turnover", unit: "%", objective: "Reduce teller turnover from 40% toward 20%", owner: "HR / Branch Ops", target: 20, peer: 32, direction: "lower", series: [38, 36, 34, 32, 30, 28], peerSeries: [35, 34, 33.5, 33, 32.5, 32], peerSource: "Peer teller turnover" },
+      { id: "staff_to", perspective: "Learning & Development", camels: "M", metric: "Total Staff Turnover", unit: "%", objective: "Hold organization turnover under 5%", owner: "HR", target: 5, peer: 6.8, direction: "lower", series: [7.2, 6.8, 6.4, 6.1, 5.8, 5.5], peerSeries: [7.4, 7.2, 7.1, 7.0, 6.9, 6.8], peerSource: "Peer total turnover median" },
+      { id: "capital", perspective: "Risk", camels: "C", metric: "Tier 1 Leverage", unit: "%", objective: "Stay well capitalized vs PCA / CBLR", owner: "CFO / ALCO", target: 9.5, peer: 9.8, direction: "higher", series: [9.4, 9.5, 9.7, 9.9, 10.1, 10.2], peerSeries: [9.4, 9.5, 9.6, 9.7, 9.75, 9.8], peerSource: "UBPR Tier 1 leverage median $1B–$3B" },
+      { id: "past_due", perspective: "Risk", camels: "A", metric: "Past Due 30+", unit: "%", objective: "Hold past due 30+ inside credit limit", owner: "CRO / Collections", target: 1.5, peer: 1.25, direction: "lower", series: [1.42, 1.38, 1.32, 1.28, 1.22, 1.18], peerSeries: [1.36, 1.34, 1.32, 1.29, 1.27, 1.25], peerSource: "Peer past-due 30+ / gross loans" },
+      { id: "ltd", perspective: "Risk", camels: "L", metric: "Loan-to-Deposit", unit: "%", objective: "Keep LTD inside the 75–90% policy band (limit 90%)", owner: "Treasury / ALCO", target: 90, peer: 84, direction: "lower", series: [86.2, 85.4, 84.6, 83.8, 83.1, 82.4], peerSeries: [86.0, 85.5, 85.0, 84.6, 84.3, 84.0], peerSource: "Peer LTD median $1B–$3B" },
+      { id: "irr", perspective: "Risk", camels: "S", metric: "IRR NII shock (+200 bp)", unit: "%", objective: "Keep +200 bp NII change inside ALCO floor (−8%)", owner: "ALCO", target: -8, peer: -6.2, direction: "higher", series: [-6.8, -6.4, -6.1, -5.8, -5.4, -5.1], peerSeries: [-7.1, -6.9, -6.7, -6.5, -6.3, -6.2], peerSource: "Peer ALM +200 bp NII Δ (sample)" }
+    ];
+
+    const cuObjectives = [
+      { id: "roa", perspective: "Financial", camels: "E", metric: "ROA", unit: "%", objective: "Earn enough ROA to fund net-worth growth", owner: "CEO / CFO", target: 0.80, peer: 0.66, direction: "higher", series: [0.58, 0.61, 0.64, 0.67, 0.70, 0.72], peerSeries: [0.60, 0.61, 0.62, 0.64, 0.65, 0.66], peerSource: "FPR / CU peer ROA median" },
+      { id: "noi", perspective: "Financial", camels: "E", metric: "Net Operating Income", unit: "$MM", objective: "Grow operating income to support capital retention", owner: "CFO", target: 12, peer: 10.4, direction: "higher", series: [8.6, 9.1, 9.6, 10.2, 10.7, 11.2], peerSeries: [9.2, 9.5, 9.7, 9.9, 10.2, 10.4], peerSource: "CU peer annualized NOI" },
+      { id: "deposits", perspective: "Financial", camels: "L", metric: "Total Shares", unit: "$B", objective: "Grow member shares for funding", owner: "Member Experience / Treasury", target: 1.45, peer: 1.28, direction: "higher", series: [1.22, 1.25, 1.28, 1.31, 1.34, 1.38], peerSeries: [1.20, 1.22, 1.23, 1.25, 1.26, 1.28], peerSource: "CU peer share balances" },
+      { id: "loans", perspective: "Financial", camels: "A", metric: "Total Loans", unit: "$B", objective: "Grow earning assets with credit discipline", owner: "CRO / Lending", target: 1.2, peer: 1.05, direction: "higher", series: [0.96, 0.99, 1.02, 1.05, 1.08, 1.12], peerSeries: [0.96, 0.98, 1.00, 1.02, 1.04, 1.05], peerSource: "CU peer loan book" },
+      { id: "csi", perspective: "Member", camels: "M", metric: "Member Satisfaction Index", unit: "score", objective: "Enhance member experience (MSI > 7)", owner: "COO / Branches", target: 7, peer: 7.2, direction: "higher", series: [6.6, 6.7, 6.8, 6.9, 7.0, 7.1], peerSeries: [7.0, 7.05, 7.1, 7.12, 7.16, 7.2], peerSource: "CU member CSAT / NPS sample" },
+      { id: "retention", perspective: "Member", camels: "M", metric: "Member Retention", unit: "%", objective: "Keep member retention at or above 92%", owner: "Member Experience", target: 92, peer: 93.0, direction: "higher", series: [90.8, 91.0, 91.2, 91.4, 91.6, 91.8], peerSeries: [92.2, 92.4, 92.6, 92.7, 92.9, 93.0], peerSource: "CU peer member retention" },
+      { id: "channel", perspective: "Member", camels: "M", metric: "Channel Usage", unit: "%", objective: "Drive omni-channel delivery above 75%", owner: "Digital / Ops", target: 75, peer: 71, direction: "higher", series: [62, 65, 68, 70, 72, 74], peerSeries: [64, 66, 67, 68, 70, 71], peerSource: "CU peer digital mix" },
+      { id: "efficiency", perspective: "Internal Process", camels: "E", metric: "Efficiency Ratio", unit: "%", objective: "Operate at 79% efficiency or better (CU peer curve)", owner: "COO / CFO", target: 79, peer: 79.1, direction: "lower", series: [84.0, 83.2, 82.5, 81.8, 81.1, 80.4], peerSeries: [80.8, 80.4, 80.0, 79.7, 79.4, 79.1], peerSource: "FPR efficiency median — do not grade vs bank 52%" },
+      { id: "loan_sla", perspective: "Internal Process", camels: "M", metric: "Member Business Loan SLA", unit: "days", objective: "Close member business loans in 60 days or less", owner: "Credit Admin", target: 60, peer: 68, direction: "lower", series: [78, 74, 71, 68, 66, 64], peerSeries: [74, 72, 71, 70, 69, 68], peerSource: "CU MBL close cycle sample" },
+      { id: "teller_sla", perspective: "Internal Process", camels: "M", metric: "Teller Transaction SLA", unit: "min", objective: "Complete teller transactions under 2 minutes", owner: "Branch Ops", target: 2, peer: 2.3, direction: "lower", series: [2.8, 2.6, 2.5, 2.4, 2.3, 2.2], peerSeries: [2.55, 2.5, 2.45, 2.4, 2.35, 2.3], peerSource: "CU branch ops sample" },
+      { id: "emplify", perspective: "Learning & Development", camels: "M", metric: "Emplify Participation", unit: "%", objective: "Reach 80% associate survey participation", owner: "HR", target: 80, peer: 74, direction: "higher", series: [61, 64, 68, 71, 74, 77], peerSeries: [68, 69, 70, 72, 73, 74], peerSource: "CU peer engagement participation" },
+      { id: "teller_to", perspective: "Learning & Development", camels: "M", metric: "Teller Turnover", unit: "%", objective: "Reduce teller turnover from 40% toward 20%", owner: "HR / Branch Ops", target: 20, peer: 30, direction: "lower", series: [38, 36, 34, 32, 30, 28], peerSeries: [33, 32.5, 32, 31.5, 30.5, 30], peerSource: "CU peer teller turnover" },
+      { id: "staff_to", perspective: "Learning & Development", camels: "M", metric: "Total Staff Turnover", unit: "%", objective: "Hold organization turnover under 5%", owner: "HR", target: 5, peer: 7.2, direction: "lower", series: [7.2, 6.8, 6.4, 6.1, 5.8, 5.5], peerSeries: [7.8, 7.6, 7.5, 7.4, 7.3, 7.2], peerSource: "CU peer total turnover" },
+      { id: "capital", perspective: "Risk", camels: "C", metric: "Net Worth Ratio", unit: "%", objective: "Stay well capitalized (NCUA ≥7%; board target 10%+)", owner: "CFO / ALCO", target: 10, peer: 11.0, direction: "higher", series: [9.4, 9.6, 9.8, 10.0, 10.2, 10.4], peerSeries: [10.4, 10.6, 10.7, 10.8, 10.9, 11.0], peerSource: "FPR net worth ratio median" },
+      { id: "past_due", perspective: "Risk", camels: "A", metric: "Past Due 30+", unit: "%", objective: "Hold delinquency inside CU credit limit", owner: "CRO / Collections", target: 1.0, peer: 0.85, direction: "lower", series: [1.12, 1.08, 1.04, 1.00, 0.96, 0.92], peerSeries: [0.96, 0.93, 0.91, 0.89, 0.87, 0.85], peerSource: "CU peer past-due 30+ (tighter than bank peers)" },
+      { id: "ltd", perspective: "Risk", camels: "L", metric: "Loan-to-Share", unit: "%", objective: "Keep LTS inside the 70–90% policy band (limit 90%)", owner: "Treasury / ALCO", target: 90, peer: 83, direction: "lower", series: [86.0, 85.1, 84.2, 83.4, 82.6, 81.8], peerSeries: [85.0, 84.5, 84.0, 83.6, 83.3, 83.0], peerSource: "CU peer LTS median" },
+      { id: "irr", perspective: "Risk", camels: "S", metric: "IRR NII shock (+200 bp)", unit: "%", objective: "Keep +200 bp NII change inside ALCO floor (−8%)", owner: "ALCO", target: -8, peer: -5.8, direction: "higher", series: [-7.2, -6.8, -6.4, -6.1, -5.7, -5.4], peerSeries: [-6.6, -6.4, -6.2, -6.1, -5.9, -5.8], peerSource: "CU peer ALM +200 bp NII Δ (sample)" }
+    ];
+
+    const BANK_LEADERSHIP = {
+      roa: {
+        drivers: [
+          { title: "Net interest income run-rate", meta: "Primary earnings driver · watch funding cost" },
+          { title: "Fee income mix", meta: "Noninterest income below plan by ~4%" },
+          { title: "Average assets growth", meta: "Dilutes ROA if earnings lag asset growth" }
+        ],
+        action: { what: "Close the remaining gap to 1.50% via NII run-rate, not asset stretch", owner: "CFO", due: "Sep 2026" }
+      },
+      noi: {
+        drivers: [
+          { title: "Commercial loan yields", meta: "Core profitability engine per Capstone" },
+          { title: "Deposit cost of funds", meta: "Rising rates pressure NII" },
+          { title: "Operating expense run-rate", meta: "Tied to efficiency ratio goal" }
+        ],
+        action: { what: "Hold OpEx flat while commercial yields recover $0.4MM to plan", owner: "CFO", due: "Q4 2026" }
+      },
+      deposits: {
+        drivers: [
+          { title: "Consumer DDA growth", meta: "Primary low-cost funding source" },
+          { title: "Business deposits", meta: "Treasury management opportunity" },
+          { title: "Branch vs digital mix", meta: "Omni-channel acquisition" }
+        ],
+        action: { what: "Add $40MM core DDA before year-end (no wholesale substitution)", owner: "Retail / Treasury", due: "Dec 2026" }
+      },
+      loans: {
+        drivers: [
+          { title: "Commercial pipeline", meta: "Capstone priority process" },
+          { title: "Past due / NPL watch", meta: "Asset quality constraint on growth" },
+          { title: "Retail / mortgage book", meta: "Steady origination" }
+        ],
+        action: { what: "Convert commercial pipeline without lifting past-due limit", owner: "CRO / Commercial", due: "Sep 2026" }
+      },
+      csi: {
+        drivers: [
+          { title: "Loan processing satisfaction", meta: "Survey theme · commercial SLA lag" },
+          { title: "Account opening time", meta: "Deposit SLA under 30 minutes" },
+          { title: "Issue response time", meta: "Post-interaction survey item" }
+        ],
+        action: { what: "Clear commercial SLA backlog that is dragging CSI comments", owner: "COO / Retail", due: "Aug 2026" }
+      },
+      retention: {
+        drivers: [
+          { title: "CIF life > 7 years", meta: "Strategy map relationship goal" },
+          { title: "Cross-sell / products per CIF", meta: "Wallet share depth" },
+          { title: "Attrition by segment", meta: "Commercial vs retail" }
+        ],
+        action: { what: "Win back the 40 bps to 92% via household depth, not rate specials", owner: "Retail Banking", due: "Oct 2026" }
+      },
+      channel: {
+        drivers: [
+          { title: "Mobile / online adoption", meta: "Alternative channel penetration" },
+          { title: "Branch transaction mix", meta: "Shift routine volume digital" },
+          { title: "Tech utilization", meta: "E-Sign, internet banking, ATM" }
+        ],
+        action: { what: "Move 3 pts of routine branch volume to digital to clear 75%", owner: "Digital / Ops", due: "Sep 2026" }
+      },
+      efficiency: {
+        drivers: [
+          { title: "Noninterest expense", meta: "Staffing and overhead" },
+          { title: "Revenue growth", meta: "Denominator leverage" },
+          { title: "Branch transaction cost", meta: "Facility / channel strategy" }
+        ],
+        action: { what: "Cut 180 bps of efficiency via OpEx, not a bank-curve peer chase", owner: "COO / CFO", due: "Q4 2026" }
+      },
+      loan_sla: {
+        drivers: [
+          { title: "Underwriting queue age", meta: "Capstone-identified gap" },
+          { title: "Document completeness", meta: "Intake quality" },
+          { title: "Calibration / automation", meta: "End-to-end process steps" }
+        ],
+        action: { what: "Bring median commercial close to ≤60 days (now 64)", owner: "Credit Admin", due: "Sep 2026" }
+      },
+      teller_sla: {
+        drivers: [
+          { title: "Staffing vs traffic", meta: "Branch-level capacity" },
+          { title: "Transaction mix complexity", meta: "Cash vs account services" },
+          { title: "Training / tenure", meta: "Linked to teller turnover" }
+        ],
+        action: { what: "Staff the 3 flagged branches to get teller time under 2:00", owner: "Branch Ops", due: "Aug 2026" }
+      },
+      emplify: {
+        drivers: [
+          { title: "Manager cascade", meta: "Engagement message coverage" },
+          { title: "Branch participation", meta: "Frontline gaps" },
+          { title: "Survey timing", meta: "Biannual pulse" }
+        ],
+        action: { what: "Lift branch participation 3 pts to hit 80% on the next pulse", owner: "HR", due: "Oct 2026" }
+      },
+      teller_to: {
+        drivers: [
+          { title: "Exit survey themes", meta: "Scheduling and career pathing" },
+          { title: "Training days / associate", meta: "Skill readiness" },
+          { title: "Overtime hours", meta: "Capacity stress indicator" }
+        ],
+        action: { what: "Cut teller turnover another 8 pts toward the 20% target", owner: "HR / Branch Ops", due: "Dec 2026" }
+      },
+      staff_to: {
+        drivers: [
+          { title: "Management retention", meta: "Historically strong" },
+          { title: "Frontline churn", meta: "Teller-driven" },
+          { title: "Career pathing adoption", meta: "L&D initiative" }
+        ],
+        action: { what: "Hold org turnover under 5% by fixing teller-driven churn", owner: "HR", due: "Dec 2026" }
+      },
+      capital: {
+        drivers: [
+          { title: "Retained earnings vs asset growth", meta: "Leverage math if the book outruns capital" },
+          { title: "PCA / CBLR buffer", meta: "Stay well above well-capitalized" },
+          { title: "Dividend / holding-company actions", meta: "Bank capital can be issued; still prefer earnings" }
+        ],
+        action: { what: "Hold Tier 1 leverage ≥9.5% at monthly ALCO", owner: "CFO / ALCO", due: "Monthly" }
+      },
+      past_due: {
+        drivers: [
+          { title: "Collections aging 30–89", meta: "Early warning before NPL" },
+          { title: "CRE / C&I watch list", meta: "Credit quality → provision → ROA" },
+          { title: "Charge-off lag", meta: "Past due leads net charge-offs" }
+        ],
+        action: { what: "Keep past due 30+ inside the 1.5% credit limit", owner: "CRO / Collections", due: "Sep 2026" }
+      },
+      ltd: {
+        drivers: [
+          { title: "Loan pipeline vs deposit gather", meta: "LTD rises if loans outrun core funding" },
+          { title: "Wholesale substitute risk", meta: "Policy band 75–90%; limit 90%" },
+          { title: "Seasonal public funds", meta: "Temporary mix, not franchise liquidity" }
+        ],
+        action: { what: "Keep LTD ≤90% with core deposits, not wholesale", owner: "Treasury / ALCO", due: "Monthly ALCO" }
+      },
+      irr: {
+        drivers: [
+          { title: "Duration gap", meta: "+200 bp parallel shock on NII" },
+          { title: "Deposit beta", meta: "Funding cost lag vs asset repricing" },
+          { title: "ALCO floor (−8%)", meta: "Sensitivity vs policy, not a peer beauty contest" }
+        ],
+        action: { what: "Stay inside −8% NII floor on the +200 bp shock", owner: "ALCO", due: "Monthly" }
+      }
+    };
+
+    const CU_LEADERSHIP = {
+      roa: {
+        drivers: [
+          { title: "ROA as capital-build fuel", meta: "Cannot issue stock — earnings fund net worth" },
+          { title: "Member pricing / fee discipline", meta: "CU ROA is not a failed bank target" },
+          { title: "FPR peer 0.66%", meta: "Grade on CU curve, not UBPR 1.19%" }
+        ],
+        action: { what: "Earn enough ROA to fund the 10% net-worth target", owner: "CFO", due: "Q4 2026" }
+      },
+      noi: {
+        drivers: [
+          { title: "Loan yield vs member rates", meta: "Member value vs capital retention" },
+          { title: "Operating expense load", meta: "Structurally higher CU efficiency curve" },
+          { title: "Fee income without penalty pricing", meta: "Patronage capacity" }
+        ],
+        action: { what: "Grow NOI to $12MM to retain capital, not to mimic bank ROE", owner: "CFO", due: "Dec 2026" }
+      },
+      deposits: {
+        drivers: [
+          { title: "Member share growth", meta: "Core funding from member-owners" },
+          { title: "Share mix (regular vs certificate)", meta: "Cost of funds and stickiness" },
+          { title: "New member onboarding", meta: "FOM quality feeds share growth" }
+        ],
+        action: { what: "Add member shares without certificate-rate chasing", owner: "Member Experience / Treasury", due: "Dec 2026" }
+      },
+      loans: {
+        drivers: [
+          { title: "Consumer vs MBL mix", meta: "MBL cap if the commercial book is material" },
+          { title: "Delinquency control", meta: "Credit quality → provision → ROA & capital" },
+          { title: "Member relationship depth", meta: "AMR: loans + shares per member" }
+        ],
+        action: { what: "Grow the loan book inside credit limits and MBL capacity", owner: "CRO / Lending", due: "Sep 2026" }
+      },
+      csi: {
+        drivers: [
+          { title: "Member NPS / experience", meta: "Behind CU peer 7.2 — service is the franchise" },
+          { title: "Onboarding + FOM quality", meta: "Experience → retention" },
+          { title: "Branch vs digital wait times", meta: "Same-day digital onboarding gap" }
+        ],
+        action: { what: "Close the gap to CU peer MSI with onboarding, not giveaways", owner: "COO / Branches", due: "Oct 2026" }
+      },
+      retention: {
+        drivers: [
+          { title: "Member-owner tenure", meta: "Members are customers and capital providers" },
+          { title: "CU peer retention 93%", meta: "On plan vs 92% target; behind peer" },
+          { title: "Products per member", meta: "Depth beats acquisition" }
+        ],
+        action: { what: "Lift member retention toward the 93% CU peer median", owner: "Member Experience", due: "Dec 2026" }
+      },
+      channel: {
+        drivers: [
+          { title: "Digital active members", meta: "CU peer mix slightly ahead" },
+          { title: "Branch routine volume", meta: "Cost load on the 79% efficiency curve" },
+          { title: "Mobile deposit / bill pay", meta: "Self-service that protects MSI" }
+        ],
+        action: { what: "Clear 75% omni-channel without starving branch service", owner: "Digital / Ops", due: "Sep 2026" }
+      },
+      efficiency: {
+        drivers: [
+          { title: "CU expense structure", meta: "Never grade vs bank 52% — FPR ~79%" },
+          { title: "Efficiency → capital retention", meta: "Causal line to net worth" },
+          { title: "Noninterest expense vs member service", meta: "Cut waste, not access" }
+        ],
+        action: { what: "Get to 79% on the CU curve; do not chase a bank efficiency target", owner: "COO / CFO", due: "Q4 2026" }
+      },
+      loan_sla: {
+        drivers: [
+          { title: "MBL underwriting queue", meta: "Member business loan close cycle" },
+          { title: "Document completeness", meta: "Intake quality" },
+          { title: "FOM / membership check lag", meta: "CU-specific process step" }
+        ],
+        action: { what: "Bring MBL close to ≤60 days without skipping FOM checks", owner: "Credit Admin", due: "Sep 2026" }
+      },
+      teller_sla: {
+        drivers: [
+          { title: "Staffing vs lobby traffic", meta: "Branch-level capacity" },
+          { title: "Member education at the window", meta: "Time vs service tradeoff" },
+          { title: "Teller tenure", meta: "Linked to turnover" }
+        ],
+        action: { what: "Get teller transactions under 2 minutes at flagged branches", owner: "Branch Ops", due: "Aug 2026" }
+      },
+      emplify: {
+        drivers: [
+          { title: "Manager cascade", meta: "Engagement message coverage" },
+          { title: "Frontline participation", meta: "Branch and contact-center gaps" },
+          { title: "Volunteer board education hours", meta: "CU L&D emphasis" }
+        ],
+        action: { what: "Hit 80% participation on the next associate pulse", owner: "HR", due: "Oct 2026" }
+      },
+      teller_to: {
+        drivers: [
+          { title: "Exit themes", meta: "Scheduling and career pathing" },
+          { title: "Training days / associate", meta: "Skill readiness" },
+          { title: "Overtime", meta: "Capacity stress" }
+        ],
+        action: { what: "Move teller turnover from 28% toward 20%", owner: "HR / Branch Ops", due: "Dec 2026" }
+      },
+      staff_to: {
+        drivers: [
+          { title: "Frontline churn", meta: "Teller-driven" },
+          { title: "Leadership retention", meta: "Usually stronger than teller" },
+          { title: "Career pathing", meta: "L&D initiative" }
+        ],
+        action: { what: "Hold organization turnover under 5%", owner: "HR", due: "Dec 2026" }
+      },
+      capital: {
+        drivers: [
+          { title: "ROA retention into net worth", meta: "Only source of CU capital" },
+          { title: "NCUA well-capitalized ≥7%", meta: "Board target 10%+; peer 11%" },
+          { title: "Asset growth vs earnings", meta: "Growth that outruns ROA dilutes NWR" }
+        ],
+        action: { what: "Defend 10%+ net worth; close the gap to FPR peer 11%", owner: "CFO / ALCO", due: "Monthly" }
+      },
+      past_due: {
+        drivers: [
+          { title: "Consumer delinquency", meta: "Often leads the pack at retail-heavy CUs" },
+          { title: "CU peer is tighter than bank", meta: "0.85% peer vs 1.0% limit" },
+          { title: "NCO / provision lag", meta: "Delinquency control → ROA & capital build" }
+        ],
+        action: { what: "Hold delinquency inside the 1.0% CU credit limit", owner: "CRO / Collections", due: "Sep 2026" }
+      },
+      ltd: {
+        drivers: [
+          { title: "Loan-to-share, not LTD", meta: "Same math; CU funding is shares" },
+          { title: "Policy band 70–90%", meta: "Limit 90%" },
+          { title: "Share gather vs loan demand", meta: "Member growth feeds LTS capacity" }
+        ],
+        action: { what: "Keep LTS ≤90% with member shares, not borrowed funds", owner: "Treasury / ALCO", due: "Monthly ALCO" }
+      },
+      irr: {
+        drivers: [
+          { title: "+200 bp NII shock", meta: "Same ALCO floor as bank; CU ALM peer" },
+          { title: "Share beta / certificate mix", meta: "Funding cost lag" },
+          { title: "Do not use bank ALM peers", meta: "FPR / CU peer −5.8%" }
+        ],
+        action: { what: "Stay inside −8% NII floor on the +200 bp shock", owner: "ALCO", due: "Monthly" }
+      }
+    };
+
+    function attachLeadership(list, pack) {
+      list.forEach((o) => {
+        const extra = pack[o.id];
+        if (!extra) return;
+        o.drivers = extra.drivers;
+        o.action = extra.action;
+      });
+    }
+    attachLeadership(bankObjectives, BANK_LEADERSHIP);
+    attachLeadership(cuObjectives, CU_LEADERSHIP);
+
+    const METRIC_DEFS = {
+      bank: {
+        roa: {
+          definition: "Earnings on the asset base — primary shareholder profitability KPI.",
+          formula: "ROA = Net Income / Average Total Assets",
+          source: "GL / Call Report · UBPR peer median $1B–$3B"
+        },
+        noi: {
+          definition: "Operating profit available after interest and operating expense, before extraordinary items.",
+          formula: "NOI = Net Interest Income + Noninterest Income − Noninterest Expense (annualized)",
+          source: "GL · peer median annualized NOI"
+        },
+        deposits: {
+          definition: "Size of the deposit franchise used to fund loans and liquid assets.",
+          formula: "Total Deposits = Sum of period-end deposit balances",
+          source: "Core / FDIC SOD · deposit stock, not growth"
+        },
+        loans: {
+          definition: "Gross loans held for investment — earning assets subject to credit discipline.",
+          formula: "Total Loans = Gross loans HFI (period-end)",
+          source: "Core / loan system · Call Report"
+        },
+        csi: {
+          definition: "Customer experience score from the bank’s satisfaction survey (Capstone CSI).",
+          formula: "CSI = Mean survey score (vendor scale; target > 7)",
+          source: "Survey platform · community bank CSAT sample"
+        },
+        retention: {
+          definition: "Share of customer relationships that remain open over the period.",
+          formula: "Retention = 1 − (Closed CIF / Beginning CIF)",
+          source: "Core CIF · household retention"
+        },
+        channel: {
+          definition: "Share of customers using more than one delivery channel (branch + digital).",
+          formula: "Channel Usage = Omni-channel customers / Eligible customers",
+          source: "Digital analytics + branch activity"
+        },
+        efficiency: {
+          definition: "Cost to produce a dollar of revenue. Lower is better.",
+          formula: "Efficiency = Noninterest Expense / (NII + Noninterest Income)",
+          source: "GL · UBPR efficiency median — bank curve (~52% target)"
+        },
+        loan_sla: {
+          definition: "Elapsed days from commercial application to close.",
+          formula: "Commercial Loan SLA = Median days (application date → close date)",
+          source: "LOS / credit admin · Capstone process KPI"
+        },
+        teller_sla: {
+          definition: "Time to complete a teller transaction at the window.",
+          formula: "Teller SLA = Average minutes per teller transaction",
+          source: "Branch ops / queue system"
+        },
+        emplify: {
+          definition: "Share of associates who complete the Emplify engagement pulse.",
+          formula: "Participation = Completed surveys / Invited associates",
+          source: "HR survey (Emplify) · not the engagement index itself"
+        },
+        teller_to: {
+          definition: "Annualized voluntary (and total) turnover in the teller job family.",
+          formula: "Teller Turnover = Teller separations / Average teller headcount",
+          source: "HRIS · segment tellers vs rest of staff"
+        },
+        staff_to: {
+          definition: "Organization-wide turnover rate.",
+          formula: "Staff Turnover = Voluntary separations / Average headcount",
+          source: "HRIS"
+        },
+        capital: {
+          definition: "Leverage capital adequacy vs PCA / CBLR well-capitalized levels.",
+          formula: "Tier 1 Leverage = Tier 1 Capital / Average Total Assets",
+          source: "Call Report / capital calculator · UBPR"
+        },
+        past_due: {
+          definition: "Early asset-quality signal: unpaid balance 30 or more days past due.",
+          formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans",
+          source: "Servicing / core · peer past-due / gross loans"
+        },
+        ltd: {
+          definition: "How much of the deposit base is deployed in loans (liquidity utilization).",
+          formula: "LTD = Total Loans / Total Deposits",
+          source: "Core / Call Report · policy band 75–90%, limit 90%"
+        },
+        irr: {
+          definition: "Sensitivity of net interest income to a parallel +200 bp rate shock.",
+          formula: "IRR NII shock = ΔNII under +200 bp / Base NII  (must stay ≥ ALCO floor −8%)",
+          source: "ALM model · ALCO policy, not a peer beauty contest"
+        }
+      },
+      cu: {
+        roa: {
+          definition: "Earnings that fund net worth — capital-build fuel, not a failed bank ROA target.",
+          formula: "ROA = Net Income / Average Total Assets",
+          source: "5300 / FPR peer median — do not grade vs UBPR 1.19%"
+        },
+        noi: {
+          definition: "Operating income retained to build net worth and support member value.",
+          formula: "NOI = Net Interest Income + Noninterest Income − Noninterest Expense (annualized)",
+          source: "GL · CU peer annualized NOI"
+        },
+        deposits: {
+          definition: "Member share balances that fund loans (CU funding liabilities).",
+          formula: "Total Shares = Sum of period-end share balances",
+          source: "Core / 5300 · share stock, not growth"
+        },
+        loans: {
+          definition: "Gross loans to members, including MBL within statutory capacity.",
+          formula: "Total Loans = Gross loans HFI (period-end)",
+          source: "Core / loan system · CU peer loan book"
+        },
+        csi: {
+          definition: "Member experience score (MSI) — cooperative service identity.",
+          formula: "MSI = Mean member survey score (vendor scale; target > 7)",
+          source: "Survey platform · CU member CSAT / NPS sample"
+        },
+        retention: {
+          definition: "Share of member-owners who remain on the books.",
+          formula: "Retention = 1 − (Closed members / Beginning members)",
+          source: "Core membership · CU peer retention"
+        },
+        channel: {
+          definition: "Share of members using more than one delivery channel.",
+          formula: "Channel Usage = Omni-channel members / Eligible members",
+          source: "Digital analytics + branch activity"
+        },
+        efficiency: {
+          definition: "Cost to produce a dollar of revenue on the CU expense structure. Lower is better; never grade vs bank 52%.",
+          formula: "Efficiency = Noninterest Expense / (NII + Noninterest Income)",
+          source: "GL · FPR efficiency median (~79%)"
+        },
+        loan_sla: {
+          definition: "Elapsed days from member-business-loan application to close, including FOM checks.",
+          formula: "MBL SLA = Median days (application date → close date)",
+          source: "LOS / credit admin · CU MBL cycle"
+        },
+        teller_sla: {
+          definition: "Time to complete a teller transaction at the window.",
+          formula: "Teller SLA = Average minutes per teller transaction",
+          source: "Branch ops / queue system"
+        },
+        emplify: {
+          definition: "Share of associates who complete the Emplify engagement pulse.",
+          formula: "Participation = Completed surveys / Invited associates",
+          source: "HR survey (Emplify)"
+        },
+        teller_to: {
+          definition: "Annualized teller job-family turnover.",
+          formula: "Teller Turnover = Teller separations / Average teller headcount",
+          source: "HRIS"
+        },
+        staff_to: {
+          definition: "Organization-wide turnover rate.",
+          formula: "Staff Turnover = Voluntary separations / Average headcount",
+          source: "HRIS"
+        },
+        capital: {
+          definition: "Net worth adequacy. NCUA well-capitalized ≥7%; many boards target 10%+.",
+          formula: "Net Worth Ratio = Net Worth / Total Assets",
+          source: "5300 / FPR · retained earnings only (no stock issuance)"
+        },
+        past_due: {
+          definition: "Delinquency 30+ as a share of gross loans — often tighter CU peer than banks.",
+          formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans",
+          source: "Servicing / core · CU peer (tighter than bank peers)"
+        },
+        ltd: {
+          definition: "How much of member shares is deployed in loans.",
+          formula: "LTS = Total Loans / Total Shares",
+          source: "Core / 5300 · policy band 70–90%, limit 90%"
+        },
+        irr: {
+          definition: "Sensitivity of NII to a +200 bp shock vs ALCO floor; use CU ALM peers, not bank ALM.",
+          formula: "IRR NII shock = ΔNII under +200 bp / Base NII  (must stay ≥ ALCO floor −8%)",
+          source: "ALM model · FPR / CU peer sample"
+        }
+      }
+    };
+
+    let charter = "bank";
+    let objectives = bankObjectives;
+    let mode = "monitor";
+    let activePerspective = "All";
+    let selectedId = null;
+    let drillLevel = 1;
+
+    function customerLabel() { return charter === "cu" ? "Member" : "Customer"; }
+
+    function perspectives() {
+      return ["All", "Financial", customerLabel(), "Internal Process", "Risk", "Learning & Development"];
+    }
+
+    function actual(o) { return o.series[o.series.length - 1]; }
+
+    function periodOf(o) {
+      return o && o.period && PERIODS[o.period] ? o.period : "month";
+    }
+
+    function periodSpec(o) {
+      return PERIODS[periodOf(o)];
+    }
+
+    function periodLabels(o) {
+      return (o && o.labels && o.labels.length) ? o.labels : periodSpec(o).labels;
+    }
+
+    function sampleSeries(target, direction, n) {
+      const start = direction === "higher" ? target * 0.82 : target * 1.25;
+      const end = target * 0.96;
+      const denom = Math.max(1, n - 1);
+      return Array.from({ length: n }, (_, i) => {
+        const t = i / denom;
+        return Number((start + (end - start) * t).toFixed(2));
+      });
+    }
+
+    function selectedAddPeriod() {
+      const active = document.querySelector("#addPeriodPicks .tab.active");
+      return (active && PERIODS[active.dataset.period]) ? active.dataset.period : "month";
+    }
+
+    function setAddPeriod(id) {
+      const next = PERIODS[id] ? id : "month";
+      document.querySelectorAll("#addPeriodPicks .tab").forEach((btn) => {
+        const on = btn.dataset.period === next;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+    }
+
+    function statusOf(o) {
+      return statusAt(o, actual(o));
+    }
+
+    function statusAt(o, value) {
+      const t = o.target;
+      if (o.direction === "higher") {
+        if (value >= t) return "ok";
+        const watchFloor = t >= 0 ? t * 0.95 : t * 1.05;
+        if (value >= watchFloor) return "watch";
+        return "bad";
+      }
+      if (value <= t) return "ok";
+      const watchCeil = t >= 0 ? t * 1.05 : t * 0.95;
+      if (value <= watchCeil) return "watch";
+      return "bad";
+    }
+
+    function statusLabel(s) {
+      return s === "ok" ? "On track" : s === "watch" ? "At risk" : "Off track";
+    }
+
+    function beatsPeer(o) {
+      return o.direction === "higher" ? actual(o) >= o.peer : actual(o) <= o.peer;
+    }
+
+    function formatValue(v, unit) {
+      if (unit === "$MM" || unit === "$B") return Number(v).toFixed(2);
+      if (unit === "days" || unit === "min" || unit === "score") return Number(v).toFixed(1);
+      if (Number.isInteger(v)) return String(v);
+      return Number(v).toFixed(2);
+    }
+
+    function progressPct(o) {
+      const a = actual(o), t = o.target;
+      if (o.direction === "higher") {
+        if (t < 0) {
+          if (a >= t) return 100;
+          return Math.max(0, Math.min(100, (1 - (t - a) / Math.abs(t)) * 100));
+        }
+        return Math.max(0, Math.min(100, (a / t) * 100));
+      }
+      if (a <= 0 && t > 0) return 100;
+      return Math.max(0, Math.min(100, (t / a) * 100));
+    }
+
+    function gapLabel(o, compare) {
+      const delta = actual(o) - compare;
+      const favorable = o.direction === "higher" ? delta >= 0 : delta <= 0;
+      const abs = Math.abs(delta);
+      let amount;
+      if (o.unit === "%") {
+        const bps = Math.round(abs * 100);
+        amount = bps >= 100 ? abs.toFixed(2) + " pts" : bps + " bps";
+      } else if (o.unit === "days" || o.unit === "min") {
+        amount = abs.toFixed(1) + " " + o.unit;
+      } else {
+        amount = formatValue(abs, o.unit) + " " + o.unit;
+      }
+      if (Math.abs(delta) < 0.0005) return { text: "In line", favorable: true };
+      return { text: (favorable ? "Ahead " : "Behind ") + amount, favorable };
+    }
+
+    function filtered() {
+      if (activePerspective === "All") return objectives;
+      return objectives.filter((o) => o.perspective === activePerspective);
+    }
+
+    function counts(list) {
+      return list.reduce((acc, o) => { acc[statusOf(o)] += 1; return acc; }, { ok: 0, watch: 0, bad: 0 });
+    }
+
+    function sparkline(series, target) {
+      const w = 280, h = 72, pad = 8;
+      const all = series.concat([target]);
+      const min = Math.min(...all), max = Math.max(...all);
+      const span = max - min || 1;
+      const denom = Math.max(1, series.length - 1);
+      const x = (i) => pad + (i / denom) * (w - pad * 2);
+      const y = (v) => h - pad - ((v - min) / span) * (h - pad * 2);
+      const path = series.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+      const ty = y(target);
+      return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+        <line x1="${pad}" y1="${ty.toFixed(1)}" x2="${w - pad}" y2="${ty.toFixed(1)}" stroke="#f5b942" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.9" />
+        <path d="${path}" fill="none" stroke="#3b82f6" stroke-width="2.2" />
+        <circle cx="${x(series.length - 1).toFixed(1)}" cy="${y(series[series.length - 1]).toFixed(1)}" r="3.5" fill="#3b82f6" />
+      </svg>`;
+    }
+
+    function applyCharter() {
+      objectives = charter === "cu" ? cuObjectives : bankObjectives;
+      if (activePerspective === "Customer" || activePerspective === "Member") {
+        activePerspective = customerLabel();
+      }
+      const ids = new Set(objectives.map((o) => o.id));
+      if (selectedId && !ids.has(selectedId)) selectedId = null;
+      document.getElementById("brandTitle").textContent =
+        charter === "cu" ? "Credit Union | Working Monitor" : "Community Bank | Working Monitor";
+      document.getElementById("brandSub").textContent =
+        charter === "cu"
+          ? "Member-owner BSC · FPR peer group · actual vs target vs peer"
+          : "Shareholder BSC · $1B–$3B bank peers · actual vs target vs peer";
+      document.getElementById("peerNote").textContent =
+        charter === "cu"
+          ? "Credit union peers use an FPR-style sample. Efficiency is graded on a CU curve (~79%), not a bank 52% target."
+          : "Bank peers are a sample $1B–$3B community bank median (UBPR-style).";
+      document.querySelectorAll(".charter button").forEach((b) => {
+        b.classList.toggle("active", b.dataset.charter === charter);
+      });
+      const sel = document.getElementById("addPerspective");
+      sel.innerHTML = perspectives().filter((p) => p !== "All").map((p) =>
+        `<option value="${p}">${p}</option>`
+      ).join("");
+    }
+
+    function renderSummary() {
+      const c = counts(objectives);
+      document.getElementById("summaryStats").innerHTML = `
+        <div class="stat"><div class="label">Objectives</div><div class="value">${objectives.length}</div></div>
+        <div class="stat"><div class="label">On track</div><div class="value ok">${c.ok}</div></div>
+        <div class="stat"><div class="label">At risk</div><div class="value watch">${c.watch}</div></div>
+        <div class="stat"><div class="label">Off track</div><div class="value bad">${c.bad}</div></div>
+      `;
+    }
+
+    function worstStatus(list) {
+      const c = counts(list);
+      if (c.bad > 0) return "bad";
+      if (c.watch > 0) return "watch";
+      return "ok";
+    }
+
+    function mapCardHtml(p, tier, rail) {
+      const rows = objectives.filter((o) => o.perspective === p);
+      const c = counts(rows);
+      const tone = worstStatus(rows);
+      const active = p === activePerspective ? "active" : "";
+      const short = p.replace("Learning & Development", "L&D").replace("Internal Process", "Process");
+      return `<button class="map-card ${active}${rail ? " rail" : ""}" type="button" data-p="${p}">
+        <div class="tier">${tier}</div>
+        <div class="name">${short}</div>
+        <div class="pulse">
+          <span class="badge ${tone}">${statusLabel(tone)}</span>
+          <span>${c.ok}/${rows.length} on track</span>
+        </div>
+      </button>`;
+    }
+
+    function renderStrategyMap() {
+      const customer = customerLabel();
+      const boxes = [
+        { p: "Learning & Development", tier: "Leading · people" },
+        { p: "Internal Process", tier: "Leading · operations" },
+        { p: customer, tier: "Leading · franchise" },
+        { p: "Financial", tier: "Lagging · outcomes" }
+      ];
+      document.getElementById("strategyMap").innerHTML = boxes.map((b) => mapCardHtml(b.p, b.tier, false)).join("");
+      document.getElementById("riskMapSlot").innerHTML = mapCardHtml("Risk", "Constraint · CAMELS", true);
+      document.getElementById("mapCaption").textContent = charter === "cu"
+        ? "L&D → Process → Member → Financial (member value + net worth) · Risk constrains"
+        : "L&D → Process → Customer → Financial (shareholder value) · Risk constrains";
+      document.getElementById("mapCausal").textContent = charter === "cu"
+        ? "Causal sample: efficiency discipline → capital retention → net worth ratio"
+        : "Causal sample: credit quality → provision → ROA";
+      document.querySelectorAll(".map-card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activePerspective = btn.dataset.p;
+          render();
+        });
+      });
+    }
+
+    function renderExceptionStrip() {
+      const list = filtered()
+        .filter((o) => {
+          const s = statusOf(o);
+          return s === "bad" || s === "watch";
+        })
+        .sort((a, b) => (statusOf(a) === "bad" ? 0 : 1) - (statusOf(b) === "bad" ? 0 : 1));
+      const el = document.getElementById("exceptionStrip");
+      if (!list.length) {
+        el.innerHTML = `<h2 class="section">Needs attention this month</h2>
+          <p class="hint" style="margin:0">All objectives on this tab are on track.</p>`;
+        return;
+      }
+      el.innerHTML = `<h2 class="section">Needs attention this month · ${list.length} exception${list.length === 1 ? "" : "s"}</h2>
+        ${list.map((o) => {
+          const st = statusOf(o);
+          const vsT = gapLabel(o, o.target);
+          const vsP = gapLabel(o, o.peer);
+          return `<button class="ex-row ${st}${selectedId === o.id ? " selected" : ""}" type="button" data-id="${o.id}">
+            <span class="ex-metric">${o.metric}</span>
+            <span class="badge ${st}">${statusLabel(st)}</span>
+            <span class="ex-muted">${o.owner}</span>
+            <span>${vsT.text} vs plan</span>
+            <span>${vsP.text} vs peer</span>
+          </button>`;
+        }).join("")}`;
+      el.querySelectorAll(".ex-row").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedId = btn.dataset.id;
+          drillLevel = 1;
+          openDetail(selectedId);
+          renderCards();
+          renderExceptionStrip();
+        });
+      });
+    }
+
+    function renderTabs() {
+      const el = document.getElementById("perspectiveTabs");
+      el.innerHTML = perspectives().map((p) => {
+        const count = p === "All" ? objectives.length : objectives.filter((o) => o.perspective === p).length;
+        return `<button class="tab ${p === activePerspective ? "active" : ""}" data-p="${p}" type="button">
+          ${p}<span class="count">${count}</span>
+        </button>`;
+      }).join("");
+      el.querySelectorAll(".tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activePerspective = btn.dataset.p;
+          render();
+        });
+      });
+    }
+
+    function renderAggregates() {
+      const list = filtered();
+      const monthly = list.filter((o) => periodOf(o) === "month");
+      const c = counts(list);
+      const total = Math.max(1, list.length);
+      const onTrackPct = Math.round((c.ok / total) * 100);
+      const avgProg = list.length
+        ? Math.round(list.reduce((s, o) => s + progressPct(o), 0) / list.length)
+        : 0;
+
+      const size = 140, cx = 70, cy = 70, r = 46, stroke = 16;
+      let angle = -Math.PI / 2;
+      const parts = [
+        { n: c.ok, color: "#3dd68c" },
+        { n: c.watch, color: "#f5b942" },
+        { n: c.bad, color: "#f07178" }
+      ];
+      const arcs = parts.filter((p) => p.n > 0).map((p) => {
+        const sweep = (p.n / total) * Math.PI * 2;
+        const x1 = cx + r * Math.cos(angle);
+        const y1 = cy + r * Math.sin(angle);
+        angle += sweep;
+        const x2 = cx + r * Math.cos(angle);
+        const y2 = cy + r * Math.sin(angle);
+        const large = sweep > Math.PI ? 1 : 0;
+        return `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}" fill="none" stroke="${p.color}" stroke-width="${stroke}" />`;
+      }).join("");
+
+      const scopes = activePerspective === "All"
+        ? perspectives().filter((p) => p !== "All")
+        : [activePerspective];
+      const stacks = scopes.map((p) => {
+        const rows = objectives.filter((o) => o.perspective === p);
+        const cc = counts(rows);
+        const t = Math.max(1, rows.length);
+        const short = p.replace("Learning & Development", "L&D").replace("Internal Process", "Process");
+        return `<div class="stack-row"><div>${short}</div>
+          <div class="stack-bar">
+            <i class="ok" style="width:${(cc.ok / t) * 100}%"></i>
+            <i class="watch" style="width:${(cc.watch / t) * 100}%"></i>
+            <i class="bad" style="width:${(cc.bad / t) * 100}%"></i>
+          </div>
+          <div>${cc.ok}/${rows.length}</div></div>`;
+      }).join("");
+
+      const barW = 220, barH = 16, padL = 70;
+      const avgSvg = `<svg viewBox="0 0 280 48" style="height:48px">
+        <text x="0" y="18" fill="#9aa3b2" font-size="11">Avg % goal</text>
+        <rect x="${padL}" y="6" width="${barW}" height="${barH}" fill="#0b0d10" stroke="#2a3140" rx="4" />
+        <rect x="${padL}" y="6" width="${(avgProg / 100) * barW}" height="${barH}" fill="${avgProg >= 95 ? "#3dd68c" : avgProg >= 85 ? "#f5b942" : "#f07178"}" rx="4" />
+        <text x="${padL + barW + 8}" y="18" fill="#f2f4f7" font-size="12">${avgProg}%</text>
+      </svg>`;
+
+      const series = MONTHS.map((_, i) => {
+        if (!monthly.length) return 0;
+        const ok = monthly.filter((o) => Number.isFinite(o.series[i]) && statusAt(o, o.series[i]) === "ok").length;
+        return (ok / monthly.length) * 100;
+      });
+      const w = 280, h = 90, padX = 28, padY = 16;
+      const x = (i) => padX + (i / (MONTHS.length - 1)) * (w - padX * 2);
+      const y = (v) => h - padY - (v / 100) * (h - padY * 2);
+      const path = series.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+      const labels = MONTHS.map((m, i) =>
+        `<text x="${x(i).toFixed(1)}" y="${h - 2}" text-anchor="middle" fill="#9aa3b2" font-size="9">${m}</text>`
+      ).join("");
+
+      document.getElementById("aggStrip").innerHTML = `
+        <div class="agg-box">
+          <h2 class="section">Status mix</h2>
+          <svg viewBox="0 0 ${size} ${size}" style="height:120px;margin:0 auto">
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#2a3140" stroke-width="${stroke}" />
+            ${arcs}
+            <text x="${cx}" y="${cy - 2}" text-anchor="middle" fill="#f2f4f7" font-size="16" font-weight="700">${onTrackPct}%</text>
+            <text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#9aa3b2" font-size="10">on track</text>
+          </svg>
+          <p class="caption">${c.ok} on track · ${c.watch} at risk · ${c.bad} off track</p>
+        </div>
+        <div class="agg-box">
+          <h2 class="section">By perspective</h2>
+          ${stacks}
+        </div>
+        <div class="agg-box">
+          <h2 class="section">Attainment</h2>
+          ${avgSvg}
+          <p class="caption">Mean progress-to-goal for this tab (capped at 100%).</p>
+        </div>
+        <div class="agg-box">
+          <h2 class="section">% on track over time</h2>
+          <svg viewBox="0 0 ${w} ${h}" style="height:90px">
+            <path d="${path}" fill="none" stroke="#3b82f6" stroke-width="2.2" />
+            ${series.map((v, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.6" fill="#3b82f6" />`).join("")}
+            ${labels}
+          </svg>
+          <p class="caption">${monthly.length
+            ? "Share of monthly metrics on this tab meeting target each month."
+            : "Roll-up over time uses monthly metrics only — none on this filter."}</p>
+        </div>`;
+    }
+
+    function renderCards() {
+      const rank = { bad: 0, watch: 1, ok: 2 };
+      const list = filtered().slice().sort((a, b) => rank[statusOf(a)] - rank[statusOf(b)]);
+      const grid = document.getElementById("cardGrid");
+      document.getElementById("workArea").classList.toggle("has-selection", Boolean(selectedId));
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty">No objectives in this perspective yet. Use Add objective to create one.</div>`;
+        return;
+      }
+      const editable = mode === "edit";
+      grid.innerHTML = list.map((o) => {
+        const st = statusOf(o);
+        const a = actual(o);
+        const peerOk = beatsPeer(o);
+        return `
+          <article class="card ${selectedId === o.id ? "selected" : ""}" data-id="${o.id}">
+            <div class="card-head">
+              <div>
+                <h3>${o.metric}</h3>
+                <div class="meta">${o.camels || "—"} · ${o.perspective} · ${periodSpec(o).legend} · Owner: ${o.owner}</div>
+              </div>
+              <span class="badge ${st}">${statusLabel(st)}</span>
+            </div>
+            ${editable
+              ? `<input class="obj-input" data-field="objective" data-id="${o.id}" value="${o.objective.replace(/"/g, "&quot;")}" />`
+              : `<div style="font-size:13px;color:var(--ink);">${o.objective}</div>`
+            }
+            <div class="metrics">
+              <div class="metric-box">
+                <div class="k">Actual</div>
+                <div class="v">${formatValue(a, o.unit)} ${o.unit}</div>
+              </div>
+              <div class="metric-box">
+                <div class="k">Your target</div>
+                ${editable
+                  ? `<input data-field="target" data-id="${o.id}" type="number" step="any" value="${o.target}" />`
+                  : `<div class="v">${formatValue(o.target, o.unit)} ${o.unit}</div>`
+                }
+              </div>
+              <div class="metric-box">
+                <div class="k">vs goal</div>
+                <div class="v" style="color:var(--${st === "ok" ? "ok" : st === "watch" ? "watch" : "bad"})">
+                  ${o.direction === "higher"
+                    ? (a >= o.target ? "+" : "") + formatValue(a - o.target, o.unit)
+                    : (a <= o.target ? "" : "+") + formatValue(a - o.target, o.unit)}
+                </div>
+              </div>
+            </div>
+            <div class="peer-chip">${peerOk ? "Ahead of peer" : "Behind peer"} · peer ${formatValue(o.peer, o.unit)} ${o.unit} · click to drill</div>
+            <div class="progress"><span class="${st}" style="width:${progressPct(o).toFixed(1)}%"></span></div>
+            <div class="chart-wrap">${sparkline(o.series, o.target)}</div>
+            <div class="chart-legend">
+              <span><i class="dot actual"></i>Actual (${periodSpec(o).legend})</span>
+              <span><i class="dot goal"></i>Target ${formatValue(o.target, o.unit)} ${o.unit}</span>
+              <span style="margin-left:auto;color:var(--muted);">${o.direction === "higher" ? "Higher is better" : "Lower is better"}</span>
+            </div>
+          </article>`;
+      }).join("");
+
+      grid.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("click", (e) => {
+          if (e.target.closest("input")) return;
+          selectedId = card.dataset.id;
+          drillLevel = 1;
+          openDetail(selectedId);
+          renderCards();
+          renderExceptionStrip();
+        });
+      });
+      grid.querySelectorAll("input[data-field]").forEach((input) => {
+        input.addEventListener("change", () => {
+          const o = objectives.find((x) => x.id === input.dataset.id);
+          if (!o) return;
+          if (input.dataset.field === "target") o.target = Number(input.value);
+          if (input.dataset.field === "objective") o.objective = input.value;
+          render();
+        });
+        input.addEventListener("click", (e) => e.stopPropagation());
+      });
+    }
+
+    function compareBars(o) {
+      const a = actual(o);
+      const maxAbs = Math.max(Math.abs(a), Math.abs(o.target), Math.abs(o.peer), 0.01) * 1.15;
+      const pct = (v) => Math.max(3, Math.min(100, (Math.abs(v) / maxAbs) * 100));
+      return `
+        <div class="bar-row"><span>Actual</span><div class="bar-track"><span class="actual" style="width:${pct(a)}%"></span></div><span>${formatValue(a, o.unit)} ${o.unit}</span></div>
+        <div class="bar-row"><span>Target</span><div class="bar-track"><span class="target" style="width:${pct(o.target)}%"></span></div><span>${formatValue(o.target, o.unit)} ${o.unit}</span></div>
+        <div class="bar-row"><span>Peer</span><div class="bar-track"><span class="peer" style="width:${pct(o.peer)}%"></span></div><span>${formatValue(o.peer, o.unit)} ${o.unit}</span></div>
+        <p class="caption">Bars scaled to this metric. ${o.direction === "higher" ? "Higher is better." : "Lower is better."}</p>`;
+    }
+
+    function trendSvg(o) {
+      const w = 520, h = 180, padX = 36, padY = 22;
+      const ticks = periodLabels(o);
+      const all = [...o.series, ...o.peerSeries, o.target];
+      const min = Math.min(...all), max = Math.max(...all);
+      const span = max - min || 1;
+      const pad = span * 0.12;
+      const lo = min - pad, hi = max + pad;
+      const denom = Math.max(1, ticks.length - 1);
+      const x = (i) => padX + (i / denom) * (w - padX * 2);
+      const y = (v) => h - padY - ((v - lo) / (hi - lo)) * (h - padY * 2);
+      const line = (arr) => arr.map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+      const ty = y(o.target);
+      const font = ticks.length > 8 ? 9 : 11;
+      const labels = ticks.map((m, i) =>
+        `<text x="${x(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" fill="#9aa3b2" font-size="${font}">${m}</text>`
+      ).join("");
+      return `<svg viewBox="0 0 ${w} ${h}" style="height:180px">
+        <line x1="${padX}" y1="${ty.toFixed(1)}" x2="${w - padX}" y2="${ty.toFixed(1)}" stroke="#f07178" stroke-width="1.8" stroke-dasharray="5 4" />
+        <text x="${w - padX}" y="${(ty - 6).toFixed(1)}" text-anchor="end" fill="#f07178" font-size="11">Target ${formatValue(o.target, o.unit)}</text>
+        <path d="${line(o.peerSeries)}" fill="none" stroke="#f5b942" stroke-width="2.2" />
+        <path d="${line(o.series)}" fill="none" stroke="#6eb6ff" stroke-width="2.6" />
+        ${o.series.map((v, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.2" fill="#6eb6ff" />`).join("")}
+        ${labels}
+      </svg>
+      <div class="chart-legend">
+        <span><i class="dot" style="background:#6eb6ff"></i>Actual (${periodSpec(o).legend})</span>
+        <span><i class="dot" style="background:#f07178"></i>Target</span>
+        <span><i class="dot" style="background:#f5b942"></i>Peer median</span>
+      </div>`;
+    }
+
+    function peerRows(o) {
+      const names = charter === "cu" ? CU_PEERS : BANK_PEERS;
+      const spread = Math.abs(o.peer) * 0.08 + 0.02;
+      const vals = [o.peer - spread * 1.1, o.peer - spread * 0.3, o.peer + spread * 0.4, o.peer + spread * 1.0];
+      const rows = names.map((name, i) => ({ name, value: Number(vals[i].toFixed(2)), ours: false }));
+      rows.push({ name: charter === "cu" ? "This credit union" : "Community Bank (us)", value: actual(o), ours: true });
+      rows.sort((a, b) => o.direction === "higher" ? b.value - a.value : a.value - b.value);
+      return rows;
+    }
+
+    function renderDrillBody(o) {
+      const st = statusOf(o);
+      const vsT = gapLabel(o, o.target);
+      const vsP = gapLabel(o, o.peer);
+      const body = document.getElementById("drillBody");
+      if (drillLevel === 1) {
+        const story = st === "ok"
+          ? (beatsPeer(o) ? "Winning both: at/above plan and ahead of peers." : "On plan, but behind the peer median.")
+          : (beatsPeer(o) ? "Ahead of peers, still short of our own target." : "Behind both plan and peers — priority for attention.");
+        body.innerHTML = `<div class="detail-grid">
+          <div class="chart-wrap" style="padding:12px">${compareBars(o)}</div>
+          <div>
+            <div class="gap-card"><div class="k">Vs target (plan)</div><div class="v ${vsT.favorable ? "ok" : "bad"}">${vsT.text}</div>
+              <div class="caption">Actual ${formatValue(actual(o), o.unit)} ${o.unit} · Target ${formatValue(o.target, o.unit)} ${o.unit}</div></div>
+            <div class="gap-card"><div class="k">Vs peer median</div><div class="v ${vsP.favorable ? "ok" : "bad"}">${vsP.text}</div>
+              <div class="caption">${o.peerSource}</div></div>
+            <p class="lede">${story}</p>
+            <p class="hint">Owner: ${o.owner}.</p>
+          </div>
+        </div>`;
+      } else if (drillLevel === 2) {
+        const rows = peerRows(o);
+        body.innerHTML = `<div class="detail-grid">
+          <div class="chart-wrap" style="padding:12px">${trendSvg(o)}</div>
+          <div>
+            <h2 class="section">Named peers (sample)</h2>
+            <table>
+              <thead><tr><th>Institution</th><th>${o.metric}</th></tr></thead>
+              <tbody>${rows.map((r) => `<tr class="${r.ours ? "ours" : ""}"><td>${r.name}</td><td>${formatValue(r.value, o.unit)} ${o.unit}</td></tr>`).join("")}</tbody>
+            </table>
+            <p class="caption">${o.peerSource}. Ranked ${o.direction === "higher" ? "high to low" : "low to high"}.</p>
+          </div>
+        </div>`;
+      } else {
+        const drivers = o.drivers || [];
+        const action = o.action || { what: "TBD", owner: o.owner, due: "TBD" };
+        body.innerHTML = `<div class="detail-grid">
+          <div>
+            <h2 class="section">Why it moved</h2>
+            <ul class="driver-list">
+              ${drivers.map((d) => `<li><div class="d-title">${d.title}</div><div class="d-meta">${d.meta}</div></li>`).join("")}
+            </ul>
+          </div>
+          <div>
+            <h2 class="section">Named action</h2>
+            <div class="gap-card action-card">
+              <div class="k">What we are doing</div>
+              <div class="v">${action.what}</div>
+              <div class="caption">Owner: ${action.owner} · Due: ${action.due}</div>
+            </div>
+            <p class="hint">Board conversation stops here — no fourth drill.</p>
+          </div>
+        </div>`;
+      }
+    }
+
+    function hideDrill() {
+      selectedId = null;
+      document.getElementById("drillEmpty").hidden = false;
+      document.getElementById("drillActive").hidden = true;
+      document.getElementById("workArea").classList.remove("has-selection");
+      renderCards();
+      renderExceptionStrip();
+    }
+
+    function openDetail(id) {
+      const o = objectives.find((x) => x.id === id);
+      if (!o) return;
+      document.getElementById("addPanel").classList.remove("open");
+      document.getElementById("drillEmpty").hidden = true;
+      document.getElementById("drillActive").hidden = false;
+      const st = statusOf(o);
+      document.getElementById("detailTitle").textContent = `${o.metric} · ${o.objective}`;
+      const badge = document.getElementById("drillBadge");
+      badge.className = `badge ${st}`;
+      badge.textContent = statusLabel(st);
+      if (drillLevel > 3) drillLevel = 3;
+      document.querySelectorAll(".level-btn").forEach((b) => {
+        b.classList.toggle("active", Number(b.dataset.level) === drillLevel);
+      });
+      renderDrillBody(o);
+      document.getElementById("editBlock").style.display = mode === "edit" ? "block" : "none";
+      document.getElementById("editObjective").value = o.objective;
+      document.getElementById("editTarget").value = o.target;
+      document.getElementById("editDirection").value = o.direction;
+      document.getElementById("editOwner").value = o.owner;
+      document.getElementById("editPeriodNote").textContent =
+        `Scored as ${periodSpec(o).label}. Period is set when you add the objective.`;
+    }
+
+    function applyRollup() {
+      const open = sessionStorage.getItem("fi-working-rollup") === "1";
+      document.getElementById("aggStrip").hidden = !open;
+      document.getElementById("rollupToggle").textContent = open ? "Hide roll-up charts" : "Show roll-up charts";
+    }
+
+    function renderDefs() {
+      const pack = charter === "cu" ? METRIC_DEFS.cu : METRIC_DEFS.bank;
+      const stub = { definition: "Newly added — bind formula in planning.", formula: "TBD", source: "TBD" };
+      document.getElementById("defsCaption").textContent = charter === "cu"
+        ? "Formulas lock for this credit union · FPR / 5300 sample — do not grade vs bank curves"
+        : "Formulas lock for this bank · UBPR / Call Report sample";
+      document.getElementById("defsTable").innerHTML = objectives.map((o) => {
+        const d = pack[o.id] || stub;
+        const scored = periodSpec(o).label;
+        const definition = pack[o.id] ? d.definition : `${d.definition} Scored as ${scored}.`;
+        return `<tr>
+          <td>${o.metric}</td>
+          <td>${o.perspective}</td>
+          <td>${o.camels || "—"}</td>
+          <td>${definition}</td>
+          <td class="formula">${d.formula}</td>
+          <td>${d.source}</td>
+        </tr>`;
+      }).join("");
+    }
+
+    function applySessionVisibility() {
+      const defs = mode === "defs";
+      document.querySelectorAll(".session-ui").forEach((el) => { el.hidden = defs; });
+      document.getElementById("defsPanel").hidden = !defs;
+      if (defs) renderDefs();
+    }
+
+    function setMode(next) {
+      mode = next;
+      document.querySelectorAll(".mode-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.mode === mode);
+      });
+      const hint = document.getElementById("modeHint");
+      const addPanel = document.getElementById("addPanel");
+      if (mode === "defs") {
+        hint.hidden = false;
+        hint.textContent = "Locked formulas and definitions for the current charter. Switch Bank / Credit union to see the peer pack change.";
+        addPanel.classList.remove("open");
+        applySessionVisibility();
+        return;
+      }
+      applySessionVisibility();
+      if (mode === "add") {
+        hint.hidden = false;
+        hint.textContent = "Define a new objective, target, time period, and owner — then it appears on the monitor with a sample trend.";
+        addPanel.classList.add("open");
+        addPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else if (mode === "edit") {
+        hint.hidden = false;
+        hint.textContent = "Edit objective wording and targets on the cards. The drill stays beside the grid.";
+        addPanel.classList.remove("open");
+      } else {
+        hint.hidden = true;
+        addPanel.classList.remove("open");
+      }
+      renderCards();
+      if (selectedId) openDetail(selectedId);
+    }
+
+    function render() {
+      applyCharter();
+      renderSummary();
+      renderExceptionStrip();
+      renderStrategyMap();
+      renderTabs();
+      renderAggregates();
+      applyRollup();
+      renderCards();
+      applySessionVisibility();
+      if (mode === "defs") return;
+      if (selectedId) openDetail(selectedId);
+      else {
+        document.getElementById("drillEmpty").hidden = false;
+        document.getElementById("drillActive").hidden = true;
+      }
+    }
+
+    document.querySelectorAll(".charter button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        charter = btn.dataset.charter;
+        render();
+      });
+    });
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+    });
+    document.querySelectorAll(".level-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        drillLevel = Number(btn.dataset.level);
+        if (selectedId) openDetail(selectedId);
+      });
+    });
+    document.getElementById("closeDetail").addEventListener("click", hideDrill);
+    document.getElementById("rollupToggle").addEventListener("click", () => {
+      const next = sessionStorage.getItem("fi-working-rollup") === "1" ? "0" : "1";
+      sessionStorage.setItem("fi-working-rollup", next);
+      applyRollup();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && selectedId) hideDrill();
+    });
+    document.getElementById("saveDetail").addEventListener("click", () => {
+      const o = objectives.find((x) => x.id === selectedId);
+      if (!o) return;
+      o.objective = document.getElementById("editObjective").value.trim() || o.objective;
+      o.target = Number(document.getElementById("editTarget").value);
+      o.direction = document.getElementById("editDirection").value;
+      o.owner = document.getElementById("editOwner").value.trim() || o.owner;
+      render();
+      openDetail(o.id);
+    });
+    document.getElementById("cancelAdd").addEventListener("click", () => setMode("monitor"));
+    document.querySelectorAll("#addPeriodPicks .tab").forEach((btn) => {
+      btn.addEventListener("click", () => setAddPeriod(btn.dataset.period));
+    });
+    document.getElementById("createObjective").addEventListener("click", () => {
+      const metric = document.getElementById("addMetric").value.trim();
+      const objective = document.getElementById("addObjective").value.trim();
+      const target = Number(document.getElementById("addTarget").value);
+      const unit = document.getElementById("addUnit").value.trim() || "units";
+      const direction = document.getElementById("addDirection").value;
+      const owner = document.getElementById("addOwner").value.trim() || "Owner TBD";
+      const perspective = document.getElementById("addPerspective").value;
+      const period = selectedAddPeriod();
+      const spec = PERIODS[period];
+      if (!metric || !objective || Number.isNaN(target)) {
+        alert("Please fill metric, objective, and a numeric target.");
+        return;
+      }
+      const series = sampleSeries(target, direction, spec.labels.length);
+      const peer = direction === "higher" ? target * 0.9 : target * 1.1;
+      const peerSeries = series.map((v) => Number((v * 0.95).toFixed(2)));
+      const id = "custom_" + Date.now();
+      const camelsByPerspective = {
+        Financial: "E",
+        Risk: "C",
+        Customer: "M",
+        Member: "M",
+        "Internal Process": "M",
+        "Learning & Development": "M"
+      };
+      objectives.push({
+        id, perspective, metric, unit, objective, owner, target, peer, direction, series, peerSeries,
+        period, labels: spec.labels.slice(),
+        camels: camelsByPerspective[perspective] || "—",
+        peerSource: charter === "cu" ? "CU peer sample" : "Bank peer sample",
+        drivers: [{ title: "Newly added — bind drivers in planning", meta: "Sample trend only until owners name 2–4 drivers" }],
+        action: { what: "TBD", owner, due: "TBD" }
+      });
+      activePerspective = perspective;
+      selectedId = id;
+      setMode("monitor");
+      render();
+      openDetail(id);
+      ["addMetric", "addObjective", "addTarget", "addUnit", "addOwner"].forEach((fid) => {
+        document.getElementById(fid).value = "";
+      });
+      setAddPeriod("month");
+    });
+
+    render();
+  </script>
+</body>
+</html>

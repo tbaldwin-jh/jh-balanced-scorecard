@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.pbix
+
+# Local SQL / Docker scratch (optional large backups)
+*.bak

@@ -1,0 +1,7 @@
+The strategy map on this page is the cause chain. Clicking a box opens the owning Level 1 report. Bank caption: Learning and Growth → Process → Customer → Financial (shareholder value). Risk constrains. Credit-union caption: Learning and Growth → Process → Member → Financial (member value + net worth). Risk constrains. Sample causal lines in the mockup: bank, credit quality → provision → Return on Assets; credit union, efficiency → capital retention → net worth.
+---
+Engagement and frontline turnover are leading indicators for Customer Satisfaction Index and teller service-level agreement. Training and commercial credentials feed pipeline conversion on Level 1-5. Succession on examiner-sensitive seats (Bank Secrecy Act, credit, Chief Financial Officer minus one) feeds the control environment on Level 1-4. Credit-union mode swaps commercial skill coverage for volunteer board education hours — a Management / governance metric, not a bank credential count.
+---
+TABLE1 decision: Are we executing the plan, and which objective needs capital or a course correction this period?
+---
+TABLE1 owner: Executive Leadership Team

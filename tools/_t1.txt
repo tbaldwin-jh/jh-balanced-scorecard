@@ -1,0 +1,7 @@
+﻿0 Report name | Executive decision
+1 Level 1-1 Enterprise Strategy Scorecard | Are we executing the plan, and which objective needs capital or a course correction this p
+2 Level 1-2 Financial Performance and Earn | Is growth producing acceptable, sustainable returns ù and where do we reprice, cut, or inv
+3 Level 1-3 Customer / Member Franchise | Are we deepening the relationships that fund and grow the institution, or buying volume?
+4 Level 1-4 Balance Sheet, Risk and Capita | Is risk accumulating faster than capital, liquidity, and the control environment can absor
+5 Level 1-5 Process, Service and Productio | Can the operating model originate, service, and fulfill the plan at acceptable cost, speed
+6 Level 1-6 People and Organizational Capa | Do we have the people and capabilities to run the strategy safely for the next 12û24 month

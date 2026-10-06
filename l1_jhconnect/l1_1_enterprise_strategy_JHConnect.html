@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riverbend | Enterprise Strategy Scorecard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./l1_shared_JHConnect.css" />
+</head>
+<body>
+  <div class="topbar">
+    <img class="jh-logo" src="./jkhy-logo.png" alt="Jack Henry" />
+    <div>
+      <div class="brand" id="brandTitle">Riverbend Community Bank | Enterprise Strategy Scorecard</div>
+      <div class="sub" id="brandSub">L1 Balanced Scorecard</div>
+    </div>
+    <div class="charter" role="group" aria-label="Charter">
+      <button type="button" class="active" data-charter="bank">Bank</button>
+      <button type="button" data-charter="cu">Credit union</button>
+    </div>
+    <div class="modes" role="group" aria-label="Page">
+      <button class="mode-btn active" type="button" data-mode="monitor" onclick="setMode('monitor')">Monitor</button>
+      <button class="mode-btn" type="button" data-mode="add" onclick="setMode('add')">Add</button>
+      <button class="mode-btn" type="button" data-mode="edit" onclick="setMode('edit')">Edit</button>
+      <button class="mode-btn" type="button" data-mode="defs" onclick="setMode('defs')">Definitions</button>
+    </div>
+  </div>
+  <nav class="l1nav" id="l1nav" aria-label="L1 reports">
+    <button type="button" data-go="l1-1" onclick="switchReport('l1-1')">L1-1 Strategy</button>
+    <button type="button" data-go="l1-2" onclick="switchReport('l1-2')">L1-2 Financial</button>
+    <button type="button" data-go="l1-3" onclick="switchReport('l1-3')">L1-3 Franchise</button>
+    <button type="button" data-go="l1-4" onclick="switchReport('l1-4')">L1-4 Risk</button>
+    <button type="button" data-go="l1-5" onclick="switchReport('l1-5')">L1-5 Process</button>
+    <button type="button" data-go="l1-6" onclick="switchReport('l1-6')">L1-6 People</button>
+  </nav>
+  <div class="wrap">
+    <div id="monitorSession">
+    <div class="toolbar">
+      <div>
+        <h1 id="reportTitle">Enterprise Strategy Scorecard</h1>
+        <p class="lede" id="reportDecision"></p>
+        <p class="caption" id="reportOwner"></p>
+      </div>
+      <div class="spacer"></div>
+      <div>
+        <div class="asof" id="asof"></div>
+        <div class="period-picks" role="radiogroup" aria-label="Time frame · Month is default on entry">
+          <button class="tab tab-default active" data-period="month" type="button" aria-pressed="true">Month (default)</button>
+          <button class="tab" data-period="quarter" type="button" aria-pressed="false">Quarter</button>
+          <button class="tab" data-period="ytd" type="button" aria-pressed="false">YTD</button>
+          <button class="tab" data-period="py" type="button" aria-pressed="false">vs prior year</button>
+        </div>
+      </div>
+    </div>
+    <div class="briefing">
+      <div class="counts" id="counts"></div>
+      <div class="exceptions" id="exceptions"></div>
+    </div>
+    <div class="enterprise-glance" id="enterpriseGlance"></div>
+    <div class="map-wrap" id="mapWrap">
+      <h2 class="section">Strategy map · click a box to open that L1 report</h2>
+      <div class="strategy-row">
+        <div class="strategy-map" id="strategyMap"></div>
+        <div id="riskMapSlot"></div>
+      </div>
+      <p class="caption" id="mapCaption"></p>
+      <p class="caption" id="mapCausal"></p>
+      <p class="caption mix-legend">Bar = share of that report’s proving metrics · <span class="ok">On track</span> · <span class="watch">At risk</span> · <span class="bad">Off track</span></p>
+    </div>
+    <h2 class="section">Objectives</h2>
+    <div class="work" id="workArea">
+      <div class="cards" id="cards"></div>
+      <div class="drill-pane">
+        <div class="detail open" id="detail">
+          <div id="drillEmpty" class="drill-empty">Select an exception or a card.</div>
+          <div id="drillActive" hidden>
+            <div class="drill-head">
+              <h2 id="detailTitle"></h2>
+              <span class="badge" id="drillBadge"></span>
+              <div class="levels">
+                <button class="level-btn active" data-level="1" type="button">1 · KPI &amp; gaps</button>
+                <button class="level-btn" data-level="2" type="button">2 · Trend &amp; peers</button>
+                <button class="level-btn" data-level="3" type="button">3 · Drivers &amp; action</button>
+              </div>
+              <button class="ghost" type="button" id="closeDetail">Close</button>
+            </div>
+            <div id="drillBody"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="defs-panel" id="defsPanel" hidden>
+      <h2 class="section" style="margin-bottom:6px">Metric formulas &amp; definitions</h2>
+      <p class="caption" id="defsCaption">Formulas lock for this charter · sample</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Perspective</th>
+            <th>CAMELS</th>
+            <th>Definition</th>
+            <th>Formula</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="defsTable"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="./l1_shared_JHConnect.js"></script>
+  <script>boot("l1-1");</script>
+</body>
+</html>

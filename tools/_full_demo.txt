@@ -1,0 +1,290 @@
+P0	Normal	LEVEL 1 EXECUTIVE DASHBOARD SUITE
+P1	Normal	Demo Notes
+P2	Normal	First walkthrough brief for stakeholders who have not yet seen the Level 1 mockups. Sample institution: Riverbend Community Bank. As-of date in the mockups: 31 July 2026.
+P3	Normal	These pages are interactive HyperText Markup Language mockups, not a live warehouse. Numbers are sample. Formulas are locked for conversation, not calculation quality-assured. Replace institution name, targets, owners, and peer set after a real Chief Executive Officer / Chief Financial Officer workshop.
+P4	Normal	
+P5	Heading 1	1. What this suite is for
+P6	Normal	The six Level 1 reports are the standing executive monitors for running a community bank or credit union against a published plan. They are a Kaplan–Norton balanced scorecard at board and Executive Leadership Team altitude: objectives first, one proving metric per objective, Actual versus Target versus Peer, a named owner, and a three-step drill that ends in a named action.
+P7	Normal	Level 1 means board and president altitude only. These pages answer three questions in a meeting: Are we on plan this period? Why? What are we doing about it? They are not a general-ledger close package, not a branch league table, and not a full planning workspace. Add and Edit on the top bar bind a sample objective in this browser session only (see section 3).
+P8	Normal	The Cause chain is built to show
+P9	Normal	People (Level 1-6) → Process, service and production (Level 1-5) → Customer / member franchise (Level 1-3) → Financial results (Level 1-2). Balance sheet, risk and capital (Level 1-4) is a constraint rail across that chain, not a fifth earnings box. Level 1-1 is the enterprise map and the only page the board pack needs if time is short.
+P10	Normal	Bank versus credit union
+P11	Normal	One framework, two label sets. The Bank / Credit union toggle on every page relabels metrics (deposits versus shares, Loans-to-Deposits versus Loans-to-Shares, products per household versus Average Member Relationship, Return on Equity versus net worth growth). It does not invent parallel math. Peers stay inside charter: Uniform Bank Performance Report for banks, Financial Performance Report / 5300 Call Report for credit unions. Never mix those two peer books on the same curve. Riverbend Community Bank is the first live sample; credit-union mode is a demo label set until a second workshop.
+P12	Heading 1	2. What you will see on first open
+P13	Normal	Open any of the six L1 report files. They share one engine, so navigation, period pills, and the drill pane behave the same way.
+P14	List Bullet	Top bar: institution name, Bank / Credit union toggle, four page pills (Monitor, Add, Edit, Definitions), links out of the suite.
+P15	List Bullet	Report nav: Level 1-1 Strategy through Level 1-6 People. Switching reports stays in the same browser window.
+P16	List Bullet	Period pills on every report: Month (default, July 2026), Quarter (last closed quarter, second quarter 2026 average), Year-to-date (running mean through July), versus prior year (this year overlaid on last year).
+P17	List Bullet	Needs attention: enterprise exceptions (off track / at risk versus the published target), plus a Branch & associate · Level 2 exceptions strip where that grain exists.
+P18	List Bullet	Strategy map (Level 1-1): click a perspective box to open that report. Risk sits beside the chain as a constraint.
+P19	List Bullet	Objective tiles: Actual, Your target, versus goal (or versus last year when that period is on), peer chip, sparkline, status badge.
+P20	List Bullet	Right-hand drill, three tabs only: 1 · Key performance indicator & gaps; 2 · Trend & peers; 3 · Drivers & action. There is no fourth drill.
+P21	List Bullet	Definitions mode: the same metrics as a table — Metric, Perspective, CAMELS letter, Definition, Formula, Source.
+P22	Normal	Status on every tile is Actual versus the institution’s own target (goal, limit, band, or floor). Peers pressure-test the plan; they do not replace it. Green / amber / red is not a Uniform Bank Performance Report grade.
+P23	Heading 1	3. Add and Edit metric objectives
+P24	Normal	The top bar now has four pills, not two. Monitor is the standing executive session. Definitions is the formula lock. Add and Edit let a presenter bind or change a proving metric without leaving the six pages. They are session-only demo controls — not a live planning workspace, not calculation quality assurance, and not a write to a warehouse.
+P25	Normal	Add — new metric objective. Opens a form on the report you are on. Required fields are metric name, the objective in words, and a numeric target. Optional fields are owner (defaults to the report owner), peer (defaults to a sample offset from target), current actual (otherwise the mockup generates a six-month approach-to-target series), unit, and direction (higher is better, lower is better, or stay inside a band). Create & monitor returns to Monitor and opens the new tile so status, gaps, and the sparkline are visible immediately.
+P26	List Bullet	On Level 1-1, pick the strategy-map home (Financial, Customer / Member, Risk / Capital, Process / Production, or People) so the map bar counts the new tile. On Level 1-2 through Level 1-6, a checkbox can also pin the tile on Level 1-1. On Level 1-5, pick Operations or Production so the card lands in the right stack.
+P27	Normal	Edit — existing metric objective. Opens the same form against a metric already on the report. The picker defaults to the tile that was selected on Monitor. Changes apply to the active charter side only (Bank versus Credit union), so Return on Equity and net worth growth stay independent. You can change name, objective, owner, target, peer, unit, and direction (including a band). Save changes returns to Monitor on that tile. Badge, gaps, and the sparkline recompute from the new target in the same session.
+P28	Normal	Refresh the browser and the sample catalog is restored. A session-added tile has a Definitions stub (formula “to be determined — session add”). In a live institution, earnings and franchise target changes still go through Asset-Liability Committee; risk limits and capital floors still go through the board.
+P29	Heading 1	4. How a leadership meeting is supposed to use it
+P30	Normal	The intended sequence is short. The mockups are built to support this path, not a 47-metric tour.
+P31	Normal	
+P32	Normal	Committees map to reports, not the other way around. Asset-Liability Committee looks at Level 1-4 plus Net Interest Margin on Level 1-2. Credit committee looks at the credit strip on Level 1-4. Finance looks at Level 1-2. Lending looks at the production half of Level 1-5. Operations looks at the service-level half of Level 1-5. Risk and compliance look at Level 1-4 controls. Human resources looks at Level 1-6. Board strategy looks at Level 1-1 only.
+P33	Heading 1	5. Level 1-1 through Level 1-6 summary
+P34	Normal	The Metrics column lists every proving tile on the six Level 1 pages (from the dashboard files), with abbreviations spelled out. Bank and credit-union names are shown where the charter toggle changes the tile. Level 1-1 has nine tiles, including capital.
+P35	Normal	
+P36	Normal	The table above is the inventory you will walk. These notes record other demo-facing clarifications, so the first meeting does not misread ownership or altitude:
+P37	List Bullet	Level 1-1 is chaired by the Executive Leadership Team. The board pack is this page only — nine objective tiles, including capital (Tier 1 leverage / net worth ratio), which also appears on Level 1-4.
+P38	List Bullet	Level 1-3 is franchise value (growth, engagement, depth), not a marketing-mix score. The Chief Marketing Officer is the franchise owner, not a campaign owner.
+P39	List Bullet	Level 1-5 is titled Process, Service and Production and is dual-owned: Chief Operating Officer (operations: cycle time, cost per transaction, self-service, teller service-level agreement, credit-union onboarding) and Chief Business Officer (production: funnel, new-money yield, origination volume, commercial pipeline). Loan and deposit growth stay on Level 1-2.
+P40	List Bullet	Period pills (Month, Quarter, Year-to-date, versus prior year) are on every report, not only Level 1-1 and Level 1-2.
+P41	List Bullet	Sample Level 2 branch and associate exceptions sit under Needs attention for franchise, people, process, deposit growth, and the Level 1-1 rollups of those. They are a coaching stub, not a roster and not a seventh report.
+P42	List Bullet	Add and Edit pills sit between Monitor and Definitions on every Level 1 page. They create or change a proving metric in this browser session only. Refresh restores the sample catalog.
+P43	Heading 1	6. Purpose of each dashboard
+P44	Normal	Level 1-1 — Enterprise Strategy Scorecard
+P45	Normal	This page is the only report the board needs if the meeting is short. Owner in the mockup: Executive Leadership Team (Chief Executive Officer chairs).
+P46	Normal	Decision is built to force: Are we executing the plan as a leadership team, and which objective needs a course correction this period?
+P47	Normal	Nine proving tiles (this year’s board pack): Return on Assets; Efficiency ratio; Tier 1 leverage / Net worth; Customer Satisfaction Index / Net Promoter Score; Retention; Loan growth; Core funding mix; Past due 30 days or more; Engagement. Each tile is an objective with one number — not a catalog of every metric in the institution.
+P48	Normal	The strategy map on this page is the cause chain. Clicking a box opens the owning Level 1 report. Bank caption: Learning and Growth → Process → Customer → Financial (shareholder value). Risk constrains. Credit-union caption: Learning and Growth → Process → Member → Financial (member value + net worth). Risk constrains. Sample causal lines in the mockup: bank, credit quality → provision → Return on Assets; credit union, efficiency → capital retention → net worth.
+P49	Normal	Use this page to start and to end the conversation. Do not turn it into six metric walls. If a tile is off track, go to the owning report and stop at the named action.
+P50	Normal	Level 1-2 — Financial Performance and Earnings
+P51	Normal	Owner: Chief Financial Officer. This is the earnings quality and growth scorecard — whether volume is producing acceptable, sustainable returns.
+P52	Normal	Decision: Is growth producing acceptable, sustainable returns — and where do we reprice, cut, or invest?
+P53	Normal	Bank story: earn competitive Return on Assets / Return on Equity without stretching credit or wholesale funding. Credit-union story: earn enough Return on Assets to fund net-worth growth and member value. Capital generation (Return on Equity or net worth growth) is scored here. Capital adequacy (Tier 1 leverage or net worth ratio) lives on Level 1-4 and is echoed on Level 1-1.
+P54	Normal	Cause lines the page is meant to make visible: core funding mix (Level 1-3) → cost of funds → Net Interest Margin → net interest income; products / Average Member Relationship (Level 1-3) → fee income → noninterest mix; process efficiency (Level 1-5) → expense → efficiency ratio; credit quality (Level 1-4) → provision → net income → Return on Assets.
+P55	Normal	Net Interest Margin is scored here as earnings quality. Interest-rate-risk limits and the shock path are managed on Level 1-4. Efficiency is scored here and explained on Level 1-5. That split is intentional — it is not a missing process metric.
+P56	Normal	Level 1-3 — Customer / Member Franchise
+P57	Normal	Owner: Chief Marketing Officer, as franchise owner — not as a marketing-mix owner. This page measures whether the institution is deepening the relationships that fund it, or buying volume.
+P58	Normal	Decision: Franchise value — growth, engagement, and depth. Are we deepening the relationships that fund the institution, or buying volume?
+P59	Normal	Banks measure household franchise depth (Customer Satisfaction Index, household retention, products per household, core deposit mix). Credit unions measure member-owner depth (Net Promoter Score, member retention, Average Member Relationship, core share mix). The math is the same spine; the labels change. Customer Acquisition Cost is here so “growth” cannot hide purchased households.
+P60	Normal	Digital active on this page is franchise adoption (eligible customers or members with a 90-day login). Digital self-service on Level 1-5 is an operations mix (eligible transactions completed without a banker). Different denominators, labeled on purpose.
+P61	Normal	There is no deposit pipeline tile. Deposits show up as growth, mix, Loans-to-Deposits / Loans-to-Shares, and wholesale. There is no seventh Sales report. Production conversion lives on Level 1-5.
+P62	Normal	Level 1-4 — Balance Sheet, Risk and Capital
+P63	Normal	Owner: Chief Risk Officer. This is the constraint rail: whether risk is accumulating faster than capital, liquidity, and controls can absorb. It is first-class in the suite and is not a seventh strategy or a second examination manual.
+P64	Normal	Decision: Is risk accumulating faster than capital, liquidity, and controls can absorb?
+P65	Normal	The page is organized the way an Asset-Liability Committee / risk committee thinks, even though the mockup is a single grid: capital adequacy; credit (past due, criticized, Allowance for Credit Losses); liquidity utilization (Loans-to-Deposits or Loans-to-Shares, wholesale); interest-rate-risk net-interest-income shock; Bank Secrecy Act aging as a Management control key risk indicator.
+P66	Normal	CAMELS letters appear on these tiles (see section 7). They tag which examination component the metric informs. They do not weight the score. Status remains Actual versus the board / Asset-Liability Committee target, limit, band, or floor.
+P67	Normal	Enterprise ratios on this page stay enterprise-only. There is no branch grain on capital, Loans-to-Deposits, interest-rate risk, or Bank Secrecy Act aging. A full Asset-Liability Management book, Bank Secrecy Act inventory, and cyber security-operations center are out of Level 1 by design.
+P68	Normal	Level 1-5 — Process, Service and Production
+P69	Normal	Dual-owned: Chief Operating Officer (run the book) and Chief Business Officer (convert the plan). The mockup splits the cards into Operations and Production so the meeting does not mix service-level agreement with pipeline.
+P70	Normal	Decision: Can operations run the book at acceptable cost and speed — and is production converting the plan?
+P71	Normal	Operations (Chief Operating Officer): decision cycle, cost per transaction, digital self-service, teller service-level agreement, and — in credit-union mode — member onboarding cycle. Production (Chief Business Officer): funnel conversion, yield on new originations, origination volume, commercial pipeline (bank). Loan growth and deposit growth are outcomes and stay on Level 1-2.
+P72	Normal	This is where “growth and pipeline” content belongs as conversion, not as stock. Commercial pipeline percent is the loan pipeline tile. There is no deposit pipeline tile. Total loans, total deposits, and loans minus deposits are not tiles; closest context is loan growth, deposit growth, Loans-to-Deposits / Loans-to-Shares, and wholesale.
+P73	Normal	Level 1-6 — People and Organizational Capacity
+P74	Normal	Owner: Chief Human Resources Officer. A green earnings page with a hollow bench is a lagging failure. This page asks whether the institution has the people to run the strategy safely for the next 12–24 months.
+P75	Normal	Decision: Do we have the people to run the strategy safely for the next 12–24 months?
+P76	Normal	Engagement and frontline turnover are leading indicators for Customer Satisfaction Index and teller service-level agreement. Training and commercial credentials feed pipeline conversion on Level 1-5. Succession on examiner-sensitive seats (Bank Secrecy Act, credit, Chief Financial Officer minus one) feeds the control environment on Level 1-4. Credit-union mode swaps commercial skill coverage for volunteer board education hours — a Management / governance metric, not a bank credential count.
+P77	Normal	Bank Secrecy Act inventory and cyber operations do not live here. Those controls sit on Level 1-4. Time-to-fill on this page is the people constraint that makes Bank Secrecy Act aging worse.
+P78	Heading 1	7. How CAMELS is used
+P79	Normal	CAMELS is the federal examination rating system: Capital, Asset quality, Management, Earnings, Liquidity, and Sensitivity to market risk. Examiners assign those component ratings to the institution. They do not grade this balanced scorecard.
+P80	Normal	The suite uses CAMELS as a tag, not as a weight and not as six extra reports. Every proving metric in the catalog carries one letter so leadership can see which examination component a number informs. The tile’s status (on track / at risk / off track) is still Actual versus the published target. A “C” on capital does not make capital more important than Return on Assets in the score. A “C” only says: this number is how we talk about Capital.
+P81	Normal	
+P82	Normal	Where the letter is visible in the mockups
+P83	List Bullet	Definitions tab on every report: a CAMELS column. Caption states that letters are tags, not weights.
+P84	List Bullet	Level 1-4 tiles: a letter chip on each card (Capital, Asset quality, Liquidity, Sensitivity, Management).
+P85	List Bullet	Level 1-1: letter chips only on the two risk tiles that sit on the enterprise page — capital (C) and past due (A). Other Level 1-1 tiles do not show a chip, so the board page does not look like an examination scorecard.
+P86	List Bullet	Level 1-2, Level 1-3, Level 1-5, and Level 1-6 cards do not show the chip. The letter is still in Definitions if someone asks.
+P87	Normal	Level 1-4 is the CAMELS rail: Capital, Asset quality, Liquidity, Sensitivity, plus Management control key risk indicators (Bank Secrecy Act aging). The suite does not create a Capital report, an Asset-quality report, a Management report, and so on. That would recreate the examination manual and bury the strategy conversation.
+P88	Normal	Talking point if a director asks “what is our CAMELS?”: this product does not display or predict the confidential supervisory rating. It shows the operating metrics the board already owns that examiners will also ask about, tagged so the conversation can move from strategy to safety and soundness without changing pages six times.
+P89	Heading 1	8. How to read a tile and the three drills
+P90	Normal	On the tile
+P91	List Bullet	Badge: On track, At risk, or Off track versus the institution target. Direction matters: higher-is-better, lower-is-better, or stay inside a band (Loans-to-Deposits / Loans-to-Shares).
+P92	List Bullet	Actual / Your target / versus goal — or versus last year when that period pill is selected. The badge and the progress bar remain versus target even in versus-prior-year mode.
+P93	List Bullet	Peer chip: ahead of or behind the same-charter, same-size median. Uniform Bank Performance Report $1 billion–$3 billion for the bank; Financial Performance Report for the credit-union demo.
+P94	List Bullet	Sparkline: this year’s path and a dotted target. When versus prior year is on, last year is a gray solid line (not gold). Gold is reserved for peer.
+P95	Normal	Tab 1 · Key performance indicator & gaps
+P96	Normal	The gap story, not another chart of the same three levels. Target type (Goal, Limit, Band, or Floor) sits above three cards: versus plan, versus peer, versus last year. A one-line Close the gap states what it would take to get back to plan (financial metrics also note that five months remain in 2026 from the July as-of). Interest Rate Risk distinguishes the −8% Asset-Liability Committee floor from the −6% plan.
+P97	Normal	Tab 2 · Trend & peers
+P98	Normal	A larger trend (actual, target, and either peer median or last year) plus a short named-peer table. Peer names are sample institutions in-charter. Curves never mix Uniform Bank Performance Report and Financial Performance Report.
+P99	Normal	Tab 3 · Drivers & action
+P100	Normal	Two or three named drivers (labels, not a click-path into child metrics) and one named action with owner and due date. Where the metric has Level 2 grain, two small tables appear: four sample branches and one or two associates to coach. Caption in the product: sample Level 2 grain — not a seventh Level 1 report or a full roster. Board conversation stops here.
+P101	Normal	There is no department grain in these mockups. Branch and associate detail is a demonstration that the enterprise miss can be located, not a production coaching system. A live Level 2 product would be a later phase.
+P102	Heading 1	9. Sample Level 2 grain — what is and is not claimed
+P103	Normal	‘Needs attention’ can show Branch & associate · Level 2 exceptions. Click opens drill 3. That strip exists on reports that have a branch-attributable proving metric.
+P104	Normal	Has sample branch / associate grain
+P105	Normal	Customer Satisfaction Index, retention, household / member growth, products per household / Average Member Relationship, digital active, cross-sell, deposit / share growth, decision cycle, funnel, new-money yield, origination volume, cost per transaction, self-service, pipeline / onboarding, teller service-level agreement, engagement, turnover, teller turnover, training. On Level 1-1, only Customer Satisfaction Index, retention, and engagement carry those exceptions.
+P106	Normal	Enterprise-only (no branch table)
+P107	Normal	Return on Assets, efficiency, capital, loan growth, core mix, past due, and the rest of the Level 1-4 constraint ratios (criticized, Allowance for Credit Losses, Loans-to-Deposits, interest-rate risk, wholesale, Bank Secrecy Act aging), plus Customer Acquisition Cost, time-to-fill, succession, and skill / board education.
+P108	Normal	Do not tell the room these dashboards already run department, branch, and associate management. They signal the conversation path and stop.
+P109	Heading 1	10. What is deliberately not on Level 1 (Out-of-Scope)
+P110	Normal	The following is out-of-scope:
+P111	List Bullet	A seventh Sales report, a marketing-mix scorecard, or a digital-only scorecard.
+P112	List Bullet	Branch or region league tables, product profit-and-loss, or a full associate roster.
+P113	List Bullet	Stock tiles for total loans, total deposits, or loans minus deposits.
+P114	List Bullet	Loan book mix (corporate / commercial / business / retail) — Level 2 under Level 1-2 / Level 1-5.
+P115	List Bullet	Transaction-decline percent versus industry — an exception rule later, not a tile.
+P116	List Bullet	Full Asset-Liability Management, Bank Secrecy Act inventory, cyber security-operations center, project-management Gantt, environmental-social-governance unless the board mandates it.
+P117	List Bullet	A live planning system with persistence and calculation quality assurance. Add and Edit on these six pages are session-only (they do not write to a warehouse or survive a refresh). In a live bank, earnings and franchise targets changed mid-year still go through Asset-Liability Committee. Risk limits and capital floors still go through the board.
+P118	List Bullet	A live Call Report or BigQuery feed. The as-of is a bound sample month.
+P119	Heading 1	11. Demo path
+P120	Normal	Stay on Bank unless someone asks for the credit-union toggle.
+P121	List Bullet	Start on Level 1-1. Read Needs attention. Point at the strategy map. Do not click every tile.
+P122	List Bullet	Open one off-track financial tile (Return on Assets or Efficiency). Walk tab 1 (gaps, target type, close-the-gap), tab 2 (trend), tab 3 (drivers and action).
+P123	List Bullet	Switch period to versus prior year on that tile so the gray last-year line is visible, then return to Month.
+P124	List Bullet	From the map, open Level 1-4. Show a CAMELS chip and say “tag, not weight.” Open Loans-to-Deposits for the band, or Interest Rate Risk for floor versus plan.
+P125	List Bullet	Open Level 1-5. Point at the Operations versus Production split. Open teller service-level agreement and show the sample branch / associate tables.
+P126	List Bullet	Flip to Definitions on any page. Show formula lock and the CAMELS column. Say the score is still versus target.
+P127	List Bullet	If asked how a new objective gets on the page: open Add, fill metric name, objective, and target, then Create & monitor. Open Edit on that tile and move the target so the badge changes. Say this is session-only — refresh restores the sample pack.
+P128	List Bullet	If asked about credit unions: toggle once on Level 1-2 (Return on Equity becomes net worth growth; efficiency target moves to the Financial Performance Report curve) and toggle back.
+P129	List Bullet	Close on Level 1-1: this is the board pack; the other five pages are the owning conversations.
+P130	Normal	Avoid: walking all ~47 proving metrics; treating sample peers as real Uniform Bank Performance Report extracts; promising a live Call Report; or presenting the four-branch table as a production Level 2 system.
+P131	Heading 1	12. Sample targets in the demo bank pack
+P132	Normal	These are workshop stand-ins so the mockups have bindable objectives. They are not Riverbend’s published policy. Credit-union demo targets differ (for example Return on Assets 0.75%, efficiency about 79% versus Financial Performance Report).
+P133	Normal	
+P134	Heading 1	13. Files to open in the demo
+P135	Normal	
+P136	Normal	Add and Edit on the Level 1 top bar are the in-suite way to create or change a proving metric in this walkthrough.
+P137	Heading 1	14. Honest status versus a live scorecard
+P138	Normal	The architecture is a complete Level 1 balanced scorecard: four perspectives, risk rail, charter swap, proving metrics, exception strip, strategy map, three-level drill, locked definitions, and session-only Add / Edit of metric objectives. It is not yet an operating scorecard. A bank cannot run next month from these pages. Still required, and not claimed as done:
+P139	List Bullet	A real Chief Executive Officer / Chief Financial Officer workshop to confirm targets, peer set, and mid-year change rights.
+P140	List Bullet	Calculation quality assurance for the latest as-of month against the locked formulas.
+P141	List Bullet	A published dictionary version and the same identifiers in Asset-Liability Committee and board packs.
+P142	List Bullet	Warehouse / Call Report binding. Sample series in the mockups are illustrative.
+P143	Normal	If asked “when can we use this in Asset-Liability Committee (ALCO)?”: after targets are confirmed and the July (or then-current) month has been calculation quality-assured. Until then, treat the walkthrough as product shape and conversation design.
+P144	Normal	
+P145	Heading 1	15. Metric definitions (all proving metrics)
+P146	Normal	Compiled from the Definitions tab in the Level 1 suite. One row per proving metric. Bank and credit-union wording both appear because the charter toggle changes labels, peer book, and in a few cases the proving metric itself (Return on Equity versus net worth growth; products per household versus Average Member Relationship; commercial pipeline versus onboarding cycle; commercial skill coverage versus board education hours). CAMELS letters are tags, not weights — the score is still Actual versus the institution target. Never mix Uniform Bank Performance Report and Financial Performance Report.
+P147	Normal	
+P148	Normal	
+P149	Heading 1	16. Glossary
+P150	Normal	
+P151	Normal	End of notes. The mockups remain the product; this document is a pre-read so the first meeting can spend time on decisions, not decoding the page.
+---TABLE 0 rows=5 cols=3---
+T0R0	Time / click	Where	Question answered
+T0R1	About 5 seconds	Level 1-1 exception strip	What needs the Executive Leadership Team this period.
+T0R2	First click	Strategy map	Which perspective is breaking the cause chain.
+T0R3	Second click	Owning report (Level 1-2 through Level 1-6)	Actual versus Target versus Peer on this year’s proving metrics.
+T0R4	Third click	Drivers and named action	Owner, due date, and — where it exists — sample branch / associate grain.
+---TABLE 1 rows=7 cols=5---
+T1R0	Report name	Owner	Audience	Executive decision	Metrics
+T1R1	Level 1-1 Enterprise Strategy Scorecard	Executive Leadership Team	Board; Executive Leadership Team	Are we executing the plan, and which objective needs capital or a course correction this period?	Return on Assets; Efficiency ratio; Loan growth; Customer Satisfaction Index / Net Promoter Score; Retention; Core funding mix; Tier 1 leverage / Net worth ratio; Past due 30 days or more; Engagement
+T1R2	Level 1-2 Financial Performance and Earnings	Chief Financial Officer	Executive Leadership Team; Asset-Liability Committee; board finance	Is growth producing acceptable, sustainable returns — and where do we reprice, cut, or invest?	Return on Assets; Return on Equity / Net worth growth; Net Interest Margin; Efficiency ratio; Net Operating Income versus budget; Loan growth; Deposit growth / Share growth; Noninterest income mix
+T1R3	Level 1-3 Customer / Member Franchise	Chief Marketing Officer	Executive Leadership Team; board franchise	Are we deepening the relationships that fund and grow the institution, or buying volume?	Customer Satisfaction Index / Net Promoter Score; Retention; Customer growth / Member growth; Core funding mix / Core share mix; Products per household / Average Member Relationship; Digital active; Cross-sell; Customer Acquisition Cost
+T1R4	Level 1-4 Balance Sheet, Risk and Capital	Chief Risk Officer	Asset-Liability Committee; risk committee; board risk	Is risk accumulating faster than capital, liquidity, and the control environment can absorb?	Tier 1 leverage / Net worth ratio; Past due 30 days or more; Criticized assets; Allowance for Credit Losses coverage; Loans-to-Deposits / Loans-to-Shares; Interest Rate Risk net interest income +200 basis points; Wholesale reliance; Bank Secrecy Act aging
+T1R5	Level 1-5 Process, Service and Production	Chief Operating Officer / Chief Business Officer	Executive Leadership Team operations; lending committee	Can the operating model originate, service, and fulfill the plan at acceptable cost, speed, and error rate?	Decision cycle; Funnel conversion; Yield on new originations; Origination volume; Cost per transaction; Digital self-service; Commercial pipeline / Onboarding cycle; Teller service-level agreement
+T1R6	Level 1-6 People and Organizational Capacity	Chief Human Resources Officer	Executive Leadership Team; board talent	Do we have the people and capabilities to run the strategy safely for the next 12–24 months?	Engagement; Voluntary turnover; Teller / frontline turnover; Time-to-fill critical roles; Required training completion; Succession coverage; Commercial skill coverage / Board education hours
+---TABLE 2 rows=7 cols=3---
+T2R0	Letter	Component (spelled out)	How it appears in this suite
+T2R1	C	Capital	Tier 1 leverage (bank); net worth ratio (credit union). Adequacy, not earnings generation.
+T2R2	A	Asset quality	Past due 30 days or more; criticized assets; Allowance for Credit Losses coverage; also loan growth and origination / pipeline as asset formation.
+T2R3	M	Management	Controls and people: Bank Secrecy Act aging, decision cycle, franchise and people metrics, training, succession. Credit-union board education hours.
+T2R4	E	Earnings	Return on Assets, Return on Equity / net worth growth, Net Interest Margin, efficiency, Net Operating Income, fee mix, new-money yield, cost per transaction.
+T2R5	L	Liquidity	Deposit / share growth, core funding mix, Loans-to-Deposits / Loans-to-Shares, wholesale reliance.
+T2R6	S	Sensitivity to market risk	Interest Rate Risk net-interest-income shock versus the Asset-Liability Committee floor.
+---TABLE 3 rows=40 cols=3---
+T3R0	Home report	Proving metric (bank)	Sample target
+T3R1	Level 1-2	Return on Assets	1.50%
+T3R2	Level 1-2	Return on Equity	12.0%
+T3R3	Level 1-2	Net Interest Margin	3.50%
+T3R4	Level 1-2	Efficiency ratio	52% (lower is better)
+T3R5	Level 1-2	Net Operating Income versus budget	$19.0 million
+T3R6	Level 1-2	Loan growth	7.0% year-over-year
+T3R7	Level 1-2	Deposit growth	6.0% year-over-year
+T3R8	Level 1-2	Noninterest income mix	22%
+T3R9	Level 1-3	Customer Satisfaction Index	7.2 floor
+T3R10	Level 1-3	Retention	92%
+T3R11	Level 1-3	Customer growth	4.0%
+T3R12	Level 1-3	Core funding mix	78%
+T3R13	Level 1-3	Products per household	3.10
+T3R14	Level 1-3	Digital active	62%
+T3R15	Level 1-3	Cross-sell	18%
+T3R16	Level 1-3	Customer Acquisition Cost	$285
+T3R17	Level 1-4	Tier 1 leverage	9.5% floor
+T3R18	Level 1-4	Past due 30 days or more	1.10% limit
+T3R19	Level 1-4	Criticized assets	4.0% limit
+T3R20	Level 1-4	Allowance for Credit Losses coverage	1.25×
+T3R21	Level 1-4	Loans-to-Deposits	86% plan; band 80–90%
+T3R22	Level 1-4	Interest Rate Risk net interest income +200 basis points	−6.0% plan; −8% floor
+T3R23	Level 1-4	Wholesale reliance	12% limit
+T3R24	Level 1-4	Bank Secrecy Act aging	18 days average
+T3R25	Level 1-5	Decision cycle	45 days
+T3R26	Level 1-5	Funnel conversion	38%
+T3R27	Level 1-5	Yield on new originations	6.80%
+T3R28	Level 1-5	Origination volume	$48 million / month
+T3R29	Level 1-5	Cost per transaction	$2.40
+T3R30	Level 1-5	Digital self-service	71%
+T3R31	Level 1-5	Commercial pipeline	32%
+T3R32	Level 1-5	Teller service-level agreement	1.8 minutes
+T3R33	Level 1-6	Engagement	74 (Engaged band)
+T3R34	Level 1-6	Voluntary turnover	11%
+T3R35	Level 1-6	Teller / frontline turnover	20%
+T3R36	Level 1-6	Time-to-fill critical roles	45 days
+T3R37	Level 1-6	Required training completion	98%
+T3R38	Level 1-6	Succession coverage	80%
+T3R39	Level 1-6	Commercial skill coverage	70% credentialed
+---TABLE 4 rows=7 cols=3---
+T4R0	Report	File	Use in the room
+T4R1	Level 1-1 Enterprise Strategy Scorecard	l1 / l1_1_enterprise_strategy.html	Start and close here.
+T4R2	Level 1-2 Financial Performance and Earnings	l1 / l1_2_financial.html	Chief Financial Officer conversation.
+T4R3	Level 1-3 Customer / Member Franchise	l1 / l1_3_franchise.html	Franchise, not marketing-mix.
+T4R4	Level 1-4 Balance Sheet, Risk and Capital	l1 / l1_4_risk_capital.html	Constraint rail and CAMELS chips.
+T4R5	Level 1-5 Process, Service and Production	l1 / l1_5_process.html	Operations versus Production.
+T4R6	Level 1-6 People and Organizational Capacity	l1 / l1_6_people.html	Bench and examiner-sensitive seats.
+---TABLE 5 rows=40 cols=7---
+T5R0	Metric (bank / credit union)	Perspective	CAMELS	Home report(s)	Definition	Formula	Source
+T5R1	Return on Assets	Financial	E — Earnings	Level 1-1, Level 1-2	Bank: Earnings on the asset base — primary shareholder profitability key performance indicator. | Credit union: Earnings that fund net worth — capital-build fuel, not a failed bank Return on Assets target.	Return on Assets = Net Income / Average Total Assets	Bank: General Ledger / Call Report · Uniform Bank Performance Report peer median, assets $1 billion–$3 billion | Credit union: 5300 Call Report / Financial Performance Report peer median — do not grade versus Uniform Bank Performance Report
+T5R2	Return on Equity  /  Net worth growth	Financial	E — Earnings	Level 1-2	Bank: Shareholder return on equity capital. | Credit union: Growth in retained earnings / net worth — the credit-union substitute for Return on Equity.	Bank: Return on Equity = Net Income / Average Equity Capital | Credit union: Net worth growth = (Net Worth this period − Net Worth prior period) / |Net Worth prior period|	Bank: General Ledger / Call Report | Credit union: 5300 Call Report · retained earnings only
+T5R3	Net Interest Margin	Financial	E — Earnings	Level 1-2	Bank: Spread between earning-asset yield and cost of funds. | Credit union: Spread while returning member value on loans and shares.	Net Interest Margin = Net Interest Income / Average Earning Assets	Bank: General Ledger / Asset-Liability Management · Uniform Bank Performance Report | Credit union: 5300 Call Report / Financial Performance Report
+T5R4	Efficiency ratio	Financial	E — Earnings	Level 1-1, Level 1-2	Bank: Cost to produce a dollar of revenue. Lower is better. | Credit union: Cost to produce a dollar of revenue on the credit-union expense structure. Never grade versus a bank 52% target.	Efficiency = Noninterest Expense / (Net Interest Income + Noninterest Income)	Bank: General Ledger · Uniform Bank Performance Report efficiency median — bank curve (about 52% target) | Credit union: General Ledger · Financial Performance Report efficiency median (about 79%)
+T5R5	Net Operating Income versus budget	Financial	E — Earnings	Level 1-2	Bank: Operating profit after interest and operating expense, before extraordinary items. | Credit union: Operating income retained to build net worth and support member value.	Net Operating Income = Net Interest Income + Noninterest Income − Noninterest Expense (annualized)	Bank: General Ledger · peer median annualized Net Operating Income | Credit union: General Ledger · credit-union peer annualized Net Operating Income
+T5R6	Loan growth	Financial	A — Asset quality	Level 1-1, Level 1-2	Bank: Year-over-year growth in gross loans held for investment. | Credit union: Year-over-year loan growth inside member-business-lending and credit limits.	Loan growth = (Loans this period − Loans prior period) / Loans prior period	Bank: Core / Call Report | Credit union: Core / 5300 Call Report
+T5R7	Deposit growth  /  Share growth	Financial	L — Liquidity	Level 1-2	Bank: Year-over-year growth in the deposit franchise. | Credit union: Year-over-year growth in member shares.	Bank: Deposit growth = (Deposits this period − Deposits prior period) / Deposits prior period | Credit union: Share growth = (Shares this period − Shares prior period) / Shares prior period	Bank: Core / Federal Deposit Insurance Corporation Summary of Deposits | Credit union: Core / 5300 Call Report
+T5R8	Noninterest income mix	Financial	E — Earnings	Level 1-2	Bank: Share of revenue that is not spread income. | Credit union: Fee income consistent with member value — do not maximize junk fees.	Fee mix = Noninterest Income / (Net Interest Income + Noninterest Income)	Bank: General Ledger | Credit union: General Ledger / 5300 Call Report
+T5R9	Customer Satisfaction Index / Net Promoter Score  /  Net Promoter Score	Customer	M — Management	Level 1-1, Level 1-3	Bank: Customer experience score from the bank’s satisfaction survey (Capstone Customer Satisfaction Index / Net Promoter Score). | Credit union: Member Net Promoter Score — cooperative service identity.	Bank: Customer Satisfaction Index = Mean survey score (vendor scale; target greater than 7.2) | Credit union: Net Promoter Score = % Promoters − % Detractors	Bank: Survey platform · community bank customer-satisfaction sample | Credit union: Survey platform · credit-union member sample
+T5R10	Retention	Customer	M — Management	Level 1-1, Level 1-3	Bank: Share of customer relationships that remain open over the period. | Credit union: Share of member-owners who remain on the books.	Bank: Retention = 1 − (Closed Customer Information Files / Beginning Customer Information Files) | Credit union: Retention = 1 − (Closed members / Beginning members)	Bank: Core Customer Information File · household retention | Credit union: Core membership · credit-union peer retention
+T5R11	Customer growth  /  Member growth	Customer	M — Management	Level 1-3	Bank: Net growth in household relationships, not account records. | Credit union: Net member growth inside field of membership.	Bank: Customer growth = (Customer Information Files this period − prior period) / prior period | Credit union: Member growth = (Members this period − Members prior period) / Members prior period	Bank: Core Customer Information File | Credit union: Core / field of membership
+T5R12	Core funding mix  /  Core share mix	Customer	L — Liquidity	Level 1-1, Level 1-3	Bank: Share of funding that is sticky core deposits (demand deposit accounts + savings + money-market deposit accounts). | Credit union: Share of funding that is sticky member shares.	Bank: Core mix = Core deposits / Total deposits | Credit union: Core share mix = Core shares / Total shares	Core / Treasury
+T5R13	Products per household  /  Average Member Relationship	Customer	M — Management	Level 1-3	Bank: Products attached to each household relationship. | Credit union: Average member relationship — balances and products per member.	Bank: Products per household = Open products / Households (Customer Information File) | Credit union: Average Member Relationship = Total member relationship value / Members	Bank: Core Customer Information File | Credit union: Core / member analytics
+T5R14	Digital active	Customer	M — Management	Level 1-3	Bank: Share of eligible customers with a 90-day digital login. | Credit union: Share of eligible members with a 90-day digital login.	Bank: Digital active = 90-day active digital users / Eligible customers | Credit union: Digital active = 90-day active digital users / Eligible members	Digital analytics
+T5R15	Cross-sell	Customer	M — Management	Level 1-3	Bank: Attach rate of a second (or additional) product to existing households. | Credit union: Attach rate of additional products to existing members.	Bank: Cross-sell = Households with 2 or more products / Households | Credit union: Cross-sell = Members with 2 or more products / Members	Core / Customer Relationship Management
+T5R16	Customer Acquisition Cost	Customer	M — Management	Level 1-3	Bank: Cost to acquire a funded household — do not buy volume. | Credit union: Cost to acquire a new member inside plan.	Bank: Customer Acquisition Cost = Acquisition spend / Net new funded households | Credit union: Customer Acquisition Cost = Acquisition spend / Net new members	Marketing + core
+T5R17	Tier 1 leverage  /  Net worth ratio	Risk	C — Capital	Level 1-1, Level 1-4	Bank: Leverage capital adequacy versus Prompt Corrective Action / Community Bank Leverage Ratio well-capitalized levels. | Credit union: Net worth adequacy. National Credit Union Administration well-capitalized is typically at least 7%; many boards target 10% or more.	Bank: Tier 1 Leverage = Tier 1 Capital / Average Total Assets | Credit union: Net Worth Ratio = Net Worth / Total Assets	Bank: Call Report / capital calculator · Uniform Bank Performance Report | Credit union: 5300 Call Report / Financial Performance Report · retained earnings only
+T5R18	Past due 30 days or more	Risk	A — Asset quality	Level 1-1, Level 1-4	Bank: Early asset-quality signal: unpaid balance 30 or more days past due. | Credit union: Delinquency 30 days or more as a share of gross loans — often a tighter credit-union peer than banks.	Past Due 30+ = Unpaid principal balance 30 or more days past due / Gross Loans	Bank: Servicing / core · peer past-due / gross loans | Credit union: Servicing / core · credit-union peer
+T5R19	Criticized assets	Risk	A — Asset quality	Level 1-4	Bank: Watchlist and classified credits as a share of loans or assets. | Credit union: Classified and criticized assets versus credit-union policy limit.	Bank: Criticized = (Special mention + Substandard + Doubtful) / Loans | Credit union: Criticized = (Special mention + Classified) / Loans	Bank: Credit administration / Allowance for Loan and Lease Losses | Credit union: Credit administration
+T5R20	Allowance for Credit Losses coverage	Risk	A — Asset quality	Level 1-4	Bank: Allowance coverage of nonperforming loans under Current Expected Credit Losses. | Credit union: Allowance coverage of nonperforming loans under Current Expected Credit Losses.	Allowance for Credit Losses coverage = Allowance for Credit Losses / Nonperforming loans	Bank: Current Expected Credit Losses / General Ledger | Credit union: Current Expected Credit Losses / 5300 Call Report
+T5R21	Loans-to-Deposits  /  Loans-to-Shares	Risk	L — Liquidity	Level 1-4	Bank: How much of the deposit base is deployed in loans (liquidity utilization). | Credit union: How much of member shares is deployed in loans.	Bank: Loans-to-Deposits = Total Loans / Total Deposits | Credit union: Loans-to-Shares = Total Loans / Total Shares	Bank: Core / Call Report · policy band 80–90% | Credit union: Core / 5300 Call Report · policy band 75–88%
+T5R22	Interest Rate Risk net interest income +200 basis points	Risk	S — Sensitivity to market risk	Level 1-4	Bank: Sensitivity of net interest income to a parallel +200 basis point rate shock. | Credit union: Sensitivity of net interest income to a +200 basis point shock versus the Asset-Liability Committee floor; use credit-union Asset-Liability Management peers, not bank peers.	Interest Rate Risk net interest income shock = Change in net interest income under +200 basis points / Base net interest income  (must stay at or above the Asset-Liability Committee floor of −8%)	Bank: Asset-Liability Management model · Asset-Liability Committee policy | Credit union: Asset-Liability Management model · Financial Performance Report / credit-union peer
+T5R23	Wholesale reliance	Risk	L — Liquidity	Level 1-4	Bank: Reliance on Federal Home Loan Bank advances, brokers, and other non-core funding. | Credit union: Reliance on borrowed funds versus member shares.	Bank: Wholesale = Wholesale liabilities / Total liabilities | Credit union: Wholesale = Borrowed funds / Total liabilities	Bank: Treasury / Call Report | Credit union: Treasury / 5300 Call Report
+T5R24	Bank Secrecy Act aging	Risk	M — Management	Level 1-4	Bank: Average age of open Bank Secrecy Act / Anti-Money Laundering alerts — an examination talking point. | Credit union: Average age of open Bank Secrecy Act / Anti-Money Laundering alerts.	Bank Secrecy Act aging = Mean days open for unresolved alerts	Anti-Money Laundering case system
+T5R25	Decision cycle	Internal Process	M — Management	Level 1-5	Bank: Elapsed days from commercial application to credit decision. | Credit union: Elapsed days from consumer or member-business-lending application to decision.	Decision cycle = Median days (application → decision)	Loan Origination System / credit administration
+T5R26	Funnel conversion	Internal Process	M — Management	Level 1-5	Share of applications that become booked loans.	Funnel conversion = Booked loans / Applications	Loan Origination System
+T5R27	Yield on new originations	Internal Process	E — Earnings	Level 1-5	Bank: Coupon on newly originated loans versus the existing book. | Credit union: Coupon on newly originated loans versus member-value pricing.	New-money yield = Weighted average note rate on originations in the period	Loan Origination System / core
+T5R28	Origination volume	Internal Process	A — Asset quality	Level 1-5	Dollar volume of loans booked in the period.	Origination volume = Sum of booked principal	Loan Origination System
+T5R29	Cost per transaction	Internal Process	E — Earnings	Level 1-5	Bank: Fully loaded cost to process one customer transaction. | Credit union: Fully loaded cost to process one member transaction.	Cost per transaction = Transaction-processing expense / Transaction count	Operations / General Ledger
+T5R30	Digital self-service	Internal Process	M — Management	Level 1-5	Bank: Share of eligible transactions completed without a banker (operations lens). | Credit union: Share of eligible transactions completed without staff.	Self-service = Straight-through / digital transactions / Eligible transactions	Core / digital operations
+T5R31	Commercial pipeline  /  Onboarding cycle	Internal Process	A — Asset quality	Level 1-5	Bank: Commercial pipeline conversion — applications that become booked commercial and industrial loans. | Credit union: Days to onboard a new member (field-of-membership checks included).	Bank: Pipeline conversion = Booked commercial and industrial / Weighted pipeline | Credit union: Onboarding cycle = Median days (application → funded membership)	Bank: Loan Origination System / Customer Relationship Management | Credit union: Core / membership operations
+T5R32	Teller service-level agreement	Internal Process	M — Management	Level 1-5	Time to complete a teller transaction at the window.	Teller service-level agreement = Average minutes per teller transaction	Branch operations / queue system
+T5R33	Engagement	Learning and Growth	M — Management	Level 1-1, Level 1-6	Bank: Associate engagement index (Emplify or successor) in the Engaged band. | Credit union: Associate engagement index in the Engaged band.	Engagement = Vendor engagement index (participation at least 80%)	Bank: Human resources survey (Emplify) | Credit union: Human resources survey
+T5R34	Voluntary turnover	Learning and Growth	M — Management	Level 1-6	Organization-wide voluntary turnover.	Voluntary turnover = Voluntary separations / Average headcount	Human Resources Information System
+T5R35	Teller / frontline turnover	Learning and Growth	M — Management	Level 1-6	Bank: Annualized turnover in the teller / frontline job family. | Credit union: Annualized frontline turnover.	Bank: Teller turnover = Teller separations / Average teller headcount | Credit union: Frontline turnover = Frontline separations / Average frontline headcount	Bank: Human Resources Information System · segment tellers versus rest of staff | Credit union: Human Resources Information System
+T5R36	Time-to-fill critical roles	Learning and Growth	M — Management	Level 1-6	Bank: Calendar days to fill examiner-sensitive seats (Bank Secrecy Act, credit, Chief Financial Officer minus one). | Credit union: Calendar days to fill examiner-sensitive seats.	Time-to-fill = Offer accept date − Requisition open date	Applicant Tracking System / Human Resources Information System
+T5R37	Required training completion	Learning and Growth	M — Management	Level 1-6	Completion of required risk and compliance modules.	Training completion = Completed required modules / Assigned modules	Learning Management System
+T5R38	Succession coverage	Learning and Growth	M — Management	Level 1-6	Ready-now backup coverage for Chief Executive Officer minus one, Bank Secrecy Act, credit, and Chief Financial Officer.	Succession coverage = Named ready-now seats / Critical seats	Talent review
+T5R39	Commercial skill coverage  /  Board education hours	Learning and Growth	M — Management	Level 1-6	Bank: Share of commercial lenders holding required credentials. | Credit union: Volunteer board education hours versus policy.	Bank: Skill coverage = Credentialed commercial lenders / Commercial lenders | Credit union: Board education = Sum of documented board training hours (year-to-date)	Bank: Learning Management System / credit administration | Credit union: Board secretary / Learning Management System
+---TABLE 6 rows=25 cols=2---
+T6R0	Term	Meaning in this suite
+T6R1	Level 1	Board and Executive Leadership Team altitude. Aggregates, exceptions, named actions. Not branch operations.
+T6R2	Level 2	Department, region, or branch grain. Sample only in these mockups. Not a seventh Level 1 report.
+T6R3	Balanced scorecard	Kaplan–Norton design: objectives in four perspectives, proved by a few metrics, linked by cause and effect.
+T6R4	Actual / Target / Peer	The three numbers on every tile. Target is policy. Peer pressure-tests the plan.
+T6R5	Uniform Bank Performance Report	Federal bank peer report. Used only in Bank mode. Size band in the sample: $1 billion–$3 billion assets.
+T6R6	Financial Performance Report	Credit-union peer report built from the 5300 Call Report. Used only in Credit union mode.
+T6R7	5300 Call Report	National Credit Union Administration regulatory report.
+T6R8	Call Report	Bank regulatory report (Consolidated Reports of Condition and Income).
+T6R9	CAMELS	Capital, Asset quality, Management, Earnings, Liquidity, Sensitivity to market risk. Examination components. Tags in this suite, not scores.
+T6R10	Asset-Liability Committee	Committee that owns earnings and franchise goal changes mid-year, plus interest-rate-risk and liquidity policy.
+T6R11	Prompt Corrective Action / Community Bank Leverage Ratio	Bank capital regimes. Community Bank Leverage Ratio is an optional simpler leverage test for qualifying community banks.
+T6R12	Current Expected Credit Losses	Current expected-loss accounting for the allowance.
+T6R13	Bank Secrecy Act / Anti-Money Laundering	The control program whose alert aging is the Management key risk indicator on Level 1-4.
+T6R14	Customer Information File	The core’s household / customer record. Household metrics use this grain, not account records.
+T6R15	Field of membership	Credit-union eligibility boundary. Onboarding and member growth sit inside it.
+T6R16	Member business lending	Credit-union commercial lending, subject to a statutory cap. Bank analog is commercial and industrial / commercial real estate without that cap.
+T6R17	Average Member Relationship	Credit-union franchise-depth metric. Bank analog is products per household.
+T6R18	Loans-to-Deposits / Loans-to-Shares	Utilization band. Too high is liquidity stress; too low is under-earning.
+T6R19	Net Promoter Score	Percent promoters minus percent detractors. Credit-union proving metric for service; bank sample uses Customer Satisfaction Index.
+T6R20	Customer Satisfaction Index	Vendor satisfaction scale in the bank sample (Capstone floor 7.2).
+T6R21	Basis points / points	Gap display: basis points when the percentage-point gap is under 1.00; points when it is 1.00 or more.
+T6R22	Calculation quality assurance	The gate that does not yet exist: latest as-of month recomputed from locked inputs and signed off. These mockups are not through that gate.
+T6R23	Add (metric objective)	Top-bar pill that creates a proving metric on the current report for this browser session. Optional pin to Level 1-1. Refresh restores the sample catalog.
+T6R24	Edit (metric objective)	Top-bar pill that changes name, objective, owner, target, peer, unit, or direction on the active Bank or Credit union side of a tile. Session only.

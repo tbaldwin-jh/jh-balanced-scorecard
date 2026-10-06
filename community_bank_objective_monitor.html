@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank | Objective Monitor Scorecard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --ok-bg: rgba(61, 214, 140, 0.12);
+      --watch: #f5b942;
+      --watch-bg: rgba(245, 185, 66, 0.12);
+      --bad: #f07178;
+      --bad-bg: rgba(240, 113, 120, 0.12);
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+    }
+    .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .spacer { flex: 1; }
+    .topbar a { color: #cfe0ff; text-decoration: none; font-size: 12px; }
+    .topbar a:hover { text-decoration: underline; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 18px 20px 64px; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .panel h1 {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+    .lede { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+    .modes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .mode-btn, .pill-btn, button.ghost {
+      border: 1px solid var(--line);
+      background: var(--elevated);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .mode-btn.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+    .pill-btn.primary, button.primary {
+      background: var(--accent);
+      border-color: #2563eb;
+      color: #fff;
+      font-weight: 600;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 900px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+    }
+    .stat {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .stat .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .stat .value { font-size: 1.5rem; font-weight: 700; margin-top: 4px; letter-spacing: -0.03em; }
+    .stat .value.ok { color: var(--ok); }
+    .stat .value.watch { color: var(--watch); }
+    .stat .value.bad { color: var(--bad); }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 14px;
+    }
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+      font-weight: 600;
+    }
+    .tab .count {
+      display: inline-block;
+      min-width: 18px;
+      text-align: center;
+      margin-left: 6px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      font-size: 11px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .card.selected { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .card h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+    .badge.ok { background: var(--ok-bg); color: var(--ok); }
+    .badge.watch { background: var(--watch-bg); color: var(--watch); }
+    .badge.bad { background: var(--bad-bg); color: var(--bad); }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .metric-box {
+      background: var(--elevated);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .metric-box .k { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .metric-box .v { font-size: 15px; font-weight: 700; margin-top: 2px; }
+    .metric-box input {
+      width: 100%;
+      margin-top: 2px;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 6px 8px;
+    }
+    .metric-box input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .obj-input {
+      width: 100%;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+    .obj-input:focus { outline: none; border-color: #2563eb; }
+
+    .chart-wrap {
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 8px 4px;
+    }
+    .chart-wrap svg { width: 100%; height: 72px; display: block; }
+    .chart-legend {
+      display: flex;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .dot.actual { background: var(--accent); }
+    .dot.goal { background: var(--watch); }
+
+    .progress {
+      height: 6px;
+      background: #0f131a;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .progress > span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+    }
+    .progress > span.ok { background: var(--ok); }
+    .progress > span.watch { background: var(--watch); }
+    .progress > span.bad { background: var(--bad); }
+
+    .detail {
+      margin-top: 16px;
+      display: none;
+    }
+    .detail.open { display: block; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 900px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .form-row label { color: var(--muted); font-size: 12px; }
+    .form-row select, .form-row input, .form-row textarea {
+      width: 100%;
+      background: #0f131a;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+    .form-row textarea { min-height: 72px; resize: vertical; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0 0 10px;
+    }
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #2563eb;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      color: #cfe0ff;
+      font-size: 13px;
+    }
+    .empty {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 24px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="brand">Community Bank | Objective Monitor</div>
+      <div class="sub">Balanced Scorecard · set goals · track actual vs target</div>
+    </div>
+    <div class="spacer"></div>
+    <a href="./community_bank_objective_aggregates.html">Scorecard aggregates</a>
+    <a href="./community_fi_working_monitor.html">Working monitor (peer drill)</a>
+    <a href="./executive_bsc_dashboard.html">Executive BSC dashboard</a>
+    <a href="./jhbi_balanced_scorecard/mockups/community_bank_bsc_planning.html">Planning workspace</a>
+    <span class="sub">Sample data · Capstone KPIs</span>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="panel">
+        <h1>How am I trending against my objective?</h1>
+        <p class="lede">
+          Enter or edit strategic objectives by Balanced Scorecard perspective.
+          The monitor compares actual performance to your target and shows a 6‑month trend.
+        </p>
+        <div class="modes">
+          <button class="mode-btn active" data-mode="monitor" type="button">Monitor trends</button>
+          <button class="mode-btn" data-mode="edit" type="button">Edit objectives &amp; targets</button>
+          <button class="mode-btn" data-mode="add" type="button">Add objective</button>
+        </div>
+        <p class="hint" id="modeHint">Click a card to inspect the trend. Status flags only when off-track vs your goal.</p>
+      </div>
+      <div class="panel">
+        <div class="summary" id="summaryStats"></div>
+      </div>
+    </div>
+
+    <div class="tabs" id="perspectiveTabs"></div>
+    <div class="grid" id="cardGrid"></div>
+
+    <div class="detail" id="detailPanel">
+      <div class="panel">
+        <div class="detail-grid">
+          <div>
+            <h2 id="detailTitle" style="margin:0 0 6px;font-size:1.1rem;"></h2>
+            <p class="hint" id="detailDesc"></p>
+            <div class="chart-wrap" style="height:auto;padding:12px;">
+              <svg id="detailChart" viewBox="0 0 520 160" preserveAspectRatio="none"></svg>
+              <div class="chart-legend">
+                <span><i class="dot actual"></i>Actual</span>
+                <span><i class="dot goal"></i>Your target</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="hint">Adjust the objective and target. Changes update status and trend immediately (demo; not persisted to a backend).</p>
+            <div class="form-row">
+              <label for="editObjective">Objective</label>
+              <textarea id="editObjective"></textarea>
+            </div>
+            <div class="form-row">
+              <label for="editTarget">Target</label>
+              <input id="editTarget" type="number" step="any" />
+            </div>
+            <div class="form-row">
+              <label for="editDirection">Direction</label>
+              <select id="editDirection">
+                <option value="higher">Higher is better</option>
+                <option value="lower">Lower is better</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="editOwner">Owner</label>
+              <input id="editOwner" type="text" />
+            </div>
+            <div class="actions">
+              <button class="primary" type="button" id="saveDetail">Apply changes</button>
+              <button class="ghost" type="button" id="closeDetail">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail" id="addPanel">
+      <div class="panel">
+        <h2 style="margin:0 0 6px;font-size:1.1rem;">Add a new objective</h2>
+        <p class="hint">New objectives appear on the monitor with a generated sample trend so you can see goal tracking immediately.</p>
+        <div class="form-row">
+          <label for="addPerspective">Perspective</label>
+          <select id="addPerspective">
+            <option value="Financial">Financial</option>
+            <option value="Customer">Customer</option>
+            <option value="Internal Process">Internal Process</option>
+            <option value="Risk">Risk</option>
+            <option value="Learning & Development">Learning & Development</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="addMetric">Metric</label>
+          <input id="addMetric" type="text" placeholder="e.g. Fee income growth %" />
+        </div>
+        <div class="form-row">
+          <label for="addObjective">Objective</label>
+          <textarea id="addObjective" placeholder="What outcome does leadership own?"></textarea>
+        </div>
+        <div class="form-row">
+          <label for="addTarget">Target</label>
+          <input id="addTarget" type="number" step="any" placeholder="e.g. 8" />
+        </div>
+        <div class="form-row">
+          <label for="addUnit">Unit</label>
+          <input id="addUnit" type="text" placeholder="%, days, $MM, score" />
+        </div>
+        <div class="form-row">
+          <label for="addDirection">Direction</label>
+          <select id="addDirection">
+            <option value="higher">Higher is better</option>
+            <option value="lower">Lower is better</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="addOwner">Owner</label>
+          <input id="addOwner" type="text" placeholder="CEO / CFO" />
+        </div>
+        <div class="actions">
+          <button class="primary" type="button" id="createObjective">Create &amp; monitor</button>
+          <button class="ghost" type="button" id="cancelAdd">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MONTHS = ["Mar", "Apr", "May", "Jun", "Jul", "Aug"];
+
+    /** Capstone-aligned starter objectives with sample actual series */
+    let objectives = [
+      {
+        id: "roa",
+        perspective: "Financial",
+        metric: "ROA",
+        unit: "%",
+        objective: "Deliver top-quartile peer ROA",
+        owner: "CEO / CFO",
+        target: 1.5,
+        direction: "higher",
+        series: [1.21, 1.28, 1.32, 1.35, 1.37, 1.39],
+      },
+      {
+        id: "noi",
+        perspective: "Financial",
+        metric: "Net Operating Income",
+        unit: "$MM",
+        objective: "Grow operating income to plan",
+        owner: "CFO",
+        target: 19,
+        direction: "higher",
+        series: [15.2, 16.1, 16.8, 17.4, 18.1, 18.6],
+      },
+      {
+        id: "deposits",
+        perspective: "Financial",
+        metric: "Total Deposits",
+        unit: "$B",
+        objective: "Expand deposit franchise for funding",
+        owner: "Retail / Treasury",
+        target: 1.45,
+        direction: "higher",
+        series: [1.28, 1.30, 1.33, 1.35, 1.38, 1.41],
+      },
+      {
+        id: "loans",
+        perspective: "Financial",
+        metric: "Total Loans",
+        unit: "$B",
+        objective: "Grow earning assets with credit discipline",
+        owner: "CRO / Commercial",
+        target: 1.2,
+        direction: "higher",
+        series: [1.02, 1.05, 1.08, 1.10, 1.13, 1.16],
+      },
+      {
+        id: "csi",
+        perspective: "Customer",
+        metric: "Customer Satisfaction Index",
+        unit: "score",
+        objective: "Enhance customer experience (CSI > 7)",
+        owner: "COO / Retail",
+        target: 7,
+        direction: "higher",
+        series: [6.4, 6.5, 6.7, 6.8, 6.9, 7.1],
+      },
+      {
+        id: "retention",
+        perspective: "Customer",
+        metric: "Customer Retention",
+        unit: "%",
+        objective: "Keep CIF retention at or above 92%",
+        owner: "Retail Banking",
+        target: 92,
+        direction: "higher",
+        series: [90.2, 90.5, 90.8, 91.0, 91.4, 91.6],
+      },
+      {
+        id: "channel",
+        perspective: "Customer",
+        metric: "Channel Usage",
+        unit: "%",
+        objective: "Drive omni-channel delivery above 75%",
+        owner: "Digital / Ops",
+        target: 75,
+        direction: "higher",
+        series: [62, 65, 68, 70, 72, 74],
+      },
+      {
+        id: "efficiency",
+        perspective: "Internal Process",
+        metric: "Efficiency Ratio",
+        unit: "%",
+        objective: "Operate at 52% efficiency or better",
+        owner: "COO / CFO",
+        target: 52,
+        direction: "lower",
+        series: [58.2, 57.1, 56.4, 55.2, 54.6, 53.8],
+      },
+      {
+        id: "loan_sla",
+        perspective: "Internal Process",
+        metric: "Commercial Loan SLA",
+        unit: "days",
+        objective: "Close commercial loans in 60 days or less",
+        owner: "Credit Admin",
+        target: 60,
+        direction: "lower",
+        series: [78, 74, 71, 68, 66, 64],
+      },
+      {
+        id: "teller_sla",
+        perspective: "Internal Process",
+        metric: "Teller Transaction SLA",
+        unit: "min",
+        objective: "Complete teller transactions under 2 minutes",
+        owner: "Branch Ops",
+        target: 2,
+        direction: "lower",
+        series: [2.8, 2.6, 2.5, 2.4, 2.3, 2.2],
+      },
+      {
+        id: "emplify",
+        perspective: "Learning & Development",
+        metric: "Emplify Participation",
+        unit: "%",
+        objective: "Reach 80% associate survey participation",
+        owner: "HR",
+        target: 80,
+        direction: "higher",
+        series: [61, 64, 68, 71, 74, 77],
+      },
+      {
+        id: "teller_to",
+        perspective: "Learning & Development",
+        metric: "Teller Turnover",
+        unit: "%",
+        objective: "Reduce teller turnover from 40% toward 20%",
+        owner: "HR / Branch Ops",
+        target: 20,
+        direction: "lower",
+        series: [38, 36, 34, 32, 30, 28],
+      },
+      {
+        id: "staff_to",
+        perspective: "Learning & Development",
+        metric: "Total Staff Turnover",
+        unit: "%",
+        objective: "Hold organization turnover under 5%",
+        owner: "HR",
+        target: 5,
+        direction: "lower",
+        series: [7.2, 6.8, 6.4, 6.1, 5.8, 5.5],
+      },
+      // --- From jhbi_balanced_scorecard mockups (not previously in Capstone set) ---
+      {
+        id: "nim",
+        perspective: "Financial",
+        metric: "Net Interest Margin",
+        unit: "%",
+        objective: "Sustain net interest margin at plan",
+        owner: "CFO / ALCO",
+        target: 3.5,
+        direction: "higher",
+        series: [3.28, 3.31, 3.34, 3.36, 3.39, 3.42],
+      },
+      {
+        id: "loan_growth",
+        perspective: "Financial",
+        metric: "Loan Growth",
+        unit: "%",
+        objective: "Grow loans to plan while holding credit quality",
+        owner: "CRO / Commercial",
+        target: 7.0,
+        direction: "higher",
+        series: [4.8, 5.1, 5.4, 5.7, 5.9, 6.1],
+      },
+      {
+        id: "core_deposits",
+        perspective: "Customer",
+        metric: "Core Deposit Growth",
+        unit: "%",
+        objective: "Grow core deposits and protect funding mix",
+        owner: "Retail / Treasury",
+        target: 5.0,
+        direction: "higher",
+        series: [3.2, 3.4, 3.6, 3.8, 4.0, 4.2],
+      },
+      {
+        id: "products_per_hh",
+        perspective: "Customer",
+        metric: "Products per Household",
+        unit: "count",
+        objective: "Deepen household product relationships",
+        owner: "Retail Banking",
+        target: 2.6,
+        direction: "higher",
+        series: [2.15, 2.20, 2.25, 2.30, 2.35, 2.40],
+      },
+      {
+        id: "digital_active",
+        perspective: "Customer",
+        metric: "Digital Active Users",
+        unit: "%",
+        objective: "Raise digital active rate among eligible customers",
+        owner: "Digital / Ops",
+        target: 45,
+        direction: "higher",
+        series: [34, 36, 37, 38, 40, 41],
+      },
+      {
+        id: "criticized",
+        perspective: "Risk",
+        metric: "Criticized Assets",
+        unit: "%",
+        objective: "Keep criticized assets inside board limit",
+        owner: "CRO / Credit",
+        target: 4.0,
+        direction: "lower",
+        series: [3.6, 3.5, 3.4, 3.3, 3.2, 3.1],
+      },
+      {
+        id: "past_due",
+        perspective: "Risk",
+        metric: "Past Due 30+",
+        unit: "%",
+        objective: "Hold past due 30+ inside credit limit",
+        owner: "CRO / Collections",
+        target: 1.5,
+        direction: "lower",
+        series: [1.42, 1.38, 1.32, 1.28, 1.22, 1.18],
+      },
+      {
+        id: "wholesale",
+        perspective: "Risk",
+        metric: "Wholesale Funding Reliance",
+        unit: "%",
+        objective: "Limit wholesale funding reliance",
+        owner: "Treasury / ALCO",
+        target: 15.0,
+        direction: "lower",
+        series: [14.2, 13.8, 13.4, 13.1, 12.7, 12.4],
+      },
+      {
+        id: "bsa_aging",
+        perspective: "Risk",
+        metric: "BSA Alert Aging",
+        unit: "days",
+        objective: "Keep average BSA alert age inside SLA",
+        owner: "BSA / Compliance",
+        target: 20,
+        direction: "lower",
+        series: [24, 22, 21, 20, 19, 18],
+      },
+      {
+        id: "decision_cycle",
+        perspective: "Internal Process",
+        metric: "Loan Decision Cycle Time",
+        unit: "days",
+        objective: "Shorten median loan decision cycle time",
+        owner: "Credit Admin",
+        target: 5.0,
+        direction: "lower",
+        series: [8.2, 7.8, 7.4, 7.1, 6.8, 6.5],
+      },
+    ];
+
+    const PERSPECTIVES = [
+      "All",
+      "Financial",
+      "Customer",
+      "Internal Process",
+      "Risk",
+      "Learning & Development",
+    ];
+
+    let mode = "monitor";
+    let activePerspective = "All";
+    let selectedId = null;
+
+    function actual(o) {
+      return o.series[o.series.length - 1];
+    }
+
+    function statusOf(o) {
+      const a = actual(o);
+      const t = o.target;
+      if (o.direction === "higher") {
+        if (a >= t) return "ok";
+        if (a >= t * 0.95) return "watch";
+        return "bad";
+      }
+      if (a <= t) return "ok";
+      if (a <= t * 1.05) return "watch";
+      return "bad";
+    }
+
+    function statusLabel(s) {
+      return s === "ok" ? "On track" : s === "watch" ? "At risk" : "Off track";
+    }
+
+    function formatValue(v, unit) {
+      if (unit === "$MM" || unit === "$B") return v.toFixed(2);
+      if (unit === "days" || unit === "min" || unit === "score") return v.toFixed(1);
+      if (Number.isInteger(v)) return String(v);
+      return v.toFixed(2);
+    }
+
+    function progressPct(o) {
+      const a = actual(o);
+      const t = o.target;
+      if (o.direction === "higher") {
+        return Math.max(0, Math.min(100, (a / t) * 100));
+      }
+      // lower is better: invert so meeting target = 100%
+      if (a <= 0) return 100;
+      return Math.max(0, Math.min(100, (t / a) * 100));
+    }
+
+    function sparkline(series, target, direction) {
+      const w = 280;
+      const h = 72;
+      const pad = 8;
+      const all = series.concat([target]);
+      const min = Math.min(...all);
+      const max = Math.max(...all);
+      const span = max - min || 1;
+      const x = (i) => pad + (i / (series.length - 1)) * (w - pad * 2);
+      const y = (v) => h - pad - ((v - min) / span) * (h - pad * 2);
+      const path = series
+        .map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+        .join(" ");
+      const ty = y(target);
+      return `
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+          <line x1="${pad}" y1="${ty.toFixed(1)}" x2="${w - pad}" y2="${ty.toFixed(1)}"
+            stroke="#f5b942" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.9" />
+          <path d="${path}" fill="none" stroke="#3b82f6" stroke-width="2.2" />
+          <circle cx="${x(series.length - 1).toFixed(1)}" cy="${y(series[series.length - 1]).toFixed(1)}"
+            r="3.5" fill="#3b82f6" />
+        </svg>`;
+    }
+
+    function detailSparkline(series, target) {
+      const w = 520;
+      const h = 160;
+      const padX = 28;
+      const padY = 20;
+      const all = series.concat([target]);
+      const min = Math.min(...all);
+      const max = Math.max(...all);
+      const span = max - min || 1;
+      const x = (i) => padX + (i / (series.length - 1)) * (w - padX * 2);
+      const y = (v) => h - padY - ((v - min) / span) * (h - padY * 2);
+      const path = series
+        .map((v, i) => `${i === 0 ? "M" : "L"} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`)
+        .join(" ");
+      const ty = y(target);
+      const labels = MONTHS.map((m, i) =>
+        `<text x="${x(i).toFixed(1)}" y="${h - 4}" text-anchor="middle" fill="#9aa3b2" font-size="11">${m}</text>`
+      ).join("");
+      return `
+        <line x1="${padX}" y1="${ty.toFixed(1)}" x2="${w - padX}" y2="${ty.toFixed(1)}"
+          stroke="#f5b942" stroke-width="1.8" stroke-dasharray="5 4" />
+        <text x="${w - padX}" y="${(ty - 6).toFixed(1)}" text-anchor="end" fill="#f5b942" font-size="11">Target ${target}</text>
+        <path d="${path}" fill="none" stroke="#3b82f6" stroke-width="2.5" />
+        ${series.map((v, i) =>
+          `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="3.2" fill="#3b82f6" />`
+        ).join("")}
+        ${labels}`;
+    }
+
+    function filtered() {
+      if (activePerspective === "All") return objectives;
+      return objectives.filter((o) => o.perspective === activePerspective);
+    }
+
+    function renderSummary() {
+      const counts = { ok: 0, watch: 0, bad: 0 };
+      objectives.forEach((o) => { counts[statusOf(o)] += 1; });
+      document.getElementById("summaryStats").innerHTML = `
+        <div class="stat"><div class="label">Objectives</div><div class="value">${objectives.length}</div></div>
+        <div class="stat"><div class="label">On track</div><div class="value ok">${counts.ok}</div></div>
+        <div class="stat"><div class="label">At risk</div><div class="value watch">${counts.watch}</div></div>
+        <div class="stat"><div class="label">Off track</div><div class="value bad">${counts.bad}</div></div>
+      `;
+    }
+
+    function renderTabs() {
+      const el = document.getElementById("perspectiveTabs");
+      el.innerHTML = PERSPECTIVES.map((p) => {
+        const count = p === "All" ? objectives.length : objectives.filter((o) => o.perspective === p).length;
+        return `<button class="tab ${p === activePerspective ? "active" : ""}" data-p="${p}" type="button">
+          ${p}<span class="count">${count}</span>
+        </button>`;
+      }).join("");
+      el.querySelectorAll(".tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activePerspective = btn.dataset.p;
+          render();
+        });
+      });
+    }
+
+    function renderCards() {
+      const list = filtered();
+      const grid = document.getElementById("cardGrid");
+      if (!list.length) {
+        grid.innerHTML = `<div class="empty">No objectives in this perspective yet. Use Add objective to create one.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map((o) => {
+        const st = statusOf(o);
+        const a = actual(o);
+        const editable = mode === "edit";
+        return `
+          <article class="card ${selectedId === o.id ? "selected" : ""}" data-id="${o.id}">
+            <div class="card-head">
+              <div>
+                <h3>${o.metric}</h3>
+                <div class="meta">${o.perspective} · Owner: ${o.owner}</div>
+              </div>
+              <span class="badge ${st}">${statusLabel(st)}</span>
+            </div>
+            ${editable
+              ? `<input class="obj-input" data-field="objective" data-id="${o.id}" value="${o.objective.replace(/"/g, "&quot;")}" />`
+              : `<div style="font-size:13px;color:var(--ink);">${o.objective}</div>`
+            }
+            <div class="metrics">
+              <div class="metric-box">
+                <div class="k">Actual</div>
+                <div class="v">${formatValue(a, o.unit)} ${o.unit}</div>
+              </div>
+              <div class="metric-box">
+                <div class="k">Your target</div>
+                ${editable
+                  ? `<input data-field="target" data-id="${o.id}" type="number" step="any" value="${o.target}" />`
+                  : `<div class="v">${formatValue(o.target, o.unit)} ${o.unit}</div>`
+                }
+              </div>
+              <div class="metric-box">
+                <div class="k">vs goal</div>
+                <div class="v" style="color:var(--${st === "ok" ? "ok" : st === "watch" ? "watch" : "bad"})">
+                  ${o.direction === "higher"
+                    ? (a >= o.target ? "+" : "") + formatValue(a - o.target, o.unit)
+                    : (a <= o.target ? "" : "+") + formatValue(a - o.target, o.unit)
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="progress"><span class="${st}" style="width:${progressPct(o).toFixed(1)}%"></span></div>
+            <div class="chart-wrap">${sparkline(o.series, o.target, o.direction)}</div>
+            <div class="chart-legend">
+              <span><i class="dot actual"></i>Actual (6 mo)</span>
+              <span><i class="dot goal"></i>Target ${formatValue(o.target, o.unit)} ${o.unit}</span>
+              <span style="margin-left:auto;color:var(--muted);">${o.direction === "higher" ? "Higher is better" : "Lower is better"}</span>
+            </div>
+          </article>`;
+      }).join("");
+
+      grid.querySelectorAll(".card").forEach((card) => {
+        card.addEventListener("click", (e) => {
+          if (e.target.closest("input")) return;
+          selectedId = card.dataset.id;
+          openDetail(selectedId);
+          renderCards();
+        });
+      });
+
+      grid.querySelectorAll("input[data-field]").forEach((input) => {
+        input.addEventListener("change", () => {
+          const o = objectives.find((x) => x.id === input.dataset.id);
+          if (!o) return;
+          if (input.dataset.field === "target") o.target = Number(input.value);
+          if (input.dataset.field === "objective") o.objective = input.value;
+          renderSummary();
+          renderCards();
+        });
+        input.addEventListener("click", (e) => e.stopPropagation());
+      });
+    }
+
+    function openDetail(id) {
+      const o = objectives.find((x) => x.id === id);
+      if (!o) return;
+      document.getElementById("addPanel").classList.remove("open");
+      const panel = document.getElementById("detailPanel");
+      panel.classList.add("open");
+      document.getElementById("detailTitle").textContent = `${o.metric} · ${statusLabel(statusOf(o))}`;
+      document.getElementById("detailDesc").textContent =
+        `${o.perspective} · Actual ${formatValue(actual(o), o.unit)} ${o.unit} vs target ${formatValue(o.target, o.unit)} ${o.unit}`;
+      document.getElementById("detailChart").innerHTML = detailSparkline(o.series, o.target);
+      document.getElementById("editObjective").value = o.objective;
+      document.getElementById("editTarget").value = o.target;
+      document.getElementById("editDirection").value = o.direction;
+      document.getElementById("editOwner").value = o.owner;
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function setMode(next) {
+      mode = next;
+      document.querySelectorAll(".mode-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.mode === mode);
+      });
+      const hint = document.getElementById("modeHint");
+      const addPanel = document.getElementById("addPanel");
+      const detailPanel = document.getElementById("detailPanel");
+      if (mode === "add") {
+        hint.textContent = "Define a new objective, target, and owner — then it appears on the monitor with a sample trend.";
+        addPanel.classList.add("open");
+        detailPanel.classList.remove("open");
+        addPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      } else if (mode === "edit") {
+        hint.textContent = "Edit objective wording and targets inline. Status and trends update as you change goals.";
+        addPanel.classList.remove("open");
+      } else {
+        hint.textContent = "Click a card to inspect the trend. Status flags only when off-track vs your goal.";
+        addPanel.classList.remove("open");
+      }
+      renderCards();
+    }
+
+    function render() {
+      renderSummary();
+      renderTabs();
+      renderCards();
+    }
+
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+    });
+
+    document.getElementById("saveDetail").addEventListener("click", () => {
+      const o = objectives.find((x) => x.id === selectedId);
+      if (!o) return;
+      o.objective = document.getElementById("editObjective").value.trim() || o.objective;
+      o.target = Number(document.getElementById("editTarget").value);
+      o.direction = document.getElementById("editDirection").value;
+      o.owner = document.getElementById("editOwner").value.trim() || o.owner;
+      render();
+      openDetail(o.id);
+    });
+
+    document.getElementById("closeDetail").addEventListener("click", () => {
+      document.getElementById("detailPanel").classList.remove("open");
+      selectedId = null;
+      renderCards();
+    });
+
+    document.getElementById("cancelAdd").addEventListener("click", () => setMode("monitor"));
+
+    document.getElementById("createObjective").addEventListener("click", () => {
+      const metric = document.getElementById("addMetric").value.trim();
+      const objective = document.getElementById("addObjective").value.trim();
+      const target = Number(document.getElementById("addTarget").value);
+      const unit = document.getElementById("addUnit").value.trim() || "units";
+      const direction = document.getElementById("addDirection").value;
+      const owner = document.getElementById("addOwner").value.trim() || "Owner TBD";
+      const perspective = document.getElementById("addPerspective").value;
+      if (!metric || !objective || Number.isNaN(target)) {
+        alert("Please fill metric, objective, and a numeric target.");
+        return;
+      }
+      // Generate a simple approach-to-target series for the demo
+      const start = direction === "higher" ? target * 0.82 : target * 1.25;
+      const series = Array.from({ length: 6 }, (_, i) => {
+        const t = i / 5;
+        return Number((start + (target * 0.96 - start) * t).toFixed(2));
+      });
+      const id = "custom_" + Date.now();
+      objectives.push({
+        id,
+        perspective,
+        metric,
+        unit,
+        objective,
+        owner,
+        target,
+        direction,
+        series,
+      });
+      activePerspective = perspective;
+      selectedId = id;
+      setMode("monitor");
+      render();
+      openDetail(id);
+      ["addMetric", "addObjective", "addTarget", "addUnit", "addOwner"].forEach((id) => {
+        document.getElementById(id).value = "";
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>

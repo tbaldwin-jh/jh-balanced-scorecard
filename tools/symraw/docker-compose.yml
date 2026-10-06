@@ -1,0 +1,14 @@
+# SQL Server 2025 required: SymRaw.bak was created on engine DB version 998 (2022 image fails restore).
+# From repo root:  docker compose -f tools/symraw/docker-compose.yml up -d
+services:
+  mssql-arcu:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: mssql-arcu
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:-ChangeMe!Strong123}"
+    volumes:
+      - ../../:/var/opt/mssql/backup:ro
+    restart: unless-stopped

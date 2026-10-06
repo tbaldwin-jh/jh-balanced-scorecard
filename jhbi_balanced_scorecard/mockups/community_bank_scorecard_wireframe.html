@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank Balanced Scorecard Wireframe</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --ink: #142033;
+      --muted: #5b677a;
+      --line: #d7dde6;
+      --accent: #0b5fff;
+      --accent-soft: #e8f0ff;
+      --ok: #0f7a45;
+      --ok-bg: #e8f7ef;
+      --watch: #9a6700;
+      --watch-bg: #fff6e5;
+      --bad: #b42318;
+      --bad-bg: #fdeceb;
+      --shadow: 0 1px 2px rgba(20, 32, 51, 0.06);
+      --radius: 12px;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #dfe9ff 0%, transparent 55%),
+        linear-gradient(180deg, #eef2f7 0%, var(--bg) 240px);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 20px 64px;
+    }
+
+    header.hero {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+      letter-spacing: -0.02em;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 18px 0 14px;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .tab[aria-selected="true"] {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .callout {
+      background: var(--accent-soft);
+      border: 1px solid #c9daff;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      color: #163a7a;
+      margin-bottom: 18px;
+    }
+
+    .callout strong { color: var(--ink); }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat .n {
+      font-size: 1.6rem;
+      font-weight: 650;
+      letter-spacing: -0.03em;
+    }
+
+    .stat .l {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .card:hover { border-color: #b7c4d8; }
+    .card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .pill {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #eef2f7;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .vs { font-size: 12px; margin: 4px 0 10px; }
+    .owner { font-size: 12px; color: var(--muted); }
+
+    .tone-success { color: var(--ok); }
+    .tone-warning { color: var(--watch); }
+    .tone-danger { color: var(--bad); }
+    .tone-info { color: var(--accent); }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 3px 8px;
+      margin-top: 10px;
+    }
+    .badge.success { background: var(--ok-bg); color: var(--ok); }
+    .badge.warning { background: var(--watch-bg); color: var(--watch); }
+    .badge.danger { background: var(--bad-bg); color: var(--bad); }
+    .badge.info { background: var(--accent-soft); color: #163a7a; }
+
+    section.block { margin-top: 28px; }
+    h2 {
+      margin: 0 0 8px;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+    }
+    .section-note {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .inspector {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .inspector-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .formula {
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 13px;
+      background: #f0f3f7;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 6px 0 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef2f7;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    tr:nth-child(even) td { background: #fafbfc; }
+
+    footer {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .summary, .grid, .inspector-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .summary, .grid, .inspector-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .tabs, .card .badge { display: none; }
+      .card, .inspector, .topbar, .stat, table { box-shadow: none; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Community bank balanced scorecard</h1>
+      <p class="lede">
+        Shareable wireframe for an executive dashboard. Sample values are illustrative.
+        Use the formulas and owners as the durable definition pack.
+      </p>
+      <div class="meta">
+        <span class="chip">As of 2026-07-31 · sample bank</span>
+        <span class="chip">Views: Executive · Board · Lending · Ops</span>
+        <span class="chip">12 core metrics</span>
+      </div>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Dashboard view">
+      <button class="tab" role="tab" data-view="executive" aria-selected="true">Executive home</button>
+      <button class="tab" role="tab" data-view="board" aria-selected="false">Board</button>
+      <button class="tab" role="tab" data-view="lending" aria-selected="false">Lending</button>
+      <button class="tab" role="tab" data-view="ops" aria-selected="false">Ops / digital</button>
+    </div>
+
+    <div class="callout" id="viewPurpose">
+      <strong>Executive home.</strong> One-page balanced scorecard. All 12 metrics, status vs target, owner.
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="topbar">
+      <span>Logo / FI name</span>
+      <span>Period: MTD | QTD | YTD</span>
+      <span>Compare: Plan | Prior year | Peer</span>
+      <span style="margin-left:auto">Export board pack</span>
+    </div>
+
+    <div class="grid" id="metricGrid" aria-live="polite"></div>
+
+    <section class="block">
+      <h2>Calculation inspector</h2>
+      <p class="section-note">Click a metric tile to load its formula, inputs, and definition notes.</p>
+      <div class="inspector" id="inspector"></div>
+    </section>
+
+    <section class="block">
+      <h2>All 12 formulas</h2>
+      <p class="section-note">Quick reference for data engineering and finance alignment.</p>
+      <div style="overflow-x:auto">
+        <table id="formulaTable">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Formula</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Suggested page map</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>View</th>
+              <th>Primary tiles</th>
+              <th>Drill-downs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Executive home</td>
+              <td>All 12 scorecard metrics</td>
+              <td>Click-through to Board / Lending / Ops detail</td>
+            </tr>
+            <tr>
+              <td>Board</td>
+              <td>NIM, Efficiency, ROA, Loan growth, Core deposits, Products/HH, Criticized, Past due, Wholesale reliance, BSA aging</td>
+              <td>Peer charts, capital, provision trend</td>
+            </tr>
+            <tr>
+              <td>Lending</td>
+              <td>Loan growth, Criticized, Past due, Decision cycle time</td>
+              <td>Portfolio mix, pipeline conversion, exception queues</td>
+            </tr>
+            <tr>
+              <td>Ops / digital</td>
+              <td>Efficiency, Digital active, BSA aging, Decision cycle time</td>
+              <td>Channel funnel, alert inventory, STP / exception rate</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Wireframe for discussion only. Lock definitions and owners before wiring core, LOS, AML, digital events, and GL sources.
+    </footer>
+  </div>
+
+  <script>
+    const VIEWS = {
+      executive: {
+        label: "Executive home",
+        purpose: "One-page balanced scorecard. All 12 metrics, status vs target, owner."
+      },
+      board: {
+        label: "Board",
+        purpose: "Capital, earnings, franchise, and risk posture. Fewer ops detail tiles."
+      },
+      lending: {
+        label: "Lending",
+        purpose: "Growth, credit quality, and speed-to-decision for the credit engine."
+      },
+      ops: {
+        label: "Ops / digital",
+        purpose: "Efficiency, channel adoption, BSA throughput, and cycle-time bottlenecks."
+      }
+    };
+
+    const METRICS = [
+      {
+        id: "nim",
+        name: "Net interest margin (NIM)",
+        perspective: "Financial",
+        value: "3.42%",
+        vsTarget: "Target 3.50% · -8 bps",
+        tone: "warning",
+        owner: "CFO / ALCO",
+        period: "YTD annualized",
+        formula: "NIM = Net Interest Income / Average Earning Assets\nwhere Net Interest Income = Interest Income - Interest Expense",
+        inputs: "Interest income, interest expense, average earning assets (loans + securities + interest-bearing balances), usually daily or monthly average, annualized.",
+        notes: "Community banks often annualize YTD NII as NII × (365 / days elapsed) before dividing. Keep the same averaging method period to period.",
+        views: ["executive", "board"]
+      },
+      {
+        id: "efficiency",
+        name: "Efficiency ratio",
+        perspective: "Financial",
+        value: "61.8%",
+        vsTarget: "Target ≤ 60% · +1.8 pts",
+        tone: "warning",
+        owner: "COO / CFO",
+        period: "YTD",
+        formula: "Efficiency Ratio = Noninterest Expense / (Net Interest Income + Noninterest Income)",
+        inputs: "Noninterest expense (salaries, occupancy, tech, other), NII, fee and other noninterest income. Exclude provision for credit losses unless board policy includes it.",
+        notes: "Lower is better. Document whether one-time items (core conversion, merger costs) are excluded for management reporting.",
+        views: ["executive", "board", "ops"]
+      },
+      {
+        id: "roa",
+        name: "Return on assets (ROA)",
+        perspective: "Financial",
+        value: "0.98%",
+        vsTarget: "Target 1.05% · -7 bps",
+        tone: "warning",
+        owner: "CEO / CFO",
+        period: "YTD annualized",
+        formula: "ROA = Net Income / Average Total Assets",
+        inputs: "GAAP net income (or board-approved adjusted NI), average total assets for the same period.",
+        notes: "Annualize YTD NI the same way as NIM. Pair with ROE for board packs, but ROA is cleaner across leverage differences.",
+        views: ["executive", "board"]
+      },
+      {
+        id: "loanGrowth",
+        name: "Loan growth",
+        perspective: "Financial",
+        value: "+6.1%",
+        vsTarget: "Plan +7.0% · -0.9 pts",
+        tone: "info",
+        owner: "CLO / Lending",
+        period: "YoY ending balances",
+        formula: "Loan Growth = (Ending Gross Loans - Beginning Gross Loans) / Beginning Gross Loans",
+        inputs: "Gross loans held for investment at period start and end. Report by portfolio (C&I, CRE, consumer, ag) in drill-down.",
+        notes: "Prefer ending balances for franchise growth. Also show net loans after charge-offs if credit burn is material.",
+        views: ["executive", "board", "lending"]
+      },
+      {
+        id: "coreDeposits",
+        name: "Core deposit growth / mix",
+        perspective: "Customer",
+        value: "+4.2% / 78%",
+        vsTarget: "Growth plan +5% · Mix ≥ 75%",
+        tone: "success",
+        owner: "Retail / Treasury",
+        period: "YoY / spot mix",
+        formula: "Core Deposit Growth = (Ending Core - Beginning Core) / Beginning Core\nCore Mix = Core Deposits / Total Deposits\nCore ≈ DDA + Savings + MMDA (exclude CDs, brokered, and listing-service deposits)",
+        inputs: "Deposit balances by product and acquisition channel. Brokered and listing-service flags must be reliable.",
+        notes: "Show both growth and mix. Cheap sticky balances can shrink while mix looks fine if total deposits fall faster.",
+        views: ["executive", "board"]
+      },
+      {
+        id: "productsPerHh",
+        name: "Products per household",
+        perspective: "Customer",
+        value: "2.4",
+        vsTarget: "Target 2.6 · -0.2",
+        tone: "warning",
+        owner: "Retail / CS",
+        period: "Month-end",
+        formula: "Products per Household = Count of Active Product Relationships / Count of Households\nActive = open account or relationship with balance or activity in the last 90 days (define once and freeze)",
+        inputs: "CIF / householding keys, product-type taxonomy (checking, savings, card, loan, treasury, wealth).",
+        notes: "Householding quality drives this metric. Bad merges inflate or deflate the ratio.",
+        views: ["executive", "board"]
+      },
+      {
+        id: "digitalActive",
+        name: "Digital active users",
+        perspective: "Customer",
+        value: "41%",
+        vsTarget: "Target 45% · -4 pts",
+        tone: "warning",
+        owner: "Digital / Retail",
+        period: "Trailing 30 days",
+        formula: "Digital Active Rate = Digital Active Users / Eligible Customers\nDigital Active User = unique customer with qualifying login or monetary transaction in online or mobile in the period",
+        inputs: "Digital channel event log (login, transfer, bill pay, mobile deposit), eligible base (retail customers with online enrollment or all households).",
+        notes: "Pick enrolled vs all-customer denominator and stick to it. Absolute MAU is useful for ops; rate is better for scorecards.",
+        views: ["executive", "ops"]
+      },
+      {
+        id: "criticized",
+        name: "Criticized assets",
+        perspective: "Risk",
+        value: "3.1%",
+        vsTarget: "Limit ≤ 4.0% of loans",
+        tone: "success",
+        owner: "CRO / Credit",
+        period: "Month-end",
+        formula: "Criticized Asset Ratio = (Special Mention + Substandard + Doubtful + Loss) / Total Gross Loans\nOptional board view: Criticized / Tier 1 Capital",
+        inputs: "Risk ratings from loan system, including accruing special mention and nonaccrual classified balances.",
+        notes: "Do not mix criticized (includes special mention) with classified-only (substandard and worse) without labeling.",
+        views: ["executive", "board", "lending"]
+      },
+      {
+        id: "pastDue",
+        name: "Past due 30+",
+        perspective: "Risk",
+        value: "1.18%",
+        vsTarget: "Limit ≤ 1.50%",
+        tone: "success",
+        owner: "Credit Admin",
+        period: "Month-end",
+        formula: "Past Due 30+ Ratio = Principal Balance of Loans ≥ 30 Days Past Due / Total Gross Loans\nOften shown as: 30-59, 60-89, 90+ buckets, with nonaccrual called out separately",
+        inputs: "Days past due from servicing system, unpaid principal balance, nonaccrual flags.",
+        notes: "Some boards want past due including nonaccrual; others want accruing past due only. Label the version on the tile.",
+        views: ["executive", "board", "lending"]
+      },
+      {
+        id: "liquidity",
+        name: "Wholesale funding reliance",
+        perspective: "Risk",
+        value: "12.4%",
+        vsTarget: "Limit ≤ 15%",
+        tone: "success",
+        owner: "Treasury / ALCO",
+        period: "Month-end",
+        formula: "Wholesale Reliance = Wholesale Funding / Total Liabilities\nWholesale Funding = Brokered Deposits + Listing-Service Deposits + FHLB Advances + Fed Funds Purchased + Other Wholesale Borrowings\nCompanion: Loan-to-Deposit = Total Loans / Total Deposits",
+        inputs: "Liability balances by funding type, brokered and listing flags, FHLB and wholesale borrowing accounts.",
+        notes: "Community banks often watch LTD and on-hand liquidity (cash + unpledged securities + unused FHLB) alongside this ratio.",
+        views: ["executive", "board"]
+      },
+      {
+        id: "bsaAging",
+        name: "BSA alert aging",
+        perspective: "Risk",
+        value: "18 days",
+        vsTarget: "SLA ≤ 20 days avg · 6% > 30d",
+        tone: "success",
+        owner: "BSA Officer",
+        period: "Open inventory",
+        formula: "Avg Alert Age = Sum(As-Of Date - Alert Open Date) / Count of Open Alerts\nAged Share = Open Alerts with Age > 30 Days / Open Alerts\nAlso track SAR filing timeliness vs regulatory clock",
+        inputs: "AML case/alert system open date, status, disposition date, SAR due dates.",
+        notes: "Average can hide a stale tail. Always show % aged past SLA beside the average.",
+        views: ["executive", "ops", "board"]
+      },
+      {
+        id: "decisionCycle",
+        name: "Loan decision cycle time",
+        perspective: "Capability",
+        value: "6.5 days",
+        vsTarget: "Target ≤ 5.0 days median",
+        tone: "danger",
+        owner: "Lending Ops",
+        period: "Trailing 90 days",
+        formula: "Decision Cycle Time (median) = Median(Decision Timestamp - Application Received Timestamp)\nfor applications decided in the period\nSegment by consumer vs commercial, and by auto-decision vs manual",
+        inputs: "LOS timestamps: application received, first complete package, decision, and optional docs-complete clock stops.",
+        notes: "Use median, not mean. Pause the clock for borrower-caused document gaps if policy allows, and disclose that rule.",
+        views: ["executive", "lending", "ops"]
+      }
+    ];
+
+    let currentView = "executive";
+    let selectedId = "nim";
+
+    const gridEl = document.getElementById("metricGrid");
+    const summaryEl = document.getElementById("summary");
+    const inspectorEl = document.getElementById("inspector");
+    const purposeEl = document.getElementById("viewPurpose");
+    const formulaBody = document.querySelector("#formulaTable tbody");
+
+    function visibleMetrics() {
+      return METRICS.filter((m) => m.views.includes(currentView));
+    }
+
+    function selectedMetric() {
+      const visible = visibleMetrics();
+      return visible.find((m) => m.id === selectedId) || visible[0];
+    }
+
+    function renderSummary(visible) {
+      const counts = {
+        success: visible.filter((m) => m.tone === "success").length,
+        warning: visible.filter((m) => m.tone === "warning").length,
+        danger: visible.filter((m) => m.tone === "danger").length
+      };
+      summaryEl.innerHTML = `
+        <div class="stat"><div class="n">${visible.length}</div><div class="l">Metrics on this view</div></div>
+        <div class="stat"><div class="n tone-success">${counts.success}</div><div class="l">On / better than target</div></div>
+        <div class="stat"><div class="n tone-warning">${counts.warning}</div><div class="l">Watch</div></div>
+        <div class="stat"><div class="n tone-danger">${counts.danger}</div><div class="l">Off target</div></div>
+      `;
+    }
+
+    function renderGrid() {
+      const visible = visibleMetrics();
+      const active = selectedMetric();
+      selectedId = active.id;
+      renderSummary(visible);
+      purposeEl.innerHTML = `<strong>${VIEWS[currentView].label}.</strong> ${VIEWS[currentView].purpose}`;
+
+      gridEl.innerHTML = visible.map((m) => `
+        <button class="card ${m.id === active.id ? "active" : ""}" data-id="${m.id}" type="button">
+          <div class="card-head">
+            <p class="card-title">${m.name}</p>
+            <span class="pill">${m.perspective}</span>
+          </div>
+          <p class="value tone-${m.tone}">${m.value}</p>
+          <div class="vs tone-${m.tone}">${m.vsTarget}</div>
+          <div class="owner">Owner: ${m.owner} · ${m.period}</div>
+          <span class="badge ${m.tone}">${m.id === active.id ? "Showing formula" : "Show formula"}</span>
+        </button>
+      `).join("");
+
+      gridEl.querySelectorAll(".card").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedId = btn.getAttribute("data-id");
+          render();
+        });
+      });
+
+      renderInspector(active);
+    }
+
+    function renderInspector(m) {
+      inspectorEl.innerHTML = `
+        <div class="card-head" style="margin-bottom:14px">
+          <h3 style="margin:0;font-size:1.05rem">${m.name}</h3>
+          <span class="pill">${m.perspective}</span>
+        </div>
+        <div class="inspector-grid">
+          <div><div class="label">Sample value</div><div><strong>${m.value}</strong></div></div>
+          <div><div class="label">Owner</div><div><strong>${m.owner}</strong></div></div>
+          <div><div class="label">Cadence</div><div><strong>${m.period}</strong></div></div>
+        </div>
+        <div class="label">Formula</div>
+        <div class="formula">${m.formula}</div>
+        <div class="label">Inputs</div>
+        <p style="margin:6px 0 14px;color:var(--muted)">${m.inputs}</p>
+        <div class="label">Definition notes</div>
+        <p style="margin:6px 0 0;color:var(--muted)">${m.notes}</p>
+      `;
+    }
+
+    function renderFormulaTable() {
+      formulaBody.innerHTML = METRICS.map((m) => `
+        <tr>
+          <td>${m.name}</td>
+          <td>${m.formula.replace(/\n/g, " · ")}</td>
+          <td>${m.owner}</td>
+        </tr>
+      `).join("");
+    }
+
+    function render() {
+      renderGrid();
+    }
+
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        currentView = tab.getAttribute("data-view");
+        document.querySelectorAll(".tab").forEach((t) => {
+          t.setAttribute("aria-selected", t === tab ? "true" : "false");
+        });
+        render();
+      });
+    });
+
+    renderFormulaTable();
+    render();
+  </script>
+</body>
+</html>

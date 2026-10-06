@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Bank | Executive Scorecard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --surface: #161a22;
+      --elevated: #1c212b;
+      --ink: #f2f4f7;
+      --muted: #9aa3b2;
+      --line: #2a3140;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+      --ok: #3dd68c;
+      --ok-bg: rgba(61, 214, 140, 0.12);
+      --watch: #f5b942;
+      --watch-bg: rgba(245, 185, 66, 0.12);
+      --bad: #f07178;
+      --bad-bg: rgba(240, 113, 120, 0.12);
+      --info: #6eb6ff;
+      --font: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .topbar {
+      background: #080a0d;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      align-items: center;
+    }
+    .topbar .brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      font-size: 15px;
+    }
+    .topbar .sub {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .topbar .spacer { flex: 1; }
+    .topbar .meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 20px 56px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .chip.active {
+      background: var(--accent-soft);
+      border-color: #2563eb;
+      color: #cfe0ff;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .stat .n {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .stat .l {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    h2 {
+      margin: 22px 0 10px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+    .card:hover { border-color: #3a4458; }
+    .card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+      background: var(--elevated);
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+    .card-title {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .pill {
+      font-size: 10px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: #222833;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .value {
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .value-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 2px 0 10px;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .pair .lbl {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pair .val { font-size: 13px; font-weight: 600; }
+    .gaps { font-size: 12px; color: var(--muted); }
+    .gaps div { margin-top: 2px; }
+    .drill-cta {
+      margin-top: 10px;
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: #cfe0ff;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+
+    .tone-success { color: var(--ok); }
+    .tone-warning { color: var(--watch); }
+    .tone-danger { color: var(--bad); }
+    .tone-info { color: var(--info); }
+
+    .drill {
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .drill h3 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+    }
+    .formula {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      margin: 8px 0 14px;
+      white-space: pre-wrap;
+    }
+    .muted { color: var(--muted); font-size: 13px; }
+
+    .bars {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 8px;
+    }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 64px;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+    }
+    .bar-track {
+      height: 10px;
+      background: #0f1218;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+    .bar-fill.actual { background: var(--info); }
+    .bar-fill.target { background: #6b7280; }
+    .bar-fill.peer { background: var(--watch); }
+
+    .trend {
+      margin-top: 14px;
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .viz-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .viz-card {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .viz-card h4 {
+      margin: 0 0 4px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .viz-card .viz-sub {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .legend i {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 5px;
+      vertical-align: -1px;
+    }
+    .ni-bars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .ni-card {
+      background: #0f1218;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .ni-card .big {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    @media (max-width: 900px) {
+      .viz-grid { grid-template-columns: 1fr; }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #12161e;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 11px;
+    }
+    tr:last-child td { border-bottom: 0; }
+    tr:nth-child(even) td { background: #141820; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .dot.success { background: var(--ok); }
+    .dot.warning { background: var(--watch); }
+    .dot.danger { background: var(--bad); }
+
+    footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .summary, .grid-2, .grid-3, .ni-bars {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .summary, .grid-2, .grid-3, .ni-bars {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media print {
+      body { background: #000; }
+      .filters .chip:not(.active) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Community Bank | Executive Scorecard</div>
+    <div class="sub">Bank President Scorecard</div>
+    <div class="spacer"></div>
+    <div class="meta">As of Jul 2026 · Sample data</div>
+  </div>
+
+  <div class="wrap">
+    <div class="filters">
+      <span class="chip active">Period: Jul 2026</span>
+      <span class="chip active">Compare: Plan + Peer</span>
+      <span class="chip active">Org: Riverbend (sample)</span>
+      <span class="chip active">View: Bank President</span>
+      <span class="chip">Export board pack</span>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <h2>Financial</h2>
+    <div class="grid-2" id="finGrid"></div>
+
+    <h2>Customer / franchise</h2>
+    <div class="grid-3" id="cusGrid"></div>
+
+    <h2>Risk and ops</h2>
+    <div class="grid-3" id="riskGrid"></div>
+
+    <section class="drill" id="drill" aria-live="polite"></section>
+
+    <h2>Variance detail</h2>
+    <div style="overflow-x:auto">
+      <table id="gapTable">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th class="num">Actual</th>
+            <th class="num">Target</th>
+            <th class="num">Peer</th>
+            <th>vs Target</th>
+            <th>vs Peer</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <footer>
+      Sample Power BI-style wireframe. Peer = Assets $1B-$3B median. Not a live core feed.
+      Mirrors the president scorecard canvas (Actual / Target / Peer, bps gaps, ROA drill).
+      Planning side: <a href="./community_bank_bsc_planning.html" style="color:#cfe0ff">BSC Planning Workspace</a>.
+    </footer>
+  </div>
+
+  <script>
+    const KPIS = [
+      {
+        id: "nim", name: "Net interest margin", perspective: "Financial",
+        actualDisplay: "3.42%", targetDisplay: "3.50%", peerDisplay: "3.35%",
+        actual: 3.42, target: 3.5, peer: 3.35, unit: "pct", higherIsBetter: true, tone: "warning",
+        formula: "NIM = (Interest Income - Interest Expense) / Average Earning Assets",
+        driverNote: "Sample run-rate NII on ~$1.90B average earning assets. Gap to target is mostly funding cost and mix, not volume."
+      },
+      {
+        id: "efficiency", name: "Efficiency ratio", perspective: "Financial",
+        actualDisplay: "61.8%", targetDisplay: "60.0%", peerDisplay: "63.5%",
+        actual: 61.8, target: 60.0, peer: 63.5, unit: "pct", higherIsBetter: false, tone: "warning",
+        formula: "Efficiency = Noninterest Expense / (Net Interest Income + Noninterest Income)",
+        driverNote: "Ahead of peer but still 180 bps behind plan. Expense growth and fee income are the two levers."
+      },
+      {
+        id: "roa", name: "Return on assets", perspective: "Financial",
+        actualDisplay: "0.98%", targetDisplay: "1.05%", peerDisplay: "0.95%",
+        actual: 0.98, target: 1.05, peer: 0.95, unit: "pct", higherIsBetter: true, tone: "warning",
+        formula: "ROA = Net Income / Average Total Assets",
+        driverNote: "Jul 2026 sample: net income ~$21.8M on ~$2.22B average assets = 0.98%. At the same asset base, 1.05% needs ~$23.3M NI (about $1.5M more)."
+      },
+      {
+        id: "loan_growth", name: "Loan growth", perspective: "Financial",
+        actualDisplay: "+6.1%", targetDisplay: "+7.0%", peerDisplay: "+4.8%",
+        actual: 6.1, target: 7.0, peer: 4.8, unit: "pct", higherIsBetter: true, tone: "warning",
+        formula: "Loan Growth = (Ending Gross Loans - Beginning Gross Loans) / Beginning Gross Loans",
+        driverNote: "Growing faster than peer, still 90 bps short of plan. Watch CRE vs C&I mix in drill-through."
+      },
+      {
+        id: "core_deposits", name: "Core deposit growth / mix", perspective: "Customer",
+        actualDisplay: "+4.2% / 78%", targetDisplay: "+5.0% / 75%", peerDisplay: "+3.5% / 74%",
+        actual: 4.2, target: 5.0, peer: 3.5, unit: "pct", higherIsBetter: true, tone: "warning",
+        formula: "Growth = (Ending Core - Beginning Core) / Beginning Core; Mix = Core / Total Deposits",
+        driverNote: "Growth variance uses the growth leg. Mix (78%) is already above the 75% floor."
+      },
+      {
+        id: "products_per_hh", name: "Products per household", perspective: "Customer",
+        actualDisplay: "2.4", targetDisplay: "2.6", peerDisplay: "2.35",
+        actual: 2.4, target: 2.6, peer: 2.35, unit: "number", higherIsBetter: true, tone: "warning",
+        formula: "Products per Household = Active Product Relationships / Households",
+        driverNote: "Slightly ahead of peer; still 0.20 below plan. Householding quality matters as much as offers."
+      },
+      {
+        id: "digital_active", name: "Digital active users", perspective: "Customer",
+        actualDisplay: "41%", targetDisplay: "45%", peerDisplay: "38%",
+        actual: 41, target: 45, peer: 38, unit: "pct", higherIsBetter: true, tone: "warning",
+        formula: "Digital Active Rate = Digital Active Users / Eligible Customers",
+        driverNote: "Ahead of peer by 300 bps; 400 bps behind target. Enrollment vs engagement is the next cut."
+      },
+      {
+        id: "criticized", name: "Criticized assets", perspective: "Risk",
+        actualDisplay: "3.1%", targetDisplay: "4.0% limit", peerDisplay: "3.4%",
+        actual: 3.1, target: 4.0, peer: 3.4, unit: "pct", higherIsBetter: false, tone: "success",
+        formula: "Criticized = (Special Mention + Substandard + Doubtful + Loss) / Gross Loans",
+        driverNote: "Inside limit and better than peer. Keep special-mention migration watchlist on the credit page."
+      },
+      {
+        id: "past_due", name: "Past due 30+", perspective: "Risk",
+        actualDisplay: "1.18%", targetDisplay: "1.50% limit", peerDisplay: "1.25%",
+        actual: 1.18, target: 1.5, peer: 1.25, unit: "pct", higherIsBetter: false, tone: "success",
+        formula: "Past Due 30+ = UPB >= 30 DPD / Gross Loans",
+        driverNote: "Inside limit and slightly better than peer median."
+      },
+      {
+        id: "wholesale", name: "Wholesale funding reliance", perspective: "Risk",
+        actualDisplay: "12.4%", targetDisplay: "15.0% limit", peerDisplay: "14.0%",
+        actual: 12.4, target: 15.0, peer: 14.0, unit: "pct", higherIsBetter: false, tone: "success",
+        formula: "Wholesale Reliance = Wholesale Funding / Total Liabilities",
+        driverNote: "Comfortably inside limit and better than peer."
+      },
+      {
+        id: "bsa_aging", name: "BSA alert aging", perspective: "Risk",
+        actualDisplay: "18 days", targetDisplay: "20 days SLA", peerDisplay: "21 days",
+        actual: 18, target: 20, peer: 21, unit: "days", higherIsBetter: false, tone: "success",
+        formula: "Avg Alert Age = Sum(Age Days) / Open Alerts",
+        driverNote: "Inside SLA and ahead of peer. Still watch the aged >30 day tail."
+      },
+      {
+        id: "decision_cycle", name: "Loan decision cycle time", perspective: "Capability",
+        actualDisplay: "6.5 days", targetDisplay: "5.0 days", peerDisplay: "5.8 days",
+        actual: 6.5, target: 5.0, peer: 5.8, unit: "days", higherIsBetter: false, tone: "danger",
+        formula: "Median(Decision Timestamp - Application Received Timestamp)",
+        driverNote: "Behind target and peer. Split consumer auto-decision vs commercial manual queues next."
+      }
+    ];
+
+    const ROA_TREND = {
+      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      actual: [0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98],
+      peer: [0.91, 0.92, 0.93, 0.93, 0.94, 0.94, 0.95],
+      target: 1.05
+    };
+
+    let selectedId = "roa";
+
+    function formatGap(k, compare) {
+      const delta = k.actual - compare;
+      if (Math.abs(delta) < 0.0005) return { label: "In line", favorable: true };
+      const favorable = k.higherIsBetter ? delta > 0 : delta < 0;
+      const abs = Math.abs(delta);
+      let amount;
+      if (k.unit === "pct") {
+        const bps = Math.round(abs * 100);
+        amount = bps >= 100 ? abs.toFixed(2) + " pts" : bps + " bps";
+      } else if (k.unit === "days") {
+        amount = abs.toFixed(1) + " days";
+      } else {
+        amount = abs.toFixed(2);
+      }
+      return { label: (favorable ? "Ahead " : "Behind ") + amount, favorable };
+    }
+
+    function statusLabel(tone) {
+      if (tone === "success") return "On target";
+      if (tone === "warning") return "Watch";
+      if (tone === "danger") return "Off target";
+      return "Info";
+    }
+
+    function byPerspective(p) {
+      return KPIS.filter((k) => k.perspective === p);
+    }
+
+    function selectedKpi() {
+      return KPIS.find((k) => k.id === selectedId) || KPIS.find((k) => k.id === "roa");
+    }
+
+    function barBlock(k) {
+      const max = Math.max(k.actual, k.target, k.peer) * 1.15 || 1;
+      const pct = (v) => Math.max(2, (v / max) * 100);
+      const unit = k.unit === "pct" ? "%" : k.unit === "days" ? " d" : "";
+      return `
+        <div class="bars">
+          <div class="bar-row"><span>Actual</span><div class="bar-track"><div class="bar-fill actual" style="width:${pct(k.actual)}%"></div></div><span>${k.actualDisplay}</span></div>
+          <div class="bar-row"><span>Target</span><div class="bar-track"><div class="bar-fill target" style="width:${pct(k.target)}%"></div></div><span>${k.targetDisplay}</span></div>
+          <div class="bar-row"><span>Peer</span><div class="bar-track"><div class="bar-fill peer" style="width:${pct(k.peer)}%"></div></div><span>${k.peerDisplay}</span></div>
+        </div>
+        <div class="muted">Scale is relative within this KPI only${unit ? " (" + (k.unit === "pct" ? "percent" : "days") + ")." : "."}</div>
+      `;
+    }
+
+    function trendSvg() {
+      const w = 560, h = 210, padL = 42, padR = 16, padT = 18, padB = 32;
+      const vals = [...ROA_TREND.actual, ...ROA_TREND.peer, ROA_TREND.target];
+      const min = Math.min(...vals) - 0.03;
+      const max = Math.max(...vals) + 0.02;
+      const n = ROA_TREND.categories.length;
+      const x = (i) => padL + (i * (w - padL - padR)) / (n - 1);
+      const y = (v) => padT + (1 - (v - min) / (max - min)) * (h - padT - padB);
+      const line = (arr) => arr.map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+      const areaActual = `${line(ROA_TREND.actual)} L${x(n - 1).toFixed(1)},${(h - padB).toFixed(1)} L${x(0).toFixed(1)},${(h - padB).toFixed(1)} Z`;
+      const yTarget = y(ROA_TREND.target);
+      const yTicks = [0.90, 0.95, 1.00, 1.05].filter((t) => t >= min && t <= max);
+      return `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="210" role="img" aria-label="ROA actual target peer trend">
+          <defs>
+            <linearGradient id="roaFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6eb6ff" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#6eb6ff" stop-opacity="0.02" />
+            </linearGradient>
+          </defs>
+          ${yTicks.map((t) => `
+            <line x1="${padL}" y1="${y(t)}" x2="${w - padR}" y2="${y(t)}" stroke="#2a3140" stroke-width="1" />
+            <text x="${padL - 6}" y="${y(t) + 3}" fill="#9aa3b2" font-size="10" text-anchor="end">${t.toFixed(2)}%</text>
+          `).join("")}
+          <line x1="${padL}" y1="${yTarget}" x2="${w - padR}" y2="${yTarget}" stroke="#f07178" stroke-dasharray="5 4" stroke-width="2" />
+          <text x="${w - padR}" y="${yTarget - 6}" fill="#f07178" font-size="11" text-anchor="end" font-weight="600">Objective 1.05%</text>
+          <path d="${areaActual}" fill="url(#roaFill)" />
+          <path d="${line(ROA_TREND.peer)}" fill="none" stroke="#f5b942" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="${line(ROA_TREND.actual)}" fill="none" stroke="#6eb6ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+          ${ROA_TREND.categories.map((c, i) => `
+            <circle cx="${x(i)}" cy="${y(ROA_TREND.peer[i])}" r="3" fill="#0f1218" stroke="#f5b942" stroke-width="2" />
+            <circle cx="${x(i)}" cy="${y(ROA_TREND.actual[i])}" r="4" fill="#6eb6ff" />
+            <text x="${x(i)}" y="${h - 10}" fill="#9aa3b2" font-size="11" text-anchor="middle">${c}</text>
+          `).join("")}
+          <circle cx="${x(n - 1)}" cy="${y(ROA_TREND.actual[n - 1])}" r="6" fill="#6eb6ff" opacity="0.35" />
+          <text x="${x(n - 1)}" y="${y(ROA_TREND.actual[n - 1]) - 12}" fill="#cfe0ff" font-size="11" text-anchor="middle" font-weight="600">0.98%</text>
+        </svg>
+        <div class="legend">
+          <span><i style="background:#6eb6ff"></i>Actual ROA</span>
+          <span><i style="background:#f5b942"></i>Peer median</span>
+          <span><i style="background:#f07178"></i>Objective / target</span>
+        </div>
+      `;
+    }
+
+    function tornadoSvg(k) {
+      // Butterfly / tornado: gap to target (left) and gap to peer (right) in bps
+      const gapT = Math.round((k.actual - k.target) * 100); // -7
+      const gapP = Math.round((k.actual - k.peer) * 100);   // +3
+      const w = 420, h = 170, mid = w / 2, maxAbs = 12;
+      const scale = (bps) => (Math.min(Math.abs(bps), maxAbs) / maxAbs) * (mid - 70);
+      const leftW = scale(gapT);
+      const rightW = scale(gapP);
+      const leftColor = gapT >= 0 ? "#3dd68c" : "#f07178";
+      const rightColor = gapP >= 0 ? "#3dd68c" : "#f07178";
+      const y1 = 48, y2 = 100, bh = 28;
+      return `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="170" role="img" aria-label="ROA tornado variance chart">
+          <text x="${mid}" y="18" fill="#9aa3b2" font-size="11" text-anchor="middle">Variance from Actual (bps)</text>
+          <line x1="${mid}" y1="28" x2="${mid}" y2="${h - 24}" stroke="#3a4458" stroke-width="1.5" />
+          <text x="16" y="40" fill="#9aa3b2" font-size="10">vs Objective</text>
+          <text x="${w - 16}" y="40" fill="#9aa3b2" font-size="10" text-anchor="end">vs Peer</text>
+          <rect x="${mid - leftW}" y="${y1}" width="${leftW}" height="${bh}" rx="4" fill="${leftColor}" opacity="0.9" />
+          <text x="${mid - leftW - 6}" y="${y1 + 19}" fill="#f2f4f7" font-size="12" text-anchor="end" font-weight="700">${gapT} bps</text>
+          <rect x="${mid}" y="${y1}" width="${rightW}" height="${bh}" rx="4" fill="${rightColor}" opacity="0.9" />
+          <text x="${mid + rightW + 6}" y="${y1 + 19}" fill="#f2f4f7" font-size="12" font-weight="700">+${gapP} bps</text>
+          <text x="16" y="${y2 + 18}" fill="#9aa3b2" font-size="11">Behind plan</text>
+          <text x="${w - 16}" y="${y2 + 18}" fill="#9aa3b2" font-size="11" text-anchor="end">Ahead of peer</text>
+          <text x="${mid}" y="${h - 8}" fill="#6eb6ff" font-size="12" text-anchor="middle" font-weight="600">Actual ROA 0.98%</text>
+        </svg>
+        <div class="legend">
+          <span><i style="background:#f07178"></i>Behind (unfavorable)</span>
+          <span><i style="background:#3dd68c"></i>Ahead (favorable)</span>
+        </div>
+      `;
+    }
+
+    function bulletSvg(k) {
+      // Position Actual on a track from low (peer neighborhood) to high (target+)
+      const w = 420, h = 110;
+      const lo = 0.88, hi = 1.08;
+      const px = (v) => 24 + ((v - lo) / (hi - lo)) * (w - 48);
+      const y = 52;
+      return `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="110" role="img" aria-label="ROA bullet comparison">
+          <rect x="24" y="${y - 10}" width="${w - 48}" height="20" rx="10" fill="#1c212b" stroke="#2a3140" />
+          <rect x="24" y="${y - 10}" width="${px(k.peer) - 24}" height="20" rx="10" fill="rgba(245,185,66,0.25)" />
+          <line x1="${px(k.peer)}" y1="${y - 18}" x2="${px(k.peer)}" y2="${y + 18}" stroke="#f5b942" stroke-width="3" />
+          <line x1="${px(k.target)}" y1="${y - 18}" x2="${px(k.target)}" y2="${y + 18}" stroke="#f07178" stroke-width="3" />
+          <circle cx="${px(k.actual)}" cy="${y}" r="9" fill="#6eb6ff" stroke="#0b0d10" stroke-width="2" />
+          <text x="${px(k.peer)}" y="22" fill="#f5b942" font-size="10" text-anchor="middle">Peer ${k.peerDisplay}</text>
+          <text x="${px(k.target)}" y="22" fill="#f07178" font-size="10" text-anchor="middle">Objective ${k.targetDisplay}</text>
+          <text x="${px(k.actual)}" y="${y + 36}" fill="#cfe0ff" font-size="12" text-anchor="middle" font-weight="700">Actual ${k.actualDisplay}</text>
+        </svg>
+      `;
+    }
+
+    function roaVisualPack(k) {
+      return `
+        <h2 style="margin-top:18px">ROA visuals · Actual / Objective / Peer</h2>
+        <div class="viz-grid">
+          <div class="viz-card">
+            <h4>Trend</h4>
+            <div class="viz-sub">YTD path vs peer median and objective line</div>
+            ${trendSvg()}
+          </div>
+          <div class="viz-card">
+            <h4>Tornado variance</h4>
+            <div class="viz-sub">bps gap to objective (left) and peer (right)</div>
+            ${tornadoSvg(k)}
+          </div>
+        </div>
+        <div class="viz-card" style="margin-top:12px">
+          <h4>Bullet position</h4>
+          <div class="viz-sub">Where Actual sits between peer and objective</div>
+          ${bulletSvg(k)}
+        </div>
+        <div class="ni-bars">
+          <div class="ni-card"><div class="lbl" style="color:var(--muted);font-size:11px">Net income (sample)</div><div class="big tone-info">$21.8M</div></div>
+          <div class="ni-card"><div class="lbl" style="color:var(--muted);font-size:11px">NI needed for 1.05%</div><div class="big">$23.3M</div></div>
+        </div>
+        <p class="muted" style="margin-top:10px">Asset base held flat at ~$2.22B. Closing 7 bps to objective is about $1.5M of incremental NI in this sample.</p>
+      `;
+    }
+
+    function renderSummary() {
+      const onTarget = KPIS.filter((k) => k.tone === "success").length;
+      const watch = KPIS.filter((k) => k.tone === "warning").length;
+      const off = KPIS.filter((k) => k.tone === "danger").length;
+      const aheadT = KPIS.filter((k) => formatGap(k, k.target).favorable).length;
+      const aheadP = KPIS.filter((k) => formatGap(k, k.peer).favorable).length;
+      document.getElementById("summary").innerHTML = `
+        <div class="stat"><div class="n tone-success">${onTarget}</div><div class="l">On target</div></div>
+        <div class="stat"><div class="n tone-warning">${watch}</div><div class="l">Watch</div></div>
+        <div class="stat"><div class="n tone-danger">${off}</div><div class="l">Off target</div></div>
+        <div class="stat"><div class="n tone-info">${aheadT} / ${KPIS.length}</div><div class="l">Ahead of target</div></div>
+        <div class="stat"><div class="n tone-info">${aheadP} / ${KPIS.length}</div><div class="l">Ahead of peer</div></div>
+      `;
+    }
+
+    function cardHtml(k) {
+      const vsT = formatGap(k, k.target);
+      const vsP = formatGap(k, k.peer);
+      const selected = k.id === selectedId ? "selected" : "";
+      return `
+        <button class="card ${selected}" type="button" data-id="${k.id}" aria-pressed="${k.id === selectedId}">
+          <div class="card-head">
+            <p class="card-title">${k.name}</p>
+            <span class="pill">${k.perspective}</span>
+          </div>
+          <p class="value tone-${k.tone}">${k.actualDisplay}</p>
+          <div class="value-label">Actual · ${statusLabel(k.tone)}</div>
+          <div class="pair">
+            <div><div class="lbl">Target</div><div class="val">${k.targetDisplay}</div></div>
+            <div><div class="lbl">Peer</div><div class="val">${k.peerDisplay}</div></div>
+          </div>
+          <div class="gaps">
+            <div>vs Target: ${vsT.label}</div>
+            <div>vs Peer: ${vsP.label}</div>
+          </div>
+          <span class="drill-cta">${k.id === selectedId ? "Showing drill" : "Drill down"}</span>
+        </button>
+      `;
+    }
+
+    function renderGrids() {
+      const bind = (el) => {
+        el.querySelectorAll(".card").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            selectedId = btn.getAttribute("data-id");
+            render();
+            document.getElementById("drill").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+      };
+      const fin = document.getElementById("finGrid");
+      const cus = document.getElementById("cusGrid");
+      const risk = document.getElementById("riskGrid");
+      fin.innerHTML = byPerspective("Financial").map(cardHtml).join("");
+      cus.innerHTML = byPerspective("Customer").map(cardHtml).join("");
+      risk.innerHTML = [...byPerspective("Risk"), ...byPerspective("Capability")].map(cardHtml).join("");
+      bind(fin); bind(cus); bind(risk);
+    }
+
+    function renderDrill() {
+      const k = selectedKpi();
+      const vsT = formatGap(k, k.target);
+      const vsP = formatGap(k, k.peer);
+      let roaExtra = "";
+      if (k.id === "roa") {
+        roaExtra = roaVisualPack(k);
+      }
+      document.getElementById("drill").innerHTML = `
+        <div class="card-head">
+          <h3>Drill: ${k.name}</h3>
+          <span class="pill">${k.perspective}</span>
+        </div>
+        <div class="filters" style="margin:0 0 12px">
+          <span class="chip active">vs Target: ${vsT.label}</span>
+          <span class="chip active">vs Peer: ${vsP.label}</span>
+          <span class="chip">${statusLabel(k.tone)}</span>
+        </div>
+        <div class="summary" style="margin-bottom:14px">
+          <div class="stat"><div class="n tone-${k.tone}">${k.actualDisplay}</div><div class="l">Actual</div></div>
+          <div class="stat"><div class="n">${k.targetDisplay}</div><div class="l">Target</div></div>
+          <div class="stat"><div class="n">${k.peerDisplay}</div><div class="l">Peer median</div></div>
+          <div class="stat"><div class="n">${vsT.label}</div><div class="l">vs Target</div></div>
+          <div class="stat"><div class="n">${vsP.label}</div><div class="l">vs Peer</div></div>
+        </div>
+        <div class="lbl" style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em">Formula</div>
+        <div class="formula">${k.formula}</div>
+        <div class="lbl" style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em">Drivers</div>
+        <p class="muted">${k.driverNote}</p>
+        <div class="lbl" style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-top:12px">Actual vs target vs peer</div>
+        ${barBlock(k)}
+        ${roaExtra}
+      `;
+    }
+
+    function renderTable() {
+      const body = document.querySelector("#gapTable tbody");
+      body.innerHTML = KPIS.map((k) => {
+        const vsT = formatGap(k, k.target);
+        const vsP = formatGap(k, k.peer);
+        return `
+          <tr>
+            <td><span class="dot ${k.tone}"></span>${k.name}</td>
+            <td class="num">${k.actualDisplay}</td>
+            <td class="num">${k.targetDisplay}</td>
+            <td class="num">${k.peerDisplay}</td>
+            <td>${vsT.label}</td>
+            <td>${vsP.label}</td>
+            <td>${statusLabel(k.tone)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function render() {
+      renderSummary();
+      renderGrids();
+      renderDrill();
+      renderTable();
+    }
+
+    render();
+  </script>
+</body>
+</html>

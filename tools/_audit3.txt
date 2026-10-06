@@ -1,0 +1,5 @@
+P11: Open the six Level 1 HTML files with Bank selected (default). Peer context is Uniform Bank Performance Report (Call Report), assets $1 billion–$3 billion. Riverbend Community Bank is the sample institution. Do not mix Financial Performance Report curves on the same tile.
+P50: Level 1-2 — Financial Performance and Earnings
+T1R2C0: Level 1-2 Financial Performance and Earnings
+T2R3C2: Controls and people: Bank Secrecy Act aging, decision cycle, franchise and people metrics, training, succession. Credit-
+T4R2C0: Level 1-2 Financial Performance and Earnings
