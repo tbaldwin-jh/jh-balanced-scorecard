@@ -54,6 +54,7 @@ body {
   font-size: 12px;
 }
 .topbar a:hover, .l1nav a:hover, .footer-links a:hover { text-decoration: underline; }
+body.charter-locked .charter { display: none; }
 .charter {
   display: flex;
   border: 1px solid var(--line);
@@ -261,6 +262,27 @@ a.mode-btn, a.nav-btn { color: var(--muted); }
   border-color: #2563eb;
   color: #cfe0ff;
   font-weight: 600;
+}
+.peer-controls { margin-bottom: 10px; }
+.peer-remove { padding: 4px 8px; font-size: 11px; }
+.peer-remove:disabled { opacity: 0.4; cursor: not-allowed; }
+.peer-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.peer-add select {
+  font: inherit;
+  font-size: 12px;
+  color: #cfe0ff;
+  background: var(--elevated);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 8px;
 }
 h1 { margin: 0 0 6px; font-size: 1.35rem; letter-spacing: -0.02em; }
 .lede { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
@@ -716,6 +738,31 @@ body.mode-edit .card { cursor: default; }
   letter-spacing: 0.04em;
   margin-bottom: 4px;
 }
+.lede.verdict { font-size: 14px; color: var(--text); margin: 0 0 10px; line-height: 1.45; }
+.delta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.delta-cell {
+  flex: 1 1 120px;
+  border: 1px solid var(--line);
+  background: var(--elevated);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.delta-cell .k {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.delta-cell .v { font-size: 13px; font-weight: 700; }
+.delta-cell .v.ok { color: var(--ok); }
+.delta-cell .v.bad { color: var(--bad); }
+.signal-list { margin-bottom: 8px; }
 .gap-card {
   background: var(--elevated);
   border: 1px solid var(--line);

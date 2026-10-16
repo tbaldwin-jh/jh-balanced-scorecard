@@ -13,19 +13,15 @@ Community bank **Balanced Scorecard** executive dashboards — monitor objective
 
 ## Open these first
 
-**L1 Balanced Scorecard (six reports).** Riverbend Community Bank demo; Bank / CU toggle; Month / Quarter / YTD / vs prior year; sample as-of 31 Jul 2026.
+**L1 Balanced Scorecard (six reports).** Two client packs — a bank or a credit union, never both. Month / Quarter / YTD / vs prior year; sample as-of 31 Jul 2026.
 
 | File | Purpose |
 |------|---------|
-| [`l1/l1_1_enterprise_strategy.html`](./l1/l1_1_enterprise_strategy.html) | **L1-1 Enterprise Strategy Scorecard** — home: 9 rollup tiles, exceptions, strategy map |
-| [`l1/l1_2_financial.html`](./l1/l1_2_financial.html) | L1-2 Financial Performance and Earnings (CFO) |
-| [`l1/l1_3_franchise.html`](./l1/l1_3_franchise.html) | L1-3 Customer / Member Franchise (CMO) |
-| [`l1/l1_4_risk_capital.html`](./l1/l1_4_risk_capital.html) | L1-4 Balance Sheet, Risk and Capital (CRO) |
-| [`l1/l1_5_process.html`](./l1/l1_5_process.html) | L1-5 Internal Process and Growth Execution (COO) |
-| [`l1/l1_6_people.html`](./l1/l1_6_people.html) | L1-6 People and Organizational Capacity (CHRO) |
+| [`l1/bank/l1_1_enterprise_strategy.html`](./l1/bank/l1_1_enterprise_strategy.html) | **Bank L1-1** — Riverbend Community Bank, UBPR |
+| [`l1/credit_union/l1_1_enterprise_strategy.html`](./l1/credit_union/l1_1_enterprise_strategy.html) | **Credit union L1-1** — Riverbend Community Credit Union, FPR / ARCU |
 | [`l1/l1_shared.js`](./l1/l1_shared.js) / [`l1/l1_shared.css`](./l1/l1_shared.css) | Shared sample-data engine and chrome (39 proving metrics) |
-| [`l1/charter.html`](./l1/charter.html) | Phase 1 charter (HTML) |
-| [`l1/planning.html`](./l1/planning.html) | Planning workspace entry |
+| [`l1/bank/charter.html`](./l1/bank/charter.html) | Bank-only Phase 1 charter |
+| [`l1/credit_union/charter.html`](./l1/credit_union/charter.html) | Credit-union-only Phase 1 charter |
 | [`l1/PHASE1_CHARTER_AND_OBJECTIVES.md`](./l1/PHASE1_CHARTER_AND_OBJECTIVES.md) | Sponsor brief, peer band, objectives (markdown source) |
 | [`l1/L1_REPORT_DATA_DICTIONARY.md`](./l1/L1_REPORT_DATA_DICTIONARY.md) | Metric definitions and report map |
 

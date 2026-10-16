@@ -3,22 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Riverbend | Financial Performance and Earnings</title>
+  <title>Riverbend | Enterprise Strategy Scorecard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./l1_shared.css" />
+  <link rel="stylesheet" href="../l1_shared.css" />
 </head>
 <body>
   <div class="topbar">
-    <img class="jh-logo" src="./jkhy-logo.png" alt="Jack Henry" />
+    <img class="jh-logo" src="../jkhy-logo.png" alt="Jack Henry" />
     <div>
-      <div class="brand" id="brandTitle">Riverbend Community Bank | Financial Performance and Earnings</div>
+      <div class="brand" id="brandTitle">Riverbend Community Bank | Enterprise Strategy Scorecard</div>
       <div class="sub" id="brandSub">L1 Balanced Scorecard</div>
-    </div>
-    <div class="charter" role="group" aria-label="Charter">
-      <button type="button" class="active" data-charter="bank">Bank</button>
-      <button type="button" data-charter="cu">Credit union</button>
     </div>
     <div class="modes" role="group" aria-label="Page">
       <button class="mode-btn active" type="button" data-mode="monitor" onclick="setMode('monitor')">Monitor</button>
@@ -39,7 +35,7 @@
     <div id="monitorSession">
     <div class="toolbar">
       <div>
-        <h1 id="reportTitle">Financial Performance and Earnings</h1>
+        <h1 id="reportTitle">Enterprise Strategy Scorecard</h1>
         <p class="lede" id="reportDecision"></p>
         <p class="caption" id="reportOwner"></p>
       </div>
@@ -58,6 +54,7 @@
       <div class="counts" id="counts"></div>
       <div class="exceptions" id="exceptions"></div>
     </div>
+    <div class="enterprise-glance" id="enterpriseGlance"></div>
     <div class="map-wrap" id="mapWrap">
       <h2 class="section">Strategy map · click a box to open that L1 report</h2>
       <div class="strategy-row">
@@ -66,6 +63,7 @@
       </div>
       <p class="caption" id="mapCaption"></p>
       <p class="caption" id="mapCausal"></p>
+      <p class="caption mix-legend">Bar = share of that report’s proving metrics · <span class="ok">On track</span> · <span class="watch">At risk</span> · <span class="bad">Off track</span></p>
     </div>
     <h2 class="section">Objectives</h2>
     <div class="work" id="workArea">
@@ -108,7 +106,7 @@
       </table>
     </div>
   </div>
-  <script src="./l1_shared.js"></script>
-  <script>boot("l1-2");</script>
+  <script src="../l1_shared.js"></script>
+  <script>boot("l1-1", "cu");</script>
 </body>
 </html>

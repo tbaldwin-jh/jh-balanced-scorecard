@@ -1,6 +1,6 @@
 # Phase 1 — Charter brief and this year’s objectives
 
-Demo stand-in for the sponsor workshop. First live FI in this pack is **Riverbend Community Bank**. The L1 HTML suite also toggles a credit-union label set (FPR peers) so both charters can be demoed; only the bank is treated as the first *live* scorecard.
+Demo stand-in for the sponsor workshop. Deliver **one** pack: [`bank/`](./bank/l1_1_enterprise_strategy.html) or [`credit_union/`](./credit_union/l1_1_enterprise_strategy.html). Clients never receive both charter views. First live FI in the bank pack is **Riverbend Community Bank**. The credit-union pack uses FPR / ARCU labels.
 
 Replace names, targets, and owners when a real FI workshop completes.
 
@@ -11,9 +11,9 @@ Replace names, targets, and owners when a real FI workshop completes.
 | Item | Decision |
 |------|----------|
 | Institution | Riverbend Community Bank (`org_key = 1` in BigQuery seed) |
-| Charter | Community bank (first live). CU mode is demo-only until a second workshop. |
+| Charter | Deliver one pack: `bank/` (UBPR) or `credit_union/` (FPR / ARCU). Never both to the same client. |
 | Sponsors | CEO + CFO |
-| Peer band | Assets $1B–$3B, UBPR median. CU demo uses FPR / same size band. |
+| Peer band | Assets $1B–$3B. Bank pack: UBPR median. Credit union pack: FPR / same size band. Never mix. |
 | As-of | 31 July 2026 (sample month, matches seed) |
 | Periods on L1-1 / L1-2 | Month (default), Quarter, YTD, vs prior year |
 | Who may change a target mid-year | Earnings and franchise goals: ALCO. Risk limits and capital floors: board. No owner-only edits after publish. |
@@ -25,14 +25,14 @@ Replace names, targets, and owners when a real FI workshop completes.
 | Domain | Owner seat | Feeds |
 |--------|------------|--------|
 | GL / earnings | CFO | ROA, ROE, NIM, NOI, efficiency, fee mix |
-| Core / deposits | Treasurer | Deposit/share growth, core mix, LTD/LTS, wholesale |
-| LOS / credit | Chief Credit | Loan growth, past due, criticized, ACL, decision cycle, pipeline |
-| ALM | Treasurer / CFO-ALM | NIM path, IRR NII shock |
+| Core / deposits | Treasurer | Deposit/share growth, core mix, loans-to-assets, wholesale, overdraft / courtesy-pay aging (L1-4 drill) |
+| LOS / credit | Chief Credit | Loan growth, past due, criticized, ACL, decision cycle, pipeline, payoff tickets |
+| ALM | Treasurer / CFO-ALM | NIM path, IRR NII shock, runoff / payoffs, new vs renewal spread, 180-day maturities |
 | CIF / member | CMO (franchise, not marketing-only) | CSI/NPS, retention, household/member growth, products/HH or AMR, CAC, digital active, cross-sell |
 | AML | BSA Officer | BSA aging |
-| Digital / ops | COO | Cost per transaction, self-service mix, teller SLA, decision cycle; CU onboarding |
+| Digital / ops | COO | Self-service mix, teller efficiency, decision cycle; CU onboarding |
 | Sales / BD | CBO | Funnel conversion, new-money yield, origination volume, commercial pipeline |
-| HRIS / LMS | CHRO | Engagement, turnover, time-to-fill, training, succession, credentials |
+| HRIS / LMS | CHRO | Engagement, turnover, time-to-fill, training, learning paths |
 
 ---
 
@@ -45,8 +45,8 @@ Replace names, targets, and owners when a real FI workshop completes.
 | Earn a competitive return without stretching wholesale | ROA | 1.50% | 0.75% (capital-build fuel) |
 | Deliver shareholder return (bank) / retain earnings (CU) | ROE / Net worth growth | ROE 12.0% | Net worth growth 8.0% |
 | Hold spread quality | NIM | 3.50% | 3.50% |
-| Keep the operating load inside plan | Efficiency | 52% | 79% vs FPR |
-| Hit earnings plan | NOI vs budget | $19.0MM | $12.5MM |
+| Keep the operating load inside plan | Efficiency / OpEx per average assets | 52% | OpEx / AA 3.20% (NCUA / ARCU — not the bank efficiency ratio) |
+| Hit earnings plan | NOI vs budget / Net income vs plan | $19.0MM | $12.5MM |
 | Grow earning assets with credit discipline | Loan growth | 7.0% YoY | 6.0% YoY |
 | Grow the funding book | Deposit / share growth | 6.0% YoY | 5.5% YoY |
 | Diversify off the spread | Noninterest income mix | 22% | 16% |
@@ -70,18 +70,28 @@ Replace names, targets, and owners when a real FI workshop completes.
 |---------|----------------|---------------|---------|
 | Stay well capitalized | Tier 1 / Net worth | Tier 1 leverage 9.5% | Net worth 10.5% |
 | Keep credit inside appetite | Past due 30+ | 1.10% | 0.90% |
-| Surface problem credits early | Criticized assets | 4.0% | 3.5% |
-| Cover expected loss | ACL coverage | 1.25× | 1.20× |
-| Run utilization in band | LTD / LTS | 86% (band 80–90) | 82% (band 75–88) |
+| Surface problem credits early / hold realized losses | Criticized assets / Net charge-offs | 4.0% | NCO 0.35% of average loans |
+| Stay inside CRE / MBL concentration | CRE / concentration | 300% watch / 400% limit | MBL 10.0% of assets (NCUA 12.25%) |
+| Cover expected loss | ACL / Allowance vs delinquent | 1.25× | 1.20× (allowance / delinquent) |
+| Hold liquidity mix | Loans-to-assets / Loans-to-shares | ~75% (band 72–78) | LTS ~82% (band 75–90); LTA is drill context |
 | Stay inside IRR policy | IRR sensitivity | −6.0% NII +200 bp (floor −8%) | −5.5% |
-| Limit wholesale | Wholesale reliance | 12% | 10% |
+| Limit wholesale / borrowed funds | Wholesale reliance / Borrowed funds per shares | 12% | 10% of shares |
 | Close BSA on time | BSA aging | 18 days avg | 16 days |
+| Hold unexpected loan runoff | Runoff / payoffs | 1.80% of book / month | 1.50% |
+| Keep new priced above renewals | New vs renewal spread | ≥ 55 bps | ≥ 40 bps |
+| See the 180-day maturity wall | Maturing loans (180d) | 7.50% of book | 6.50% of book |
+
+CU proving names follow ARCU / NCUA Key Ratios: **OpEx / average assets** (not bank efficiency), **loans-to-shares** (not loans-to-assets), **net charge-offs** (not criticized). Loans-to-assets stays drill context on LTS.
+
+Overdraft aging (bank: overdraft; CU: courtesy pay / NSF) in **1–10 / 11–20 / 21–30 / 30+** day buckets sits on **Past due 30+** drill 1 and 3 on L1-4 only — not a second tile and not on L1-1. The proving number stays loan 30+.
+
+**Book-risk tiles (own cards, not jammed into IRR or Past due):** runoff / payoffs with pipeline + ticketing alerts; new vs renewal weighted-average rates (proving number is the spread); contractual maturities looking ahead 180 days (0–30 / 31–90 / 91–180). L1-5 keeps Yield on new originations as the production coupon.
 
 ### L1-5 Process, service and production (COO / CBO)
 
-Same eight proving metrics; grouped on the page. **Operations (COO):** decision cycle, cost per transaction, digital self-service, teller SLA, and CU onboarding. **Production (CBO):** funnel conversion, new-money yield, origination volume, commercial pipeline. Loan and deposit *growth* stay on L1-2.
+Same seven proving metrics; grouped on the page. **Operations (COO):** decision cycle, digital self-service, teller efficiency, and CU onboarding. **Production (CBO):** funnel conversion, new-money yield, origination volume, commercial pipeline. Loan and deposit *growth* stay on L1-2.
 
-**L2 grain (sample):** Branch and associate exceptions appear under Needs attention on every L1 report that has a branch/associate KPI (franchise, people, process, deposit growth, L1-1 rollups of those). Click opens drill 3. Enterprise ratios (ROA, capital, LTD, IRR, BSA) stay enterprise-only. Not a roster.
+**L2 grain (sample):** Branch and associate exceptions appear under Needs attention on every L1 report that has a branch/associate KPI (franchise, people, process, deposit growth, L1-1 rollups of those). Click opens drill 3. Enterprise ratios (ROA, capital, loans-to-assets or CU loans-to-shares, IRR, BSA) stay enterprise-only. Not a roster.
 
 | Outcome | Proving metric | Target (bank) | CU demo | Group |
 |---------|----------------|---------------|---------|-------|
@@ -89,10 +99,9 @@ Same eight proving metrics; grouped on the page. **Operations (COO):** decision 
 | Convert the funnel | Funnel conversion | 38% | 42% | Production |
 | Price new money above the book | Yield on new originations | 6.80% | 6.40% | Production |
 | Keep origination volume on plan | Origination volume | $48MM / month | $22MM / month | Production |
-| Lower unit cost | Cost per transaction | $2.40 | $2.10 | Operations |
 | Move work off the lobby | Digital self-service | 71% | 68% | Operations |
 | Win commercial / onboard members | Commercial pipeline / Onboarding cycle | Pipeline 32% | Onboarding 1.2 days | Production (bank) / Operations (CU) |
-| Hold branch service speed | Teller SLA | 1.8 min | 1.8 min | Operations |
+| Run an efficient teller line | Teller Efficiency | 22 dep/hr | 22 dep/hr | Operations |
 
 ### L1-6 People (CHRO)
 
@@ -103,8 +112,9 @@ Same eight proving metrics; grouped on the page. **Operations (COO):** decision 
 | Fix the frontline leak | Teller / frontline turnover | 20% | 18% |
 | Fill examiner-sensitive seats | Time-to-fill critical roles | 45 days | 50 days |
 | Complete required training | Required training completion | 98% | 98% |
-| Cover key seats | Succession coverage | 80% | 75% |
-| Bench commercial skill / board education | Commercial skill coverage / Board education | 70% credentialed | 12 board hours |
+| Keep succession and credential paths on plan | Learning paths | 75% on plan | 75% on plan |
+
+Six proving metrics only. HR dashboard tiles (headcount, DEI, absenteeism, leave dollars, training cost, offer-decline lists) live as **drill 1 leading signals** or **drill 3 / Definitions** — not extra L1-6 cards. Mapping: [`HR_METRICS_L1_6_MAPPING.md`](./HR_METRICS_L1_6_MAPPING.md). Max drill is 3.
 
 ---
 
@@ -115,7 +125,7 @@ These are the only tiles on the ELT open (CEO chairs). Capital is on this page (
 | # | Objective | Metric | Owner | Report home |
 |---|-----------|--------|-------|-------------|
 | 1 | Deliver top-quartile peer ROA | ROA | CEO / CFO | L1-2 |
-| 2 | Operate inside the efficiency goal | Efficiency | CFO / COO | L1-2 |
+| 2 | Operate inside the efficiency goal (CU: OpEx / average assets) | Efficiency / OpEx per AA | CFO / COO | L1-2 |
 | 3 | Stay well capitalized | Tier 1 / Net worth | CFO | L1-4 |
 | 4 | Keep CSI / NPS above the floor | CSI / NPS | CMO | L1-3 |
 | 5 | Hold retention | Retention | CMO | L1-3 |
@@ -130,12 +140,8 @@ These are the only tiles on the ELT open (CEO chairs). Capital is on this page (
 
 | Report | File |
 |--------|------|
-| L1-1 Enterprise Strategy Scorecard | [`l1_1_enterprise_strategy.html`](./l1_1_enterprise_strategy.html) |
-| L1-2 Financial | [`l1_2_financial.html`](./l1_2_financial.html) |
-| L1-3 Franchise | [`l1_3_franchise.html`](./l1_3_franchise.html) |
-| L1-4 Risk & Capital | [`l1_4_risk_capital.html`](./l1_4_risk_capital.html) |
-| L1-5 Process, Service and Production | [`l1_5_process.html`](./l1_5_process.html) |
-| L1-6 People | [`l1_6_people.html`](./l1_6_people.html) |
+| Bank pack (UBPR) | [`bank/l1_1_enterprise_strategy.html`](./bank/l1_1_enterprise_strategy.html) |
+| Credit union pack (FPR / ARCU) | [`credit_union/l1_1_enterprise_strategy.html`](./credit_union/l1_1_enterprise_strategy.html) |
 
 ## Workshop still required (not claimed as done)
 

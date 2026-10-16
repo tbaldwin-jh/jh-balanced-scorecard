@@ -3,22 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Riverbend | Process, Service and Production</title>
+  <title>Riverbend | Customer Franchise</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./l1_shared.css" />
+  <link rel="stylesheet" href="../l1_shared.css" />
 </head>
 <body>
   <div class="topbar">
-    <img class="jh-logo" src="./jkhy-logo.png" alt="Jack Henry" />
+    <img class="jh-logo" src="../jkhy-logo.png" alt="Jack Henry" />
     <div>
-      <div class="brand" id="brandTitle">Riverbend Community Bank | Process, Service and Production</div>
+      <div class="brand" id="brandTitle">Riverbend Community Bank | Customer Franchise</div>
       <div class="sub" id="brandSub">L1 Balanced Scorecard</div>
-    </div>
-    <div class="charter" role="group" aria-label="Charter">
-      <button type="button" class="active" data-charter="bank">Bank</button>
-      <button type="button" data-charter="cu">Credit union</button>
     </div>
     <div class="modes" role="group" aria-label="Page">
       <button class="mode-btn active" type="button" data-mode="monitor" onclick="setMode('monitor')">Monitor</button>
@@ -39,7 +35,7 @@
     <div id="monitorSession">
     <div class="toolbar">
       <div>
-        <h1 id="reportTitle">Process, Service and Production</h1>
+        <h1 id="reportTitle">Customer Franchise</h1>
         <p class="lede" id="reportDecision"></p>
         <p class="caption" id="reportOwner"></p>
       </div>
@@ -108,7 +104,7 @@
       </table>
     </div>
   </div>
-  <script src="./l1_shared.js"></script>
-  <script>boot("l1-5");</script>
+  <script src="../l1_shared.js"></script>
+  <script>boot("l1-3", "bank");</script>
 </body>
 </html>

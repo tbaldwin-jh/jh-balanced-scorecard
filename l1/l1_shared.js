@@ -2,6 +2,8 @@
 const MONTHS = ["Feb", "Mar", "Apr", "May", "Jun", "Jul"];
 const BANK_PEERS = ["Lakeshore Community", "Northridge State", "Twin Ports National", "Harbor Trust"];
 const CU_PEERS = ["North Shore CU", "Harborlight FCU", "Lakeside Members CU", "Pioneer Community CU"];
+const BANK_PEER_POOL = ["Prairie Heritage", "Summit National", "Metro First (out of band)"];
+const CU_PEER_POOL = ["River Valley CU", "Summit Members CU", "Metro First CU (out of band)"];
 
 const DEFAULT_PERIOD = "month";
 
@@ -49,7 +51,8 @@ const REPORTS = {
   },
   "l1-3": {
     file: "l1_3_franchise.html",
-    name: "Customer / Member Franchise",
+    name: "Customer Franchise",
+    cuName: "Member Franchise",
     owner: "CMO (franchise, not marketing-only)",
     decision: "Franchise value — growth, engagement, and depth — not a marketing-mix score. Are we deepening the relationships that fund the institution, or buying volume?"
   },
@@ -80,6 +83,7 @@ const PLAN_UNITS = [
   { value: "score", label: "score" },
   { value: "n", label: "n · count" },
   { value: "x", label: "x · coverage" },
+  { value: "bps", label: "bps · basis points" },
   { value: "days", label: "days" },
   { value: "min", label: "min · minutes" },
   { value: "hrs", label: "hrs · hours" }
@@ -99,6 +103,7 @@ const PLAN_OWNERS = [
   "CMO",
   "CRO",
   "Chief Credit",
+  "Chief Credit / CRO",
   "Treasurer",
   "CHRO",
   "BSA Officer",
@@ -112,66 +117,101 @@ const METRICS = [
     drivers: [{ title: "NII run-rate", meta: "Primary earnings driver" }, { title: "Fee income mix", meta: "Below plan" }, { title: "Average assets", meta: "Dilutes ROA if earnings lag" }],
     action: { what: "Close the ROA gap via NII, not asset stretch", owner: "CFO", due: "Sep 2026" } },
   { id: "roe_nwg", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "CFO",
-    bank: { metric: "ROE", objective: "Deliver competitive shareholder return", target: 12.0, peer: 11.2, series: [10.4, 10.8, 11.1, 11.3, 11.5, 11.6], prior: [9.8, 10.1, 10.4, 10.6, 10.8, 11.0] },
-    cu: { metric: "Net worth growth", objective: "Retain earnings to grow net worth", target: 8.0, peer: 6.5, series: [6.2, 6.5, 6.8, 7.0, 7.2, 7.4], prior: [5.8, 6.0, 6.2, 6.4, 6.5, 6.6] },
-    drivers: [{ title: "Net income", meta: "Earnings engine" }, { title: "Capital actions", meta: "Bank: no buyback this year" }],
-    action: { what: "Hold dividend / patronage inside the capital plan", owner: "CFO", due: "Q4 2026" } },
+    bank: { metric: "ROE", objective: "Deliver competitive shareholder return", target: 12.0, peer: 11.2, series: [10.4, 10.8, 11.1, 11.3, 11.5, 11.6], prior: [9.8, 10.1, 10.4, 10.6, 10.8, 11.0],
+      drivers: [{ title: "Net income", meta: "Earnings engine" }, { title: "Capital actions", meta: "No buyback this year" }],
+      action: { what: "Hold the dividend inside the capital plan", owner: "CFO", due: "Q4 2026" } },
+    cu: { metric: "Net worth growth", objective: "Retain earnings to grow net worth", target: 8.0, peer: 6.5, series: [6.2, 6.5, 6.8, 7.0, 7.2, 7.4], prior: [5.8, 6.0, 6.2, 6.4, 6.5, 6.6],
+      drivers: [{ title: "Net income", meta: "Earnings engine" }, { title: "Retained earnings", meta: "Patronage stays inside the capital plan" }],
+      action: { what: "Hold patronage inside the capital plan", owner: "CFO", due: "Q4 2026" } } },
   { id: "nim", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "CFO / ALM",
-    bank: { metric: "NIM", objective: "Hold spread quality", target: 3.50, peer: 3.35, series: [3.28, 3.30, 3.32, 3.34, 3.36, 3.42], prior: [3.40, 3.38, 3.36, 3.34, 3.33, 3.32] },
-    cu: { metric: "NIM", objective: "Hold spread while returning member value", target: 3.50, peer: 3.69, series: [3.40, 3.42, 3.44, 3.46, 3.48, 3.49], prior: [3.52, 3.50, 3.48, 3.47, 3.46, 3.45] },
-    drivers: [{ title: "Cost of funds", meta: "Deposit specials lifting COF" }, { title: "Loan yields", meta: "New-money yield vs book" }],
-    action: { what: "Reprice specials; protect core DDA", owner: "Treasurer", due: "Oct 2026" } },
+    bank: { metric: "NIM", objective: "Hold spread quality", target: 3.50, peer: 3.35, series: [3.28, 3.30, 3.32, 3.34, 3.36, 3.42], prior: [3.40, 3.38, 3.36, 3.34, 3.33, 3.32],
+      drivers: [{ title: "Cost of funds", meta: "Deposit specials lifting COF" }, { title: "Loan yields", meta: "New-money yield vs book" }],
+      action: { what: "Reprice specials; protect core DDA", owner: "Treasurer", due: "Oct 2026" } },
+    cu: { metric: "NIM", objective: "Hold spread while returning member value", target: 3.50, peer: 3.69, series: [3.40, 3.42, 3.44, 3.46, 3.48, 3.49], prior: [3.52, 3.50, 3.48, 3.47, 3.46, 3.45],
+      drivers: [{ title: "Cost of funds", meta: "Share specials lifting COF — ARCU WAR on shares" }, { title: "Book loan yield", meta: "ARCU weighted average rate on the loan book" }],
+      action: { what: "Reprice share specials; protect regular shares", owner: "Treasurer", due: "Oct 2026" } } },
   { id: "efficiency", reports: ["l1-1", "l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "lower", owner: "CFO / COO",
-    bank: { metric: "Efficiency", objective: "Operate at 52% efficiency or better", target: 52, peer: 63.2, series: [58.4, 57.6, 56.8, 56.1, 55.4, 54.8], prior: [60.1, 59.4, 58.8, 58.2, 57.6, 57.0] },
-    cu: { metric: "Efficiency", objective: "Hold CU-peer efficiency, not a bank curve", target: 79, peer: 79.1, series: [82.0, 81.4, 80.9, 80.4, 80.0, 79.6], prior: [83.2, 82.6, 82.0, 81.5, 81.0, 80.6] },
-    drivers: [{ title: "Noninterest expense", meta: "Staff and tech run-rate" }, { title: "Revenue", meta: "NII + fees in the denominator" }],
-    action: { what: "Hold OpEx flat through year-end", owner: "COO", due: "Dec 2026" } },
+    bank: { metric: "Efficiency", objective: "Operate at 52% efficiency or better", target: 52, peer: 63.2, series: [58.4, 57.6, 56.8, 56.1, 55.4, 54.8], prior: [60.1, 59.4, 58.8, 58.2, 57.6, 57.0],
+      drivers: [{ title: "Noninterest expense", meta: "Staff and tech run-rate" }, { title: "Revenue", meta: "NII + fees in the denominator" }],
+      action: { what: "Hold OpEx flat through year-end", owner: "COO", due: "Dec 2026" } },
+    cu: { metric: "OpEx / average assets", objective: "Hold operating expense inside the FPR load", target: 3.20, peer: 3.40, series: [3.52, 3.48, 3.44, 3.40, 3.36, 3.32], prior: [3.60, 3.56, 3.52, 3.48, 3.44, 3.42],
+      drivers: [{ title: "Operating expense", meta: "Staff, occupancy, and tech run-rate" }, { title: "Average assets", meta: "NCUA / ARCU denominator — not the bank efficiency ratio" }],
+      action: { what: "Hold OpEx flat through year-end", owner: "COO", due: "Dec 2026" } } },
   { id: "noi", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "$MM", direction: "higher", owner: "CFO",
-    bank: { metric: "NOI vs budget", objective: "Hit the $19MM operating plan", target: 19.0, peer: 17.8, series: [15.2, 16.1, 16.8, 17.4, 18.1, 18.6], prior: [14.0, 14.6, 15.2, 15.8, 16.2, 16.4] },
-    cu: { metric: "NOI vs budget", objective: "Fund member value and capital build", target: 12.5, peer: 11.2, series: [10.1, 10.6, 11.0, 11.4, 11.7, 12.0], prior: [9.4, 9.8, 10.1, 10.4, 10.6, 10.8] },
-    drivers: [{ title: "Commercial yields", meta: "Capstone earnings engine" }, { title: "OpEx", meta: "Tied to efficiency" }],
-    action: { what: "Recover $0.4MM to plan from commercial yields", owner: "CFO", due: "Q4 2026" } },
+    bank: { metric: "NOI vs budget", objective: "Hit the $19MM operating plan", target: 19.0, peer: 17.8, series: [15.2, 16.1, 16.8, 17.4, 18.1, 18.6], prior: [14.0, 14.6, 15.2, 15.8, 16.2, 16.4],
+      drivers: [{ title: "Commercial yields", meta: "Capstone earnings engine" }, { title: "OpEx", meta: "Tied to efficiency" }],
+      action: { what: "Recover $0.4MM to plan from commercial yields", owner: "CFO", due: "Q4 2026" } },
+    cu: { metric: "Net income vs plan", objective: "Fund member value and net-worth build", target: 12.5, peer: 11.2, series: [10.1, 10.6, 11.0, 11.4, 11.7, 12.0], prior: [9.4, 9.8, 10.1, 10.4, 10.6, 10.8],
+      drivers: [{ title: "Net interest income", meta: "Member-loan yield vs cost of shares" }, { title: "Operating expense", meta: "Tied to OpEx / average assets" }],
+      action: { what: "Recover $0.4MM to plan from NII, not fee stretch", owner: "CFO", due: "Q4 2026" } } },
   { id: "loan_growth", reports: ["l1-1", "l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "Chief Credit",
-    bank: { metric: "Loan growth", objective: "Grow earning assets with credit discipline", target: 7.0, peer: 5.4, series: [4.8, 5.2, 5.6, 6.0, 6.3, 6.6], prior: [4.2, 4.5, 4.8, 5.0, 5.2, 5.3] },
-    cu: { metric: "Loan growth", objective: "Grow the loan book inside MBL and credit limits", target: 6.0, peer: 5.0, series: [4.2, 4.5, 4.8, 5.1, 5.3, 5.5], prior: [3.8, 4.0, 4.2, 4.4, 4.5, 4.6] },
-    drivers: [{ title: "Commercial pipeline", meta: "Conversion is the constraint" }, { title: "Past due", meta: "Quality gate on growth" }],
-    action: { what: "Convert pipeline without lifting the past-due limit", owner: "Chief Credit", due: "Sep 2026" } },
+    bank: { metric: "Loan growth", objective: "Grow earning assets with credit discipline", target: 7.0, peer: 5.4, series: [4.8, 5.2, 5.6, 6.0, 6.3, 6.6], prior: [4.2, 4.5, 4.8, 5.0, 5.2, 5.3],
+      drivers: [{ title: "Commercial pipeline", meta: "Conversion is the constraint" }, { title: "Past due", meta: "Quality gate on growth" }],
+      action: { what: "Convert pipeline without lifting the past-due limit", owner: "Chief Credit", due: "Sep 2026" } },
+    cu: { metric: "Loan growth", objective: "Grow the loan book inside MBL and credit limits", target: 6.0, peer: 5.0, series: [4.2, 4.5, 4.8, 5.1, 5.3, 5.5], prior: [3.8, 4.0, 4.2, 4.4, 4.5, 4.6],
+      drivers: [{ title: "Consumer / auto flow", meta: "Primary book" }, { title: "MBL inside policy", meta: "Do not grow through the NCUA MBL ceiling" }],
+      action: { what: "Grow consumer originations without lifting the past-due or MBL limit", owner: "Chief Credit", due: "Sep 2026" } } },
   { id: "dep_growth", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "Treasurer",
-    bank: { metric: "Deposit growth", objective: "Grow the funding book", target: 6.0, peer: 4.2, series: [3.8, 4.1, 4.5, 4.8, 5.2, 5.5], prior: [3.4, 3.6, 3.8, 4.0, 4.1, 4.2] },
-    cu: { metric: "Share growth", objective: "Grow member shares", target: 5.5, peer: 4.0, series: [3.4, 3.7, 4.0, 4.3, 4.6, 4.9], prior: [3.1, 3.3, 3.5, 3.6, 3.7, 3.8] },
-    drivers: [{ title: "Core DDA / shares", meta: "Stickiness over specials" }, { title: "Outflows by tier", meta: "Watch rate-sensitive money" }],
-    action: { what: "Add core balances; no wholesale substitution", owner: "Treasurer", due: "Dec 2026" } },
+    bank: { metric: "Deposit growth", objective: "Grow the funding book", target: 6.0, peer: 4.2, series: [3.8, 4.1, 4.5, 4.8, 5.2, 5.5], prior: [3.4, 3.6, 3.8, 4.0, 4.1, 4.2],
+      drivers: [{ title: "Core DDA", meta: "Stickiness over specials" }, { title: "Outflows by tier", meta: "Watch rate-sensitive money" }],
+      action: { what: "Add core balances; no wholesale substitution", owner: "Treasurer", due: "Dec 2026" } },
+    cu: { metric: "Share growth", objective: "Grow member shares", target: 5.5, peer: 4.0, series: [3.4, 3.7, 4.0, 4.3, 4.6, 4.9], prior: [3.1, 3.3, 3.5, 3.6, 3.7, 3.8],
+      drivers: [{ title: "Core shares", meta: "Stickiness over specials" }, { title: "Outflows by tier", meta: "Watch rate-sensitive money" }],
+      action: { what: "Add core member shares; do not substitute borrowed funds", owner: "Treasurer", due: "Dec 2026" } } },
   { id: "fee_mix", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "CFO",
-    bank: { metric: "Noninterest income mix", objective: "Diversify off the spread", target: 22, peer: 24, series: [18.2, 18.6, 19.0, 19.4, 19.8, 20.1], prior: [17.8, 18.0, 18.2, 18.4, 18.6, 18.8] },
-    cu: { metric: "Noninterest income mix", objective: "Fees consistent with member value", target: 16, peer: 15, series: [13.4, 13.7, 14.0, 14.2, 14.5, 14.7], prior: [13.0, 13.2, 13.4, 13.5, 13.6, 13.7] },
-    drivers: [{ title: "Treasury / card / wealth", meta: "Bank fee engines" }, { title: "Member pricing", meta: "CU: do not maximize fees" }],
-    action: { what: "Close 1–2 pts of fee mix without junk-fee risk", owner: "CFO", due: "Q4 2026" } },
+    bank: { metric: "Noninterest income mix", objective: "Diversify off the spread", target: 22, peer: 24, series: [18.2, 18.6, 19.0, 19.4, 19.8, 20.1], prior: [17.8, 18.0, 18.2, 18.4, 18.6, 18.8],
+      drivers: [{ title: "Treasury / card / wealth", meta: "Fee engines" }, { title: "Pricing discipline", meta: "Grow mix without junk-fee risk" }],
+      action: { what: "Close 1–2 pts of fee mix without junk-fee risk", owner: "CFO", due: "Q4 2026" } },
+    cu: { metric: "Noninterest income mix", objective: "Fees consistent with member value", target: 16, peer: 15, series: [13.4, 13.7, 14.0, 14.2, 14.5, 14.7], prior: [13.0, 13.2, 13.4, 13.5, 13.6, 13.7],
+      drivers: [{ title: "Card / interchange", meta: "Member-value fee engines" }, { title: "Member pricing", meta: "Do not maximize fees" }],
+      action: { what: "Lift fee mix without adding junk fees", owner: "CFO", due: "Q4 2026" } } },
 
   { id: "csi", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "score", direction: "higher", owner: "CMO",
-    bank: { metric: "CSI / NPS", objective: "Keep CSI above the Capstone floor", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95] },
-    cu: { metric: "NPS", objective: "Hold member NPS above 70", target: 70, peer: 68, series: [64, 65, 66, 67, 68, 69], prior: [62, 63, 64, 65, 66, 66] },
-    drivers: [{ title: "Loan decision time", meta: "Top CSI complaint theme" }, { title: "Account opening", meta: "Branch SLA" }],
-    action: { what: "Cut commercial cycle time to lift CSI", owner: "CMO / COO", due: "Sep 2026" } },
+    bank: { metric: "CSI / NPS", objective: "Keep CSI above the Capstone floor", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95],
+      drivers: [{ title: "Loan decision time", meta: "Top CSI complaint theme" }, { title: "Account opening", meta: "Branch SLA" }],
+      action: { what: "Cut commercial cycle time to lift CSI", owner: "CMO / COO", due: "Sep 2026" } },
+    cu: { metric: "NPS", objective: "Hold member NPS above 70", target: 70, peer: 68, series: [64, 65, 66, 67, 68, 69], prior: [62, 63, 64, 65, 66, 66],
+      drivers: [{ title: "Loan decision time", meta: "Top NPS complaint theme" }, { title: "Account opening", meta: "Branch service" }],
+      action: { what: "Cut consumer cycle time to lift NPS", owner: "CMO / COO", due: "Sep 2026" } } },
   { id: "retention", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
-    bank: { metric: "Retention", objective: "Hold household retention at 92%", target: 92, peer: 90, series: [90.2, 90.5, 90.8, 91.0, 91.2, 91.4], prior: [89.6, 89.8, 90.0, 90.2, 90.3, 90.4] },
-    cu: { metric: "Retention", objective: "Hold member retention at 93%", target: 93, peer: 91, series: [91.4, 91.6, 91.8, 92.0, 92.1, 92.3], prior: [90.8, 91.0, 91.2, 91.3, 91.4, 91.5] },
-    drivers: [{ title: "7-year CIF attrition", meta: "Long relationships leaving" }, { title: "Rate shoppers", meta: "Specials not stickiness" }],
-    action: { what: "Outreach on households with one product only", owner: "CMO", due: "Oct 2026" } },
+    bank: { metric: "Retention", objective: "Hold household retention at 92%", target: 92, peer: 90, series: [90.2, 90.5, 90.8, 91.0, 91.2, 91.4], prior: [89.6, 89.8, 90.0, 90.2, 90.3, 90.4],
+      leadingSignals: [
+        { title: "Deflection 64% of at-risk", meta: "Saved 41 of 64 households after outreach" },
+        { title: "Top close reason: Rate / fees", meta: "Operations · deceased · out-of-area on drill 3" }
+      ] },
+    cu: { metric: "Retention", objective: "Hold member retention at 93%", target: 93, peer: 91, series: [91.4, 91.6, 91.8, 92.0, 92.1, 92.3], prior: [90.8, 91.0, 91.2, 91.3, 91.4, 91.5],
+      leadingSignals: [
+        { title: "Deflection 64% of at-risk", meta: "Saved 41 of 64 members after outreach" },
+        { title: "Top close reason: Rate / fees", meta: "Operations · deceased · out-of-area on drill 3" }
+      ] },
+    drivers: [
+      { title: "Attempted vs deflected", meta: "64 outreach · 41 saved · 23 still closed" },
+      { title: "Rate / fees", meta: "Primary close code this period" },
+      { title: "Operations", meta: "Service / error-driven closes" },
+      { title: "Deceased", meta: "Not a save play" },
+      { title: "Out-of-area", meta: "Moved — not rate shopping" }
+    ],
+    action: { what: "Outreach on rate-shoppers before they close", owner: "CMO", due: "Oct 2026" } },
   { id: "hh_growth", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
-    bank: { metric: "Customer growth", objective: "Grow households, not account records", target: 4.0, peer: 2.8, series: [2.4, 2.6, 2.8, 3.0, 3.2, 3.4], prior: [2.1, 2.2, 2.3, 2.4, 2.5, 2.6] },
-    cu: { metric: "Member growth", objective: "Grow net members inside FOM", target: 3.5, peer: 2.5, series: [2.1, 2.3, 2.5, 2.7, 2.8, 3.0], prior: [1.8, 1.9, 2.0, 2.1, 2.2, 2.3] },
-    drivers: [{ title: "Net new CIF / members", meta: "Adds minus closes" }, { title: "FOM / market", meta: "CU field-of-membership" }],
-    action: { what: "Add primary relationships, not CD specials", owner: "CMO", due: "Dec 2026" } },
+    bank: { metric: "Customer growth", objective: "Grow households, not account records", target: 4.0, peer: 2.8, series: [2.4, 2.6, 2.8, 3.0, 3.2, 3.4], prior: [2.1, 2.2, 2.3, 2.4, 2.5, 2.6],
+      drivers: [{ title: "Net new CIF", meta: "Adds minus closes" }, { title: "Market", meta: "Primary-household growth, not account records" }],
+      action: { what: "Add primary relationships, not CD specials", owner: "CMO", due: "Dec 2026" } },
+    cu: { metric: "Member growth", objective: "Grow net members inside FOM", target: 3.5, peer: 2.5, series: [2.1, 2.3, 2.5, 2.7, 2.8, 3.0], prior: [1.8, 1.9, 2.0, 2.1, 2.2, 2.3],
+      drivers: [{ title: "Net new members", meta: "Adds minus closes" }, { title: "Field of membership", meta: "Growth inside FOM" }],
+      action: { what: "Add primary member relationships, not share specials", owner: "CMO", due: "Dec 2026" } } },
   { id: "core_mix", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "Treasurer",
-    bank: { metric: "Core funding mix", objective: "Improve funding stickiness", target: 78, peer: 74, series: [73.2, 73.6, 74.0, 74.4, 74.8, 75.2], prior: [72.0, 72.4, 72.8, 73.0, 73.2, 73.4] },
-    cu: { metric: "Core share mix", objective: "Grow sticky member shares", target: 80, peer: 77, series: [75.0, 75.4, 75.8, 76.2, 76.6, 77.0], prior: [74.2, 74.5, 74.8, 75.0, 75.2, 75.4] },
-    drivers: [{ title: "DDA + savings + MMDA", meta: "Core definition locked" }, { title: "Brokered / specials", meta: "Pulls mix down" }],
+    bank: { metric: "Core funding mix", objective: "Improve funding stickiness", target: 78, peer: 74, series: [73.2, 73.6, 74.0, 74.4, 74.8, 75.2], prior: [72.0, 72.4, 72.8, 73.0, 73.2, 73.4],
+      drivers: [{ title: "DDA + savings + MMDA", meta: "Core definition locked" }, { title: "Brokered / specials", meta: "Pulls mix down" }] },
+    cu: { metric: "Core share mix", objective: "Grow sticky member shares", target: 80, peer: 77, series: [75.0, 75.4, 75.8, 76.2, 76.6, 77.0], prior: [74.2, 74.5, 74.8, 75.0, 75.2, 75.4],
+      drivers: [{ title: "Regular shares + MMDA", meta: "Core definition locked" }, { title: "Specials", meta: "Pulls mix down" }] },
     action: { what: "Shift 200 bps into core before year-end", owner: "Treasurer", due: "Dec 2026" } },
   { id: "depth", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "n", direction: "higher", owner: "CMO",
-    bank: { metric: "Products per household", objective: "Deepen the household franchise", target: 3.10, peer: 2.85, series: [2.72, 2.76, 2.80, 2.84, 2.88, 2.92], prior: [2.64, 2.66, 2.68, 2.70, 2.72, 2.74] },
-    cu: { metric: "AMR", objective: "Deepen average member relationship", target: 18.5, peer: 16.8, series: [16.2, 16.5, 16.8, 17.1, 17.3, 17.6], prior: [15.4, 15.6, 15.8, 16.0, 16.1, 16.2] },
-    drivers: [{ title: "Cross-sell conversion", meta: "Second product attach" }, { title: "Primary-FI share", meta: "Loan + deposit in same CIF" }],
-    action: { what: "Campaign households with deposits only", owner: "CMO", due: "Nov 2026" } },
+    bank: { metric: "Products per household", objective: "Deepen the household franchise", target: 3.10, peer: 2.85, series: [2.72, 2.76, 2.80, 2.84, 2.88, 2.92], prior: [2.64, 2.66, 2.68, 2.70, 2.72, 2.74],
+      drivers: [{ title: "Cross-sell conversion", meta: "Second product attach" }, { title: "Primary-FI share", meta: "Loan + deposit in same CIF" }],
+      action: { what: "Campaign households with deposits only", owner: "CMO", due: "Nov 2026" } },
+    cu: { metric: "AMR", objective: "Deepen average member relationship", target: 18.5, peer: 16.8, series: [16.2, 16.5, 16.8, 17.1, 17.3, 17.6], prior: [15.4, 15.6, 15.8, 16.0, 16.1, 16.2],
+      drivers: [{ title: "Cross-sell conversion", meta: "Second product attach" }, { title: "Primary relationship", meta: "Loan + share in the same membership" }],
+      action: { what: "Campaign members with shares only", owner: "CMO", due: "Nov 2026" } } },
   { id: "digital", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
     bank: { metric: "Digital active", objective: "Shift eligible customers to digital", target: 62, peer: 58, series: [54, 55, 56, 57, 58, 59], prior: [50, 51, 52, 53, 54, 55] },
     cu: { metric: "Digital active", objective: "Raise member digital-active rate", target: 58, peer: 55, series: [50, 51, 52, 53, 54, 55], prior: [47, 48, 49, 50, 51, 52] },
@@ -183,9 +223,10 @@ const METRICS = [
     drivers: [{ title: "Referral conversion", meta: "Branch + banker" }, { title: "Digital offers", meta: "Attach at login" }],
     action: { what: "Stand up a weekly referral huddle", owner: "CMO", due: "Sep 2026" } },
   { id: "cac", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "$", direction: "lower", owner: "CMO",
-    bank: { metric: "CAC", objective: "Acquire without buying volume", target: 285, peer: 310, series: [340, 330, 322, 314, 308, 302], prior: [350, 345, 340, 336, 332, 328] },
-    cu: { metric: "CAC", objective: "Keep member acquisition cost inside plan", target: 240, peer: 260, series: [278, 270, 264, 258, 254, 250], prior: [286, 280, 274, 270, 266, 262] },
-    drivers: [{ title: "Paid media", meta: "Cost per funded household" }, { title: "Branch vs digital mix", meta: "Digital cheaper" }],
+    bank: { metric: "CAC", objective: "Acquire without buying volume", target: 285, peer: 310, series: [340, 330, 322, 314, 308, 302], prior: [350, 345, 340, 336, 332, 328],
+      drivers: [{ title: "Paid media", meta: "Cost per funded household" }, { title: "Branch vs digital mix", meta: "Digital cheaper" }] },
+    cu: { metric: "CAC", objective: "Keep member acquisition cost inside plan", target: 240, peer: 260, series: [278, 270, 264, 258, 254, 250], prior: [286, 280, 274, 270, 266, 262],
+      drivers: [{ title: "Paid media", meta: "Cost per funded membership" }, { title: "Branch vs digital mix", meta: "Digital cheaper" }] },
     action: { what: "Shift 15% of acquisition spend to digital", owner: "CMO", due: "Oct 2026" } },
 
   { id: "capital", reports: ["l1-1", "l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "higher", owner: "CFO",
@@ -194,46 +235,274 @@ const METRICS = [
     drivers: [{ title: "Retained earnings", meta: "ROA is the fuel" }, { title: "Asset growth", meta: "Dilutes the ratio" }],
     action: { what: "Keep the capital floor inside the growth plan", owner: "CFO", due: "monthly ALCO" } },
   { id: "past_due", reports: ["l1-1", "l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "CRO",
-    bank: { metric: "Past due 30+", objective: "Keep credit inside appetite", target: 1.10, peer: 1.05, series: [1.02, 1.06, 1.10, 1.14, 1.16, 1.18], prior: [0.92, 0.94, 0.96, 0.98, 0.99, 1.00] },
-    cu: { metric: "Past due 30+", objective: "Hold consumer delinquency inside limit", target: 0.90, peer: 0.85, series: [0.78, 0.82, 0.86, 0.88, 0.90, 0.93], prior: [0.70, 0.72, 0.74, 0.76, 0.77, 0.78] },
-    drivers: [{ title: "30/60/90 mix", meta: "Watch 60+ migration" }, { title: "Consumer auto / card", meta: "CU lead book" }],
+    bank: { metric: "Past due 30+", objective: "Keep credit inside appetite", target: 1.10, peer: 1.05, series: [1.02, 1.06, 1.10, 1.14, 1.16, 1.18], prior: [0.92, 0.94, 0.96, 0.98, 0.99, 1.00],
+      drivers: [{ title: "30/60/90 mix", meta: "Watch 60+ migration" }, { title: "C&I / CRE watch", meta: "Commercial lead book" }],
+      l14Signals: [
+        { title: "OD 30+ is 12% of overdraft balances", meta: "$0.30MM — charge-off risk. Buckets on drill 3." },
+        { title: "21–30 day OD at 18%", meta: "Migration into 30+ this month" }
+      ],
+      odAging: {
+        title: "Overdraft aging",
+        shareHeader: "Share of OD",
+        caption: "Deposit overdraft balances by days negative — not loan past due. Shown on L1-4 only.",
+        buckets: [
+          { band: "1–10 days", share: 42, dollars: "$1.05MM", status: "ok" },
+          { band: "11–20 days", share: 28, dollars: "$0.70MM", status: "watch" },
+          { band: "21–30 days", share: 18, dollars: "$0.45MM", status: "watch" },
+          { band: "30+ days", share: 12, dollars: "$0.30MM", status: "bad" }
+        ]
+      } },
+    cu: { metric: "Past due 30+", objective: "Hold consumer delinquency inside limit", target: 0.90, peer: 0.85, series: [0.78, 0.82, 0.86, 0.88, 0.90, 0.93], prior: [0.70, 0.72, 0.74, 0.76, 0.77, 0.78],
+      drivers: [{ title: "30/60/90 mix", meta: "Watch 60+ migration" }, { title: "Consumer auto / card", meta: "Lead book" }],
+      l14Signals: [
+        { title: "Courtesy pay 30+ is 11% of courtesy-pay balances", meta: "$0.22MM — charge-off risk. Buckets on drill 3." },
+        { title: "21–30 day courtesy pay at 17%", meta: "Migration into 30+ this month" }
+      ],
+      odAging: {
+        title: "Courtesy pay / overdraft aging",
+        shareHeader: "Share of courtesy pay",
+        caption: "Courtesy pay and NSF balances by days negative — not loan delinquency. Shown on L1-4 only.",
+        buckets: [
+          { band: "1–10 days", share: 46, dollars: "$0.88MM", status: "ok" },
+          { band: "11–20 days", share: 26, dollars: "$0.50MM", status: "watch" },
+          { band: "21–30 days", share: 17, dollars: "$0.33MM", status: "watch" },
+          { band: "30+ days", share: 11, dollars: "$0.22MM", status: "bad" }
+        ]
+      } },
     action: { what: "Tighten early-stage collections on 30–59", owner: "Chief Credit", due: "Sep 2026" } },
   { id: "criticized", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "Chief Credit",
-    bank: { metric: "Criticized assets", objective: "Surface problem credits early", target: 4.0, peer: 3.6, series: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9], prior: [3.1, 3.2, 3.2, 3.3, 3.3, 3.4] },
-    cu: { metric: "Criticized assets", objective: "Keep classified / criticized inside limit", target: 3.5, peer: 3.2, series: [2.9, 3.0, 3.1, 3.2, 3.25, 3.30], prior: [2.7, 2.75, 2.8, 2.85, 2.9, 2.95] },
-    drivers: [{ title: "Special mention inflows", meta: "Label criticized vs classified" }, { title: "CRE watchlist", meta: "Bank concentration" }],
-    action: { what: "Work the SM list before it rolls to substandard", owner: "Chief Credit", due: "Oct 2026" } },
+    bank: { metric: "Criticized assets", objective: "Surface problem credits early", target: 4.0, peer: 3.6, series: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9], prior: [3.1, 3.2, 3.2, 3.3, 3.3, 3.4],
+      drivers: [{ title: "Special mention inflows", meta: "Label criticized vs classified" }, { title: "CRE concentration", meta: "Limits live on the CRE tile — not this one" }],
+      action: { what: "Work the SM list before it rolls to substandard", owner: "Chief Credit", due: "Oct 2026" } },
+    cu: { metric: "Net charge-offs", objective: "Hold realized losses inside the NCUA / FPR limit", target: 0.35, peer: 0.28, series: [0.26, 0.28, 0.30, 0.32, 0.34, 0.36], prior: [0.20, 0.21, 0.22, 0.23, 0.24, 0.25],
+      leadingSignals: [
+        { title: "Card NCO 0.55% of avg card", meta: "$0.22MM — fastest leak" },
+        { title: "Auto 0.42%", meta: "Largest dollar book" }
+      ],
+      drivers: [
+        { title: "Charge-offs", meta: "Gross charge-offs this period — ARCU collections" },
+        { title: "Recoveries", meta: "CHARGEOFFAMOUNT minus remaining balance" },
+        { title: "Average loans", meta: "NCUA denominator" }
+      ],
+      action: { what: "Work card and auto charge-off inflows before they lift the ratio", owner: "Chief Credit", due: "Oct 2026" },
+      drillTable: {
+        title: "Net charge-offs by book",
+        caption: "NCUA / ARCU realized-loss split. Delinquency stays on Past due 30+. Not classified / criticized.",
+        columns: ["Book", "NCO / avg loans", "Amount"],
+        rows: [
+          { cells: ["Consumer auto", "0.42%", "$0.48MM"], status: "watch" },
+          { cells: ["Card", "0.55%", "$0.22MM"], status: "bad" },
+          { cells: ["MBL", "0.18%", "$0.08MM"], status: "ok" }
+        ]
+      } } },
+  { id: "cre_conc", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "Chief Credit / CRO",
+    bank: { metric: "CRE / concentration", objective: "Stay inside the 300% watch / 400% CRE limit", target: 300, peer: 278, series: [298, 302, 305, 308, 310, 312], prior: [286, 288, 290, 292, 294, 296],
+      leadingSignals: [
+        { title: "Construction nearest the limit", meta: "268% of risk-based capital" },
+        { title: "Hotel / motel +180 bps this quarter", meta: "Bucket-shift alert — not a live monitor" }
+      ],
+      drivers: [
+        { title: "CRE / RBC", meta: "Proving number — 300% watch · 400% regulatory limit" },
+        { title: "Construction", meta: "Nearest sub-limit" },
+        { title: "Multifamily", meta: "Inside policy" },
+        { title: "Hotel / motel", meta: "Fastest bucket shift this quarter" }
+      ],
+      action: { what: "Pause new hotel/motel commitments until CRE is back under 300%", owner: "Chief Credit", due: "Oct 2026" } },
+    cu: { metric: "MBL concentration", objective: "Hold member-business loans inside policy", target: 10.0, peer: 9.2, series: [9.2, 9.5, 9.8, 10.0, 10.2, 10.4], prior: [8.6, 8.8, 9.0, 9.1, 9.2, 9.3],
+      leadingSignals: [
+        { title: "Construction nearest the limit", meta: "Construction MBL 4.1% of assets" },
+        { title: "MBL +40 bps this quarter", meta: "Bucket-shift alert — not a live monitor" }
+      ],
+      drivers: [
+        { title: "MBL / assets", meta: "Proving number — 10% policy · NCUA 12.25% ceiling" },
+        { title: "Construction", meta: "Nearest sub-limit" },
+        { title: "Member business other", meta: "Inside policy" }
+      ],
+      action: { what: "Pause new construction MBL until concentration is back under 10%", owner: "Chief Credit", due: "Oct 2026" } } },
   { id: "acl", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "x", direction: "higher", owner: "CFO / Credit",
-    bank: { metric: "ACL coverage", objective: "Cover expected loss", target: 1.25, peer: 1.18, series: [1.20, 1.21, 1.22, 1.22, 1.23, 1.23], prior: [1.16, 1.17, 1.17, 1.18, 1.18, 1.19] },
-    cu: { metric: "ACL coverage", objective: "Hold CECL coverage vs NPL", target: 1.20, peer: 1.15, series: [1.14, 1.15, 1.16, 1.16, 1.17, 1.17], prior: [1.10, 1.11, 1.12, 1.12, 1.13, 1.13] },
-    drivers: [{ title: "NPL stock", meta: "Denominator" }, { title: "Provision", meta: "Earnings echo on L1-2" }],
-    action: { what: "Refresh CECL qualitative overlay", owner: "CFO", due: "Q3 close" } },
-  { id: "ltd", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "band", owner: "Treasurer",
-    bank: { metric: "LTD", objective: "Run utilization in the 80–90 band", target: 86, peer: 84, series: [88.4, 88.8, 89.1, 89.4, 89.6, 89.8], prior: [86.0, 86.4, 86.8, 87.0, 87.2, 87.4], band: [80, 90] },
-    cu: { metric: "LTS", objective: "Run utilization in the 75–88 band", target: 82, peer: 80, series: [84.0, 84.4, 84.8, 85.0, 85.2, 85.4], prior: [81.5, 81.8, 82.0, 82.2, 82.4, 82.6], band: [75, 88] },
-    drivers: [{ title: "Loan growth vs deposits", meta: "Both moving" }, { title: "Wholesale", meta: "Fills the gap" }],
-    action: { what: "Bring LTD/LTS back inside the band via core funding", owner: "Treasurer", due: "Nov 2026" } },
+    bank: { metric: "ACL coverage", objective: "Cover expected loss", target: 1.25, peer: 1.18, series: [1.20, 1.21, 1.22, 1.22, 1.23, 1.23], prior: [1.16, 1.17, 1.17, 1.18, 1.18, 1.19],
+      drivers: [{ title: "NPL stock", meta: "Denominator" }, { title: "Provision", meta: "Earnings echo on L1-2" }],
+      action: { what: "Refresh CECL qualitative overlay", owner: "CFO", due: "Q3 close" } },
+    cu: { metric: "Allowance / delinquent", objective: "Cover delinquent loans at the NCUA ratio", target: 1.20, peer: 1.15, series: [1.14, 1.15, 1.16, 1.16, 1.17, 1.17], prior: [1.10, 1.11, 1.12, 1.12, 1.13, 1.13],
+      drivers: [{ title: "Allowance", meta: "GL allowance for loan losses" }, { title: "Delinquent loans", meta: "NCUA denominator — not bank NPL / CECL wording" }],
+      action: { what: "Refresh the allowance vs the delinquent book", owner: "CFO", due: "Q3 close" } } },
+  { id: "loan_assets", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "band", owner: "Treasurer",
+    bank: { metric: "Loans-to-assets", objective: "Hold loan book near the ~75% liquidity target", target: 75, peer: 73, series: [72.8, 73.2, 73.8, 74.2, 74.6, 75.0], prior: [71.5, 72.0, 72.4, 72.8, 73.2, 73.6], band: [72, 78],
+      drivers: [{ title: "Pipeline vs balance sheet", meta: "LTD removed — pipeline swings distort deposit ratios" }, { title: "Securities & cash", meta: "Non-loan asset mix" }],
+      action: { what: "Rebalance toward ~75% loans-to-assets without chasing pipeline noise", owner: "Treasurer", due: "Nov 2026" } },
+    cu: { metric: "Loans-to-shares", objective: "Hold loans funded by member shares inside the board band", target: 82, peer: 80, series: [83.2, 83.8, 84.4, 85.0, 85.6, 86.2], prior: [80.0, 80.4, 80.8, 81.2, 81.6, 82.0], band: [75, 90],
+      leadingSignals: [
+        { title: "Loans-to-assets 74.8%", meta: "Context only — not the proving number. Split on drill 3." },
+        { title: "Borrowed funds 10.7% of shares", meta: "LTS tightness shows up as borrowed-funds pressure" }
+      ],
+      drivers: [
+        { title: "Loans-to-shares", meta: "Proving number — NCUA / ARCU liquidity" },
+        { title: "Loans-to-assets", meta: "Context only — not a second tile" },
+        { title: "Cash and investments", meta: "Non-loan asset mix" }
+      ],
+      action: { what: "Rebalance toward ~82% loans-to-shares without borrowed-fund substitution", owner: "Treasurer", due: "Nov 2026" },
+      drillTable: {
+        title: "Liquidity mix",
+        caption: "Proving number is loans-to-shares (NCUA / ARCU). Loans-to-assets is context — not a second tile.",
+        columns: ["Ratio", "Actual", "Board"],
+        rows: [
+          { cells: ["Loans-to-shares", "86.2%", "75–90%"], status: "ok" },
+          { cells: ["Loans-to-assets", "74.8%", "Context"], status: "ok" }
+        ]
+      } } },
   { id: "irr", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "higher", owner: "Treasurer",
     bank: { metric: "IRR NII +200 bp", objective: "Stay inside the −8% NII floor", target: -6.0, peer: -7.0, series: [-7.4, -7.2, -7.1, -7.0, -6.9, -6.8], prior: [-6.4, -6.5, -6.6, -6.7, -6.7, -6.8] },
     cu: { metric: "IRR NII +200 bp", objective: "Stay inside the −8% NII floor", target: -5.5, peer: -6.5, series: [-6.6, -6.5, -6.4, -6.3, -6.2, -6.1], prior: [-5.8, -5.9, -6.0, -6.0, -6.1, -6.1] },
     drivers: [{ title: "Duration of funding", meta: "Specials shortening" }, { title: "Loan coupons", meta: "Fixed vs floating mix" }],
     action: { what: "Stay inside the −8% NII floor", owner: "ALCO", due: "monthly" } },
   { id: "wholesale", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "Treasurer",
-    bank: { metric: "Wholesale reliance", objective: "Limit wholesale funding", target: 12, peer: 14, series: [13.8, 13.6, 13.4, 13.2, 13.1, 13.0], prior: [12.4, 12.6, 12.8, 12.9, 13.0, 13.1] },
-    cu: { metric: "Wholesale reliance", objective: "Limit borrowed funds", target: 10, peer: 11, series: [11.4, 11.2, 11.0, 10.9, 10.8, 10.7], prior: [10.2, 10.3, 10.4, 10.5, 10.5, 10.6] },
-    drivers: [{ title: "FHLB / brokers", meta: "Fills LTD gap" }, { title: "Core mix", meta: "L1-3 leading indicator" }],
-    action: { what: "Replace $15MM wholesale with core", owner: "Treasurer", due: "Dec 2026" } },
+    bank: { metric: "Wholesale reliance", objective: "Limit wholesale funding", target: 12, peer: 14, series: [13.8, 13.6, 13.4, 13.2, 13.1, 13.0], prior: [12.4, 12.6, 12.8, 12.9, 13.0, 13.1],
+      drivers: [{ title: "FHLB / brokers", meta: "Non-core funding if loan assets run hot" }, { title: "Core mix", meta: "L1-3 leading indicator" }],
+      action: { what: "Replace $15MM wholesale with core", owner: "Treasurer", due: "Dec 2026" } },
+    cu: { metric: "Borrowed funds / shares", objective: "Limit borrowed funds vs member shares", target: 10, peer: 11, series: [11.4, 11.2, 11.0, 10.9, 10.8, 10.7], prior: [10.2, 10.3, 10.4, 10.5, 10.5, 10.6],
+      drivers: [{ title: "FHLB / other borrowed", meta: "Non-share funding if LTS runs hot" }, { title: "Core share mix", meta: "L1-3 leading indicator" }],
+      action: { what: "Replace $15MM borrowed funds with member shares", owner: "Treasurer", due: "Dec 2026" } } },
   { id: "bsa", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "days", direction: "lower", owner: "BSA Officer",
     bank: { metric: "BSA aging", objective: "Close alerts inside SLA", target: 18, peer: 16, series: [22, 21, 21, 20, 20, 19.5], prior: [18, 18, 19, 19, 19, 20] },
     cu: { metric: "BSA aging", objective: "Close alerts inside SLA", target: 16, peer: 15, series: [19, 18.5, 18, 17.6, 17.2, 17.0], prior: [16, 16, 16.5, 16.5, 17, 17] },
     drivers: [{ title: "Aged >30 share", meta: "Exam talking point" }, { title: "Staffing", meta: "Time-to-fill on L1-6" }],
     action: { what: "Clear the >30-day bucket", owner: "BSA Officer", due: "Sep 2026" } },
+  { id: "runoff", reports: ["l1-4"], perspective: "Risk", map: "l1-4", riskGroup: "book", unit: "%", direction: "lower", owner: "Treasurer",
+    bank: { metric: "Runoff / payoffs", objective: "Hold unexpected loan runoff inside plan", target: 1.80, peer: 1.55, series: [1.48, 1.56, 1.64, 1.72, 1.80, 1.86], prior: [1.22, 1.26, 1.30, 1.34, 1.38, 1.42],
+      leadingSignals: [
+        { title: "4 open payoff tickets · $6.10MM", meta: "Servicing / JH ticketing — table on drill 3" },
+        { title: "Pipeline payoffs $2.80MM this month", meta: "LOS scheduled exits, not yet ticketed" }
+      ],
+      drivers: [
+        { title: "Scheduled vs unexpected payoffs", meta: "Proving number is total runoff / beginning loans" },
+        { title: "Pipeline payoffs", meta: "LOS scheduled exits this month" },
+        { title: "Open payoff tickets", meta: "Servicing / ticketing — work the queue" }
+      ],
+      action: { what: "Clear the open CRE / C&I payoff tickets before they hit the book", owner: "Treasurer", due: "Sep 2026" },
+      drillTable: {
+        title: "Payoff alerts · ticketing",
+        caption: "Servicing / LOS tickets for scheduled and requested payoffs. Sample — not a live ticketing feed.",
+        columns: ["Ticket", "Relationship", "Amount", "Days out"],
+        rows: [
+          { cells: ["TKT-1842", "Oak Street CRE", "$2.40MM", "12"], status: "bad" },
+          { cells: ["TKT-1838", "Riverside C&I", "$1.85MM", "21"], status: "watch" },
+          { cells: ["TKT-1821", "Downtown CRE refi", "$1.20MM", "6"], status: "watch" },
+          { cells: ["TKT-1794", "Northside HELOC", "$0.65MM", "—"], status: "ok" }
+        ]
+      } },
+    cu: { metric: "Runoff / payoffs", objective: "Hold unexpected member-loan payoffs inside plan", target: 1.50, peer: 1.35, series: [1.32, 1.38, 1.42, 1.46, 1.52, 1.56], prior: [1.12, 1.16, 1.20, 1.24, 1.28, 1.30],
+      leadingSignals: [
+        { title: "3 open payoff tickets · $2.07MM", meta: "Servicing / ticketing — table on drill 3" },
+        { title: "Pipeline payoffs $1.10MM this month", meta: "LOS scheduled member-loan exits" }
+      ],
+      drivers: [
+        { title: "Scheduled vs unexpected payoffs", meta: "Proving number is total runoff / beginning loans" },
+        { title: "Pipeline payoffs", meta: "LOS scheduled member-loan exits this month" },
+        { title: "Open payoff tickets", meta: "Servicing / ticketing — work the queue" }
+      ],
+      action: { what: "Clear the open member-loan payoff tickets before they hit the book", owner: "Treasurer", due: "Sep 2026" },
+      drillTable: {
+        title: "Payoff alerts · ticketing",
+        caption: "Servicing / LOS tickets for scheduled and requested member-loan payoffs. Sample — not a live ticketing feed.",
+        columns: ["Ticket", "Relationship", "Amount", "Days out"],
+        rows: [
+          { cells: ["TKT-902", "Member auto — Oak Street", "$0.42MM", "9"], status: "bad" },
+          { cells: ["TKT-887", "MBL — Riverside", "$1.10MM", "18"], status: "watch" },
+          { cells: ["TKT-871", "HELOC — Downtown", "$0.55MM", "24"], status: "watch" },
+          { cells: ["TKT-840", "Member auto — Northside", "$0.28MM", "—"], status: "ok" }
+        ]
+      } } },
+  { id: "txn_yield", reports: ["l1-4"], perspective: "Risk", map: "l1-4", riskGroup: "book", unit: "bps", direction: "higher", owner: "ALCO",
+    bank: { metric: "New vs renewal spread", objective: "Keep new-loan coupons above renewals", target: 55, peer: 48, series: [62, 58, 55, 53, 51, 50], prior: [70, 68, 66, 64, 62, 60],
+      leadingSignals: [
+        { title: "New loans 6.62% · $26.1MM (59%)", meta: "Weighted average note rate this period — also the L1-5 proving coupon" },
+        { title: "Renewals 6.12% · $18.2MM (41%)", meta: "50 bps inside new — concession on the book we already have" }
+      ],
+      drivers: [
+        { title: "New-loan WA", meta: "6.62% on $26.1MM — production coupon (L1-5)" },
+        { title: "Renewal WA", meta: "6.12% on $18.2MM — concession check" },
+        { title: "Mix", meta: "Renewals 41% of booked volume" }
+      ],
+      action: { what: "Cap renewal concessions so the new-minus-renewal spread stays ≥ 55 bps", owner: "ALCO", due: "Sep 2026" },
+      drillTable: {
+        title: "Yields by transaction type",
+        caption: "Weighted average note rate on booked principal this period. New vs renewal only — not a product-line yield cube.",
+        columns: ["Type", "WA rate", "Volume", "Share"],
+        rows: [
+          { cells: ["New loans", "6.62%", "$26.1MM", "59%"], status: "watch" },
+          { cells: ["Renewals", "6.12%", "$18.2MM", "41%"], status: "bad" }
+        ]
+      } },
+    cu: { metric: "New vs renewal spread", objective: "Keep new-loan coupons above member renewals", target: 40, peer: 34, series: [48, 44, 42, 40, 38, 36], prior: [52, 50, 48, 46, 44, 42],
+      leadingSignals: [
+        { title: "New loans 6.24% · $12.4MM (62%)", meta: "Weighted average note rate this period — also the L1-5 proving coupon" },
+        { title: "Renewals 5.88% · $7.6MM (38%)", meta: "36 bps inside new — concession on the member book" }
+      ],
+      drivers: [
+        { title: "New-loan WA", meta: "6.24% on $12.4MM — production coupon (L1-5)" },
+        { title: "Renewal WA", meta: "5.88% on $7.6MM — concession check" },
+        { title: "Mix", meta: "Renewals 38% of booked volume" }
+      ],
+      action: { what: "Cap renewal concessions so the new-minus-renewal spread stays ≥ 40 bps", owner: "ALCO", due: "Sep 2026" },
+      drillTable: {
+        title: "Yields by transaction type",
+        caption: "Weighted average note rate on booked member-loan principal this period. New vs renewal only — not a product-line yield cube.",
+        columns: ["Type", "WA rate", "Volume", "Share"],
+        rows: [
+          { cells: ["New loans", "6.24%", "$12.4MM", "62%"], status: "watch" },
+          { cells: ["Renewals", "5.88%", "$7.6MM", "38%"], status: "watch" }
+        ]
+      } } },
+  { id: "maturities", reports: ["l1-4"], perspective: "Risk", map: "l1-4", riskGroup: "book", unit: "%", direction: "lower", owner: "Treasurer",
+    bank: { metric: "Maturing loans (180d)", objective: "See the 180-day maturity wall before it becomes runoff", target: 7.50, peer: 7.10, series: [6.90, 7.10, 7.28, 7.46, 7.64, 7.82], prior: [6.20, 6.32, 6.44, 6.56, 6.68, 6.80],
+      leadingSignals: [
+        { title: "0–30 day wall $8.4MM (1.40% of book)", meta: "Nearest refinance / payoff risk" },
+        { title: "Three notes ≥ $2MM in 31–90 days", meta: "Call list for retain or reprice" }
+      ],
+      drivers: [
+        { title: "0–30 days", meta: "Nearest wall — retain or reprice this week" },
+        { title: "31–90 days", meta: "Next call window" },
+        { title: "91–180 days", meta: "Look-ahead ceiling — not beyond 180" }
+      ],
+      action: { what: "Call the 0–30 day wall this week — retain or reprice before payoff", owner: "Treasurer", due: "Sep 2026" },
+      drillTable: {
+        title: "Upcoming maturities · 180-day look-ahead",
+        caption: "Share of the loan book with a contractual maturity inside 180 days. Windows stop at 180 — this is not a full ALM gap report.",
+        columns: ["Window", "Balance", "Share of book"],
+        rows: [
+          { cells: ["0–30 days", "$8.4MM", "1.40%"], status: "watch" },
+          { cells: ["31–90 days", "$17.1MM", "2.85%"], status: "ok" },
+          { cells: ["91–180 days", "$21.4MM", "3.57%"], status: "ok" }
+        ]
+      } },
+    cu: { metric: "Maturing loans (180d)", objective: "See the 180-day member-loan maturity wall before it becomes runoff", target: 6.50, peer: 6.20, series: [6.10, 6.28, 6.42, 6.58, 6.76, 6.95], prior: [5.60, 5.70, 5.80, 5.90, 6.00, 6.08],
+      leadingSignals: [
+        { title: "0–30 day wall $3.2MM (1.15% of book)", meta: "Nearest refinance / payoff risk" },
+        { title: "Two large member notes in 31–90 days", meta: "Call list for retain or reprice" }
+      ],
+      drivers: [
+        { title: "0–30 days", meta: "Nearest wall — retain or reprice this week" },
+        { title: "31–90 days", meta: "Next call window" },
+        { title: "91–180 days", meta: "Look-ahead ceiling — not beyond 180" }
+      ],
+      action: { what: "Call the 0–30 day member-loan wall this week — retain or reprice before payoff", owner: "Treasurer", due: "Sep 2026" },
+      drillTable: {
+        title: "Upcoming maturities · 180-day look-ahead",
+        caption: "Share of the member-loan book with a contractual maturity inside 180 days. Windows stop at 180 — this is not a full ALM gap report.",
+        columns: ["Window", "Balance", "Share of book"],
+        rows: [
+          { cells: ["0–30 days", "$3.2MM", "1.15%"], status: "watch" },
+          { cells: ["31–90 days", "$7.4MM", "2.65%"], status: "ok" },
+          { cells: ["91–180 days", "$8.8MM", "3.15%"], status: "ok" }
+        ]
+      } } },
 
   { id: "cycle", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "ops", unit: "days", direction: "lower", owner: "COO / Lending",
-    bank: { metric: "Decision cycle", objective: "Decide commercial credits inside SLA", target: 45, peer: 52, series: [62, 58, 55, 53, 51, 50], prior: [68, 66, 64, 62, 60, 58] },
-    cu: { metric: "Decision cycle", objective: "Decide consumer credits same week", target: 12, peer: 14, series: [16, 15, 14.5, 14, 13.6, 13.2], prior: [18, 17, 16.5, 16, 15.5, 15] },
-    drivers: [{ title: "Credit memo queue", meta: "Officer capacity" }, { title: "Exceptions", meta: "STP rate" }],
-    action: { what: "Cut median cycle to 45 days", owner: "COO", due: "Sep 2026" } },
+    bank: { metric: "Decision cycle", objective: "Decide commercial credits inside SLA", target: 45, peer: 52, series: [62, 58, 55, 53, 51, 50], prior: [68, 66, 64, 62, 60, 58],
+      action: { what: "Cut median cycle to 45 days", owner: "COO", due: "Sep 2026" } },
+    cu: { metric: "Decision cycle", objective: "Decide consumer credits same week", target: 12, peer: 14, series: [16, 15, 14.5, 14, 13.6, 13.2], prior: [18, 17, 16.5, 16, 15.5, 15],
+      action: { what: "Cut median cycle to 12 days", owner: "COO", due: "Sep 2026" } },
+    drivers: [{ title: "Credit memo queue", meta: "Officer capacity" }, { title: "Exceptions", meta: "STP rate" }] },
   { id: "funnel", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "prod", unit: "%", direction: "higher", owner: "CBO",
     bank: { metric: "Funnel conversion", objective: "Convert applications to booked loans", target: 38, peer: 34, series: [30, 31, 32, 33, 33.5, 34.2], prior: [28, 29, 29.5, 30, 30.5, 31] },
     cu: { metric: "Funnel conversion", objective: "Convert applications to booked loans", target: 42, peer: 38, series: [36, 37, 37.5, 38, 38.5, 39], prior: [34, 34.5, 35, 35.5, 36, 36] },
@@ -242,100 +511,172 @@ const METRICS = [
   { id: "new_yield", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "prod", unit: "%", direction: "higher", owner: "CBO",
     bank: { metric: "Yield on new originations", objective: "Price new money above the book", target: 6.80, peer: 6.55, series: [6.40, 6.46, 6.50, 6.54, 6.58, 6.62], prior: [6.20, 6.24, 6.28, 6.32, 6.36, 6.38] },
     cu: { metric: "Yield on new originations", objective: "Price new money vs member value", target: 6.40, peer: 6.20, series: [6.05, 6.10, 6.14, 6.18, 6.21, 6.24], prior: [5.90, 5.94, 5.98, 6.00, 6.02, 6.04] },
-    drivers: [{ title: "Exception pricing", meta: "Below-grid deals" }, { title: "Mix", meta: "Auto vs commercial" }],
+    leadingSignals: [
+      { title: "Renewals ~50 bps inside new", meta: "Concession — New vs renewal spread is a proving tile on L1-4" },
+      { title: "Renewals 41% of volume", meta: "Mix pulls the blended coupon. Full split lives on L1-4." }
+    ],
+    drivers: [
+      { title: "New loans", meta: "Proving number — weighted average note rate this period" },
+      { title: "Renewals", meta: "Concession check — full new vs renewal tile is on L1-4" },
+      { title: "Exception pricing", meta: "Below-grid deals" },
+      { title: "Mix", meta: "Auto vs commercial" }
+    ],
     action: { what: "Cap below-grid exceptions at 10% of volume", owner: "CBO", due: "Sep 2026" } },
   { id: "orig_vol", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "prod", unit: "$MM", direction: "higher", owner: "CBO",
     bank: { metric: "Origination volume", objective: "Keep monthly originations on plan", target: 48, peer: 42, series: [38, 40, 41, 43, 44, 45], prior: [36, 37, 38, 39, 40, 40] },
     cu: { metric: "Origination volume", objective: "Keep monthly originations on plan", target: 22, peer: 19, series: [17, 18, 18.5, 19, 19.5, 20], prior: [16, 16.4, 16.8, 17.0, 17.2, 17.4] },
     drivers: [{ title: "Applications in", meta: "Flow, not stock" }, { title: "Cycle time", meta: "Locks leak if slow" }],
     action: { what: "Restore $3MM monthly volume via cycle time", owner: "CBO", due: "Oct 2026" } },
-  { id: "cpt", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "ops", unit: "$", direction: "lower", owner: "COO",
-    bank: { metric: "Cost per transaction", objective: "Lower unit servicing cost", target: 2.40, peer: 2.65, series: [2.82, 2.76, 2.70, 2.66, 2.62, 2.58], prior: [2.90, 2.86, 2.82, 2.78, 2.74, 2.70] },
-    cu: { metric: "Cost per transaction", objective: "Lower unit servicing cost", target: 2.10, peer: 2.30, series: [2.42, 2.36, 2.32, 2.28, 2.24, 2.22], prior: [2.50, 2.46, 2.42, 2.38, 2.36, 2.34] },
-    drivers: [{ title: "Teller vs digital mix", meta: "Self-service is the lever" }, { title: "Exception items", meta: "STP" }],
-    action: { what: "Move 5 pts of volume to self-service", owner: "COO", due: "Nov 2026" } },
   { id: "self_svc", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "ops", unit: "%", direction: "higher", owner: "COO",
     bank: { metric: "Digital self-service", objective: "Move work off the lobby", target: 71, peer: 66, series: [62, 63, 64, 65, 66, 67], prior: [58, 59, 60, 61, 62, 63] },
     cu: { metric: "Digital self-service", objective: "Move work off the lobby", target: 68, peer: 64, series: [58, 59, 60, 61, 62, 63], prior: [54, 55, 56, 57, 58, 59] },
     drivers: [{ title: "Deposit / transfer STP", meta: "Ops lens, not franchise adoption" }, { title: "Core availability", meta: "Blocks self-service" }],
     action: { what: "Turn on more deposit STP paths", owner: "COO", due: "Oct 2026" } },
   { id: "pipeline", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "prod", unit: "mixed", direction: "higher", owner: "CBO",
-    bank: { metric: "Commercial pipeline", objective: "Convert C&I pipeline", target: 32, peer: 28, series: [24, 25, 26, 27, 27.5, 28], prior: [22, 23, 23.5, 24, 24.5, 25], unit: "%" },
-    cu: { metric: "Onboarding cycle", objective: "Same-week member onboarding", target: 1.2, peer: 1.6, series: [2.1, 1.9, 1.8, 1.7, 1.6, 1.55], prior: [2.4, 2.3, 2.2, 2.1, 2.0, 1.95], unit: "days", direction: "lower" },
-    drivers: [{ title: "Bank: C&I conversion", meta: "Skill coverage on L1-6" }, { title: "CU: FOM checks", meta: "Onboarding quality" }],
-    action: { what: "Bank: lift pipeline conversion. CU: cut onboarding to 1.2 days", owner: "CBO", due: "Oct 2026" } },
-  { id: "teller_sla", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "ops", unit: "min", direction: "lower", owner: "COO",
-    bank: { metric: "Teller SLA", objective: "Keep lobby waits under 2 minutes", target: 1.8, peer: 2.1, series: [2.20, 2.12, 2.06, 2.00, 1.96, 1.92], prior: [2.30, 2.24, 2.18, 2.14, 2.10, 2.06] },
-    cu: { metric: "Teller SLA", objective: "Keep lobby waits under 2 minutes", target: 1.8, peer: 2.0, series: [2.10, 2.04, 1.98, 1.94, 1.90, 1.88], prior: [2.20, 2.14, 2.10, 2.06, 2.02, 1.98] },
-    drivers: [{ title: "Staffing vs traffic", meta: "L2 branch view" }, { title: "Teller turnover", meta: "L1-6" }],
-    action: { what: "Align teller schedules to peak traffic", owner: "COO", due: "Sep 2026" } },
+    bank: { metric: "Commercial pipeline", objective: "Convert C&I pipeline", target: 32, peer: 28, series: [24, 25, 26, 27, 27.5, 28], prior: [22, 23, 23.5, 24, 24.5, 25], unit: "%",
+      drivers: [{ title: "C&I conversion", meta: "Learning paths on L1-6" }, { title: "Credit box", meta: "Do not loosen to buy volume" }],
+      action: { what: "Lift commercial pipeline conversion", owner: "CBO", due: "Oct 2026" } },
+    cu: { metric: "Onboarding cycle", objective: "Same-week member onboarding", target: 1.2, peer: 1.6, series: [2.1, 1.9, 1.8, 1.7, 1.6, 1.55], prior: [2.4, 2.3, 2.2, 2.1, 2.0, 1.95], unit: "days", direction: "lower",
+      drivers: [{ title: "FOM checks", meta: "Onboarding quality" }, { title: "Membership ops", meta: "Same-week funded membership" }],
+      action: { what: "Cut onboarding to 1.2 days", owner: "CBO", due: "Oct 2026" } } },
+  { id: "teller_sla", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "ops", unit: "dep/hr", direction: "higher", owner: "COO",
+    bank: { metric: "Teller Efficiency", objective: "Raise deposits per hour without extra overrides", target: 22, peer: 19, series: [17.4, 18.0, 18.6, 19.2, 19.8, 20.4], prior: [16.2, 16.6, 17.0, 17.4, 17.8, 18.0] },
+    cu: { metric: "Teller Efficiency", objective: "Raise deposits per hour without extra overrides", target: 22, peer: 20, series: [17.8, 18.4, 19.0, 19.6, 20.0, 20.6], prior: [16.6, 17.0, 17.4, 17.8, 18.2, 18.4] },
+    leadingSignals: [
+      { title: "Oak Street 16.2 dep/hr", meta: "J. Patel at 15.4 — well below the 22 target" },
+      { title: "Overrides 4.8 / 100 txns", meta: "Policy opt-outs also elevated on Oak Street" }
+    ],
+    drivers: [
+      { title: "Deposits per hour", meta: "Proving number — window throughput" },
+      { title: "Procedure adherence", meta: "SOP / dual-control exceptions at the drawer" },
+      { title: "Override frequency / opt-outs", meta: "Supervisor overrides and policy opt-outs per 100 txns" }
+    ],
+    action: { what: "Coach Oak Street on overrides and recover deposits per hour", owner: "COO", due: "Sep 2026" } },
 
-  { id: "engagement", reports: ["l1-1", "l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "score", direction: "higher", owner: "CHRO",
+  { id: "engagement", reports: ["l1-1", "l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "score", direction: "higher", owner: "CHRO", peopleGroup: "workforce",
     bank: { metric: "Engagement", objective: "Keep Emplify in the Engaged band", target: 74, peer: 70, series: [69, 70, 70.5, 71, 71.5, 72], prior: [67, 67.5, 68, 68.5, 69, 69] },
     cu: { metric: "Engagement", objective: "Keep engagement in the Engaged band", target: 76, peer: 72, series: [71, 72, 72.5, 73, 73.5, 74], prior: [69, 69.5, 70, 70.5, 71, 71] },
-    drivers: [{ title: "Participation", meta: "Need ≥80%" }, { title: "Frontline items", meta: "Teller disengagement" }],
+    leadingSignals: [
+      { title: "Survey participation 77%", meta: "Floor is 80% — sample is not yet a valid index" },
+      { title: "79 in the Questionable band", meta: "Need Coaching 15 · not four L1 tiles" }
+    ],
+    drivers: [
+      { title: "Participation", meta: "Need ≥80% before we trust the index" },
+      { title: "Frontline items", meta: "Teller disengagement · Oak Street and Riverside" },
+      { title: "Performance buckets (HR ops)", meta: "Questionable 79 · Need coaching 15 · Contributor 12 · Top 14 — drill 3 only" },
+      { title: "Bottom-quartile teams", meta: "N. Ortiz (Oak Street) and P. Singh (Riverside) need manager action plans" }
+    ],
     action: { what: "Manager action plans on the bottom-quartile teams", owner: "CHRO", due: "Oct 2026" } },
-  { id: "turnover", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "lower", owner: "CHRO",
+  { id: "turnover", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "lower", owner: "CHRO", peopleGroup: "workforce",
     bank: { metric: "Voluntary turnover", objective: "Cut regretted exits", target: 11, peer: 13, series: [14.2, 13.8, 13.4, 13.1, 12.8, 12.6], prior: [15.0, 14.6, 14.2, 13.8, 13.6, 13.4] },
     cu: { metric: "Voluntary turnover", objective: "Cut regretted exits", target: 12, peer: 14, series: [15.0, 14.6, 14.2, 13.9, 13.6, 13.4], prior: [15.6, 15.2, 14.8, 14.6, 14.4, 14.2] },
-    drivers: [{ title: "Regretted vs total", meta: "Focus regretted" }, { title: "Pay / career path", meta: "Stay interviews" }],
+    leadingSignals: [
+      { title: "Regretted 38 of 54 · 3 LATL", meta: "Least Affordable to Lose — stay interviews first" },
+      { title: "Top reason: More money", meta: "Career change and Unhappy next — full list on drill 3" }
+    ],
+    drivers: [
+      { title: "Regretted vs total", meta: "38 regretted of 54 separations · focus stay interviews" },
+      { title: "LATL exits", meta: "M. Chen (C&I RM) · A. Brooks (BSA backup) · P. Singh (Riverside lead)" },
+      { title: "By role", meta: "Tellers 26% · Bankers 14% · Managers 8% — teller_to is the frontline tile" },
+      { title: "Termination reasons", meta: "More money · Career change · Unhappy (HR treemap — not an L1 tile)" },
+      { title: "Pay / career path", meta: "Stay interviews on examiner-sensitive and LATL roles" }
+    ],
     action: { what: "Stay interviews on examiner-sensitive roles", owner: "CHRO", due: "Sep 2026" } },
-  { id: "teller_to", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "lower", owner: "CHRO",
+  { id: "teller_to", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "lower", owner: "CHRO", peopleGroup: "workforce",
     bank: { metric: "Teller / frontline turnover", objective: "Cut teller turnover toward 20%", target: 20, peer: 28, series: [32, 30, 29, 28, 27, 26], prior: [36, 35, 34, 33, 32, 31] },
     cu: { metric: "Teller / frontline turnover", objective: "Cut frontline turnover toward 18%", target: 18, peer: 24, series: [26, 25, 24, 23.5, 23, 22.5], prior: [28, 27, 26.5, 26, 25.5, 25] },
-    drivers: [{ title: "Capstone pain point", meta: "12% actively disengaged" }, { title: "Scheduling", meta: "Tied to teller SLA" }],
+    leadingSignals: [
+      { title: "<1 yr exits: 20 of 58", meta: "Early-tenure leak — 1–2 yrs 23 · 2–3 yrs 15" },
+      { title: "Oak Street exits lead the book", meta: "Highest frontline turnover in the sample" }
+    ],
+    drivers: [
+      { title: "Tenure at exit", meta: "<1 yr: 20 · 1–2 yrs: 23 · 2–3 yrs: 15" },
+      { title: "Capstone pain point", meta: "12% actively disengaged on the front line" },
+      { title: "Scheduling", meta: "Staff vs peak traffic" },
+      { title: "Oak Street leak", meta: "Highest frontline turnover" }
+    ],
     action: { what: "Supervisor training + schedule stability", owner: "CHRO", due: "Nov 2026" } },
-  { id: "ttf", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "days", direction: "lower", owner: "CHRO",
+  { id: "ttf", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "days", direction: "lower", owner: "CHRO", peopleGroup: "talent",
     bank: { metric: "Time-to-fill critical roles", objective: "Fill examiner-sensitive seats faster", target: 45, peer: 55, series: [62, 60, 58, 56, 54, 52], prior: [66, 64, 62, 60, 58, 57] },
     cu: { metric: "Time-to-fill critical roles", objective: "Fill examiner-sensitive seats faster", target: 50, peer: 58, series: [64, 62, 60, 58, 57, 56], prior: [68, 66, 64, 62, 61, 60] },
-    drivers: [{ title: "BSA / credit / CFO-1", meta: "Named seats" }, { title: "Offer accept", meta: "Comp band" }],
+    leadingSignals: [
+      { title: "Offer acceptance 67%", meta: "Comp band is the first lever" },
+      { title: "Top decline: Salary 56.4%", meta: "Technical 25.8% · Culture 19.8% — full list on drill 3" }
+    ],
+    drivers: [
+      { title: "Hires vs plan", meta: "82 hires this period (−1.5%) · headcount 220" },
+      { title: "Offer accept", meta: "67% · BSA / credit / CFO-1 seats still open" },
+      { title: "Decline reasons", meta: "Salary 56.4% · Technical 25.8% · Culture 19.8% · Other 12.7%" },
+      { title: "Named seats", meta: "BSA backup is the exam talking point this month" }
+    ],
     action: { what: "Open the BSA backup seat this month", owner: "CHRO", due: "Sep 2026" } },
-  { id: "training", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "higher", owner: "CHRO",
+  { id: "training", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "higher", owner: "CHRO", peopleGroup: "learning",
     bank: { metric: "Required training completion", objective: "Complete required risk/compliance training", target: 98, peer: 95, series: [93, 94, 94.5, 95, 95.5, 96], prior: [91, 92, 92.5, 93, 93.5, 94] },
     cu: { metric: "Required training completion", objective: "Complete required risk/compliance training", target: 98, peer: 96, series: [94, 94.5, 95, 95.5, 96, 96.4], prior: [92, 92.5, 93, 93.5, 94, 94.2] },
-    drivers: [{ title: "BSA / info-sec modules", meta: "Exam evidence" }, { title: "New hires", meta: "Lag to complete" }],
+    leadingSignals: [
+      { title: "33 sessions completed", meta: "Volume behind the completion rate — not a second tile" },
+      { title: "New-hire lag", meta: "BSA / info-sec modules still open on Oak Street" }
+    ],
+    drivers: [
+      { title: "Sessions vs completion", meta: "33 completed sessions this period" },
+      { title: "Training type mix", meta: "Internal 36% · External 64% — LMS reporting, not an L1 tile" },
+      { title: "BSA / info-sec modules", meta: "Exam evidence — close the last 2 pts" },
+      { title: "New hires", meta: "Lag to complete assigned modules" }
+    ],
     action: { what: "Close the last 2 pts before exam window", owner: "CHRO", due: "Oct 2026" } },
-  { id: "succession", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "higher", owner: "CHRO",
-    bank: { metric: "Succession coverage", objective: "Cover CEO-1, BSA, credit, CFO", target: 80, peer: 70, series: [60, 62, 64, 66, 68, 70], prior: [55, 56, 58, 58, 60, 60] },
-    cu: { metric: "Succession coverage", objective: "Cover CEO-1, BSA, credit, CFO", target: 75, peer: 65, series: [55, 58, 60, 62, 64, 66], prior: [50, 52, 54, 55, 56, 58] },
-    drivers: [{ title: "Ready-now vs ready-2yr", meta: "Named backups" }, { title: "Board education", meta: "CU governance" }],
-    action: { what: "Name ready-now backups for BSA and credit", owner: "CHRO", due: "Nov 2026" } },
-  { id: "skill_board", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "mixed", direction: "higher", owner: "CHRO",
-    bank: { metric: "Commercial skill coverage", objective: "Credential the commercial bench", target: 70, peer: 62, series: [54, 56, 58, 60, 61, 63], prior: [50, 51, 52, 53, 54, 55], unit: "%" },
-    cu: { metric: "Board education hours", objective: "Meet volunteer board education policy", target: 12, peer: 10, series: [7, 8, 8.5, 9, 9.5, 10], prior: [6, 6.5, 7, 7.5, 8, 8], unit: "hrs" },
-    drivers: [{ title: "Bank: C&I credentials", meta: "Feeds pipeline conversion" }, { title: "CU: board hours", meta: "CAMELS M" }],
-    action: { what: "Bank: two more lenders credentialed. CU: complete board hours", owner: "CHRO", due: "Dec 2026" } }
+  { id: "learning_paths", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "higher", owner: "CHRO", peopleGroup: "learning",
+    bank: { metric: "Learning paths", objective: "Succession and commercial credential paths on plan", target: 75, peer: 66, series: [58, 61, 64, 67, 70, 72], prior: [54, 56, 58, 60, 62, 64],
+      leadingSignals: [
+        { title: "Succession ready-now 70%", meta: "CEO-1, BSA, credit, CFO — still short of 75% on-plan" },
+        { title: "Commercial credentials 63%", meta: "C&I bench feeds pipeline conversion" }
+      ],
+      drivers: [
+        { title: "Succession ready-now", meta: "Named backups for CEO-1, BSA, credit, CFO" },
+        { title: "Commercial credentials", meta: "C&I bench feeds L1-5 pipeline conversion" },
+        { title: "Performance stack (context)", meta: "Contributor 12 · Top 14 — talent review, not L1 tiles" }
+      ] },
+    cu: { metric: "Learning paths", objective: "Succession, board education, and credential paths on plan", target: 75, peer: 66, series: [56, 59, 62, 65, 68, 70], prior: [52, 54, 56, 58, 60, 62],
+      leadingSignals: [
+        { title: "Succession ready-now 70%", meta: "CEO-1, BSA, credit, CFO — still short of 75% on-plan" },
+        { title: "Board education hours", meta: "Volunteer board path still short of plan" }
+      ],
+      drivers: [
+        { title: "Succession ready-now", meta: "Named backups for CEO-1, BSA, credit, CFO" },
+        { title: "Board education hours", meta: "Volunteer board path" },
+        { title: "Performance stack (context)", meta: "Contributor 12 · Top 14 — talent review, not L1 tiles" }
+      ] },
+    action: { what: "Close named path gaps before year-end talent review", owner: "CHRO", due: "Dec 2026" } }
 ];
 
 /* Sample L2 grain for coaching — not L1 tiles. Bank / CU sides stay on the same metric ids. */
 const WHERE_GRAIN = {
   teller_sla: {
     bank: {
-      unit: "min",
+      unit: "dep/hr",
       role: "tellers",
       branches: [
-        { name: "Oak Street", value: 2.41, status: "bad" },
-        { name: "Riverside", value: 2.18, status: "watch" },
-        { name: "Downtown", value: 1.94, status: "watch" },
-        { name: "Northside", value: 1.62, status: "ok" }
+        { name: "Oak Street", value: 16.2, status: "bad" },
+        { name: "Riverside", value: 18.8, status: "watch" },
+        { name: "Downtown", value: 20.4, status: "watch" },
+        { name: "Northside", value: 23.1, status: "ok" }
       ],
       associates: [
-        { name: "J. Patel · Oak Street teller", value: 2.64, status: "bad", coach: "Branch manager" },
-        { name: "T. Nguyen · Riverside teller", value: 2.22, status: "watch", coach: "Branch manager" }
+        { name: "J. Patel · Oak Street teller", value: 15.4, status: "bad", coach: "Branch manager" },
+        { name: "T. Nguyen · Riverside teller", value: 18.6, status: "watch", coach: "Branch manager" }
       ]
     },
     cu: {
-      unit: "min",
+      unit: "dep/hr",
       role: "tellers",
       branches: [
-        { name: "Oak Street", value: 2.28, status: "bad" },
-        { name: "Riverside", value: 2.06, status: "watch" },
-        { name: "Downtown", value: 1.90, status: "watch" },
-        { name: "Northside", value: 1.58, status: "ok" }
+        { name: "Oak Street", value: 16.8, status: "bad" },
+        { name: "Riverside", value: 19.2, status: "watch" },
+        { name: "Downtown", value: 20.8, status: "watch" },
+        { name: "Northside", value: 23.4, status: "ok" }
       ],
       associates: [
-        { name: "J. Patel · Oak Street teller", value: 2.50, status: "bad", coach: "Branch manager" },
-        { name: "T. Nguyen · Riverside teller", value: 2.12, status: "watch", coach: "Branch manager" }
+        { name: "J. Patel · Oak Street teller", value: 16.0, status: "bad", coach: "Branch manager" },
+        { name: "T. Nguyen · Riverside teller", value: 19.0, status: "watch", coach: "Branch manager" }
       ]
     }
   },
@@ -669,36 +1010,6 @@ const WHERE_GRAIN = {
       ]
     }
   },
-  cpt: {
-    bank: {
-      unit: "$",
-      role: "tellers",
-      branches: [
-        { name: "Oak Street", value: 2.95, status: "bad" },
-        { name: "Riverside", value: 2.70, status: "watch" },
-        { name: "Downtown", value: 2.50, status: "watch" },
-        { name: "Northside", value: 2.28, status: "ok" }
-      ],
-      associates: [
-        { name: "J. Patel · Oak Street teller", value: 3.10, status: "bad", coach: "Branch manager" },
-        { name: "T. Nguyen · Riverside teller", value: 2.72, status: "watch", coach: "Branch manager" }
-      ]
-    },
-    cu: {
-      unit: "$",
-      role: "tellers",
-      branches: [
-        { name: "Oak Street", value: 2.55, status: "bad" },
-        { name: "Riverside", value: 2.34, status: "watch" },
-        { name: "Downtown", value: 2.18, status: "watch" },
-        { name: "Northside", value: 2.02, status: "ok" }
-      ],
-      associates: [
-        { name: "J. Patel · Oak Street teller", value: 2.62, status: "bad", coach: "Branch manager" },
-        { name: "T. Nguyen · Riverside teller", value: 2.36, status: "watch", coach: "Branch manager" }
-      ]
-    }
-  },
   self_svc: {
     bank: {
       unit: "%",
@@ -849,6 +1160,66 @@ const WHERE_GRAIN = {
       ]
     }
   },
+  ttf: {
+    bank: {
+      unit: "days",
+      role: "recruiters",
+      branches: [
+        { name: "BSA / AML", value: 68, status: "bad" },
+        { name: "Credit admin", value: 58, status: "watch" },
+        { name: "CFO-1 / finance", value: 51, status: "watch" },
+        { name: "Retail ops", value: 42, status: "ok" }
+      ],
+      associates: [
+        { name: "BSA Officer (open req)", value: 71, status: "bad", coach: "CHRO" },
+        { name: "Credit analyst II (open req)", value: 56, status: "watch", coach: "CHRO" }
+      ]
+    },
+    cu: {
+      unit: "days",
+      role: "recruiters",
+      branches: [
+        { name: "BSA / AML", value: 70, status: "bad" },
+        { name: "Lending", value: 60, status: "watch" },
+        { name: "CFO-1 / finance", value: 54, status: "watch" },
+        { name: "Member ops", value: 46, status: "ok" }
+      ],
+      associates: [
+        { name: "BSA Officer (open req)", value: 72, status: "bad", coach: "CHRO" },
+        { name: "Consumer lender (open req)", value: 58, status: "watch", coach: "CHRO" }
+      ]
+    }
+  },
+  learning_paths: {
+    bank: {
+      unit: "%",
+      role: "path owners",
+      branches: [
+        { name: "BSA succession", value: 50, status: "bad" },
+        { name: "Credit succession", value: 62, status: "watch" },
+        { name: "Commercial credentials", value: 63, status: "watch" },
+        { name: "CFO / CEO-1", value: 80, status: "ok" }
+      ],
+      associates: [
+        { name: "BSA backup (unnamed)", value: 40, status: "bad", coach: "CHRO" },
+        { name: "M. Chen · C&I RM credentials", value: 60, status: "watch", coach: "CHRO / CBO" }
+      ]
+    },
+    cu: {
+      unit: "%",
+      role: "path owners",
+      branches: [
+        { name: "BSA succession", value: 48, status: "bad" },
+        { name: "Board education hours", value: 62, status: "watch" },
+        { name: "Lending credentials", value: 66, status: "watch" },
+        { name: "CFO / CEO-1", value: 78, status: "ok" }
+      ],
+      associates: [
+        { name: "BSA backup (unnamed)", value: 40, status: "bad", coach: "CHRO" },
+        { name: "Board secretary · hours log", value: 58, status: "watch", coach: "CHRO" }
+      ]
+    }
+  },
   csi: {
     bank: {
       unit: "score",
@@ -884,22 +1255,22 @@ const WHERE_GRAIN = {
 const METRIC_DEFS = {
   roa: { camels: "E",
     bank: { definition: "Earnings on the asset base — primary shareholder profitability KPI.", formula: "ROA = Net Income / Average Total Assets", source: "GL / Call Report · UBPR peer median $1B–$3B" },
-    cu: { definition: "Earnings that fund net worth — capital-build fuel, not a failed bank ROA target.", formula: "ROA = Net Income / Average Total Assets", source: "5300 / FPR peer median — do not grade vs UBPR" } },
+    cu: { definition: "Earnings that fund net worth — capital-build fuel.", formula: "ROA = Net Income / Average Total Assets", source: "ARCU FactGLMonthlySnapshot · NCUA GL category · FPR peer median" } },
   roe_nwg: { camels: "E",
     bank: { definition: "Shareholder return on equity capital.", formula: "ROE = Net Income / Average Equity Capital", source: "GL / Call Report" },
-    cu: { definition: "Growth in retained earnings / net worth — the CU substitute for ROE.", formula: "Net worth growth = (NW_t − NW_t-1) / |NW_t-1|", source: "5300 · retained earnings only" } },
+    cu: { definition: "Growth in retained earnings / net worth — the CU substitute for ROE.", formula: "Net worth growth = (NW_t − NW_t-1) / |NW_t-1|", source: "ARCU FactGLMonthlySnapshot · NCUA GL · retained earnings only · FPR" } },
   nim: { camels: "E",
     bank: { definition: "Spread between earning-asset yield and cost of funds.", formula: "NIM = Net Interest Income / Average Earning Assets", source: "GL / ALM · UBPR" },
-    cu: { definition: "Spread while returning member value on loans and shares.", formula: "NIM = Net Interest Income / Average Earning Assets", source: "5300 / FPR" } },
+    cu: { definition: "Spread while returning member value on loans and shares. Cost of funds and book loan yield (ARCU WAR) explain the gap — not extra tiles.", formula: "NIM = NII / Average earning assets. Monitor: cost of shares; book loan WAR.", source: "ARCU NCUA GL · FactGLMonthlySnapshot · FPR" } },
   efficiency: { camels: "E",
     bank: { definition: "Cost to produce a dollar of revenue. Lower is better.", formula: "Efficiency = Noninterest Expense / (NII + Noninterest Income)", source: "GL · UBPR efficiency median — bank curve (~52% target)" },
-    cu: { definition: "Cost to produce a dollar of revenue on the CU expense structure. Never grade vs bank 52%.", formula: "Efficiency = Noninterest Expense / (NII + Noninterest Income)", source: "GL · FPR efficiency median (~79%)" } },
+    cu: { definition: "NCUA / ARCU management ratio: operating expense as a share of average assets. Not the bank efficiency ratio.", formula: "OpEx / average assets = Operating expense / Average total assets", source: "ARCU NCUA GL · FactGLMonthlySnapshot · FPR" } },
   noi: { camels: "E",
     bank: { definition: "Operating profit after interest and operating expense, before extraordinary items.", formula: "NOI = NII + Noninterest Income − Noninterest Expense (annualized)", source: "GL · peer median annualized NOI" },
-    cu: { definition: "Operating income retained to build net worth and support member value.", formula: "NOI = NII + Noninterest Income − Noninterest Expense (annualized)", source: "GL · CU peer annualized NOI" } },
+    cu: { definition: "Net income vs the board plan — funds net worth and member value. Not bank NOI or commercial yields.", formula: "Net income (annualized) vs plan", source: "ARCU FactGLMonthlySnapshot · FP&A plan · FPR" } },
   loan_growth: { camels: "A",
     bank: { definition: "Year-over-year growth in gross loans held for investment.", formula: "Loan growth = (Loans_t − Loans_t-1) / Loans_t-1", source: "Core / Call Report" },
-    cu: { definition: "YoY loan growth inside MBL and credit limits.", formula: "Loan growth = (Loans_t − Loans_t-1) / Loans_t-1", source: "Core / 5300" } },
+    cu: { definition: "YoY loan growth inside MBL and credit limits. Consumer / auto is the lead book; MBL is the ceiling — not a commercial pipeline story.", formula: "Loan growth = (Loans_t − Loans_t-1) / Loans_t-1", source: "ARCU FactLoanMonthlySnapshot · 5300 / FPR" } },
   dep_growth: { camels: "L",
     bank: { definition: "Year-over-year growth in the deposit franchise.", formula: "Deposit growth = (Deposits_t − Deposits_t-1) / Deposits_t-1", source: "Core / FDIC SOD" },
     cu: { definition: "Year-over-year growth in member shares.", formula: "Share growth = (Shares_t − Shares_t-1) / Shares_t-1", source: "Core / 5300" } },
@@ -910,8 +1281,8 @@ const METRIC_DEFS = {
     bank: { definition: "Customer experience score from the bank’s satisfaction survey (Capstone CSI / NPS).", formula: "CSI = Mean survey score (vendor scale; target > 7.2)", source: "Survey platform · community bank CSAT sample" },
     cu: { definition: "Member NPS — cooperative service identity.", formula: "NPS = % Promoters − % Detractors", source: "Survey platform · CU member sample" } },
   retention: { camels: "M",
-    bank: { definition: "Share of customer relationships that remain open over the period.", formula: "Retention = 1 − (Closed CIF / Beginning CIF)", source: "Core CIF · household retention" },
-    cu: { definition: "Share of member-owners who remain on the books.", formula: "Retention = 1 − (Closed members / Beginning members)", source: "Core membership · CU peer retention" } },
+    bank: { definition: "Share of customer relationships that remain open over the period. Deflection (saves after outreach) and close-reason codes explain the gap — they are not a second tile.", formula: "Retention = 1 − (Closed CIF / Beginning CIF). Monitor: deflected / at-risk outreach; close codes (rate/fees, operations, deceased, out-of-area).", source: "Core CIF · household retention · close-reason codes" },
+    cu: { definition: "Share of member-owners who remain on the books. Deflection and close-reason codes explain the gap — not a second tile.", formula: "Retention = 1 − (Closed members / Beginning members). Monitor: deflected / at-risk outreach; close codes (rate/fees, operations, deceased, out-of-area).", source: "Core membership · close-reason codes" } },
   hh_growth: { camels: "M",
     bank: { definition: "Net growth in household relationships, not account records.", formula: "Customer growth = (CIF_t − CIF_t-1) / CIF_t-1", source: "Core CIF" },
     cu: { definition: "Net member growth inside field of membership.", formula: "Member growth = (Members_t − Members_t-1) / Members_t-1", source: "Core / FOM" } },
@@ -932,28 +1303,40 @@ const METRIC_DEFS = {
     cu: { definition: "Cost to acquire a new member inside plan.", formula: "CAC = Acquisition spend / Net new members", source: "Marketing + core" } },
   capital: { camels: "C",
     bank: { definition: "Leverage capital adequacy vs PCA / CBLR well-capitalized levels.", formula: "Tier 1 Leverage = Tier 1 Capital / Average Total Assets", source: "Call Report / capital calculator · UBPR" },
-    cu: { definition: "Net worth adequacy. NCUA well-capitalized ≥7%; many boards target 10%+.", formula: "Net Worth Ratio = Net Worth / Total Assets", source: "5300 / FPR · retained earnings only" } },
+    cu: { definition: "Net worth adequacy. NCUA well-capitalized ≥7%; many boards target 10%+.", formula: "Net Worth Ratio = Net Worth / Total Assets", source: "ARCU FactGLMonthlySnapshot · NCUA GL category · FPR · retained earnings only" } },
   past_due: { camels: "A",
-    bank: { definition: "Early asset-quality signal: unpaid balance 30 or more days past due.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans", source: "Servicing / core · peer past-due / gross loans" },
-    cu: { definition: "Delinquency 30+ as a share of gross loans — often tighter CU peer than banks.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans", source: "Servicing / core · CU peer" } },
+    bank: { definition: "Early asset-quality signal: unpaid loan balance 30 or more days past due. Overdraft aging (1–10 / 11–20 / 21–30 / 30+ days) is L1-4 drill grain — not a second tile and not on L1-1.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor (L1-4): overdraft balances by days negative.", source: "Servicing / core · deposit OD aging" },
+    cu: { definition: "Loan delinquency 30+ as a share of gross loans. Courtesy pay / overdraft aging (1–10 / 11–20 / 21–30 / 30+ days) is L1-4 drill grain — not a second tile and not on L1-1.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor (L1-4): courtesy pay and NSF balances by days negative.", source: "Servicing / core · courtesy pay aging" } },
   criticized: { camels: "A",
     bank: { definition: "Watchlist and classified credits as a share of loans or assets.", formula: "Criticized = (Special mention + Substandard + Doubtful) / Loans", source: "Credit admin / ALLL" },
-    cu: { definition: "Classified and criticized assets vs CU policy limit.", formula: "Criticized = (Special mention + Classified) / Loans", source: "Credit admin" } },
+    cu: { definition: "NCUA / ARCU realized-loss ratio. Delinquency stays on Past due 30+. Not classified / criticized.", formula: "Net charge-offs = (Charge-offs − Recoveries) / Average loans", source: "ARCU collections / NCUA GL · FactLoanMonthlySnapshot · FPR" } },
+  cre_conc: { camels: "A",
+    bank: { definition: "Commercial real estate concentration vs the 300% watch and 400% regulatory limit (percent of total risk-based capital). Construction, multifamily, and hotel/motel are sub-limits — not extra tiles.", formula: "CRE / concentration = CRE loans / Total risk-based capital. Watch 300% · limit 400%.", source: "Call Report / credit admin · interagency CRE guidance" },
+    cu: { definition: "Member-business loan concentration vs board policy (NCUA MBL ceiling 12.25% of assets).", formula: "MBL concentration = Member-business loans / Total assets", source: "5300 / credit admin · NCUA MBL" } },
   acl: { camels: "A",
     bank: { definition: "Allowance coverage of nonperforming loans (CECL).", formula: "ACL coverage = ACL / Nonperforming loans", source: "CECL / GL" },
-    cu: { definition: "Allowance coverage of NPL under CECL.", formula: "ACL coverage = ACL / Nonperforming loans", source: "CECL / 5300" } },
-  ltd: { camels: "L",
-    bank: { definition: "How much of the deposit base is deployed in loans (liquidity utilization).", formula: "LTD = Total Loans / Total Deposits", source: "Core / Call Report · policy band 80–90%" },
-    cu: { definition: "How much of member shares is deployed in loans.", formula: "LTS = Total Loans / Total Shares", source: "Core / 5300 · policy band 75–88%" } },
+    cu: { definition: "NCUA allowance coverage of delinquent loans — not CECL / NPL bank wording.", formula: "Allowance / delinquent = Allowance for loan losses / Delinquent loans", source: "ARCU NCUA GL · 5300 / FPR" } },
+  loan_assets: { camels: "L",
+    bank: { definition: "Share of total assets funded in loans — stable liquidity view vs LTD when pipeline moves deposits and loans at different speeds.", formula: "Loans-to-assets = Total Loans / Total Assets", source: "Core / Call Report · target ~75%" },
+    cu: { definition: "NCUA / ARCU liquidity ratio: loans funded by member shares. Loans-to-assets is drill context — not the proving number.", formula: "LTS = Total loans / Total shares. Monitor: loans / assets.", source: "ARCU FactLoanMonthlySnapshot / FactShareMonthlySnapshot · FPR" } },
   irr: { camels: "S",
     bank: { definition: "Sensitivity of net interest income to a parallel +200 bp rate shock.", formula: "IRR NII shock = ΔNII under +200 bp / Base NII  (must stay ≥ ALCO floor −8%)", source: "ALM model · ALCO policy" },
-    cu: { definition: "Sensitivity of NII to a +200 bp shock vs ALCO floor; use CU ALM peers, not bank ALM.", formula: "IRR NII shock = ΔNII under +200 bp / Base NII  (must stay ≥ ALCO floor −8%)", source: "ALM model · FPR / CU peer" } },
+    cu: { definition: "Sensitivity of NII to a +200 bp shock vs ALCO floor. Use FPR ALM peers.", formula: "IRR NII shock = ΔNII under +200 bp / Base NII  (must stay ≥ ALCO floor −8%)", source: "ALM model · FPR" } },
   wholesale: { camels: "L",
     bank: { definition: "Reliance on FHLB, brokers, and other non-core funding.", formula: "Wholesale = Wholesale liabilities / Total liabilities", source: "Treasury / Call Report" },
-    cu: { definition: "Reliance on borrowed funds vs member shares.", formula: "Wholesale = Borrowed funds / Total liabilities", source: "Treasury / 5300" } },
+    cu: { definition: "Borrowed funds as a share of member shares — not wholesale / total liabilities.", formula: "Borrowed funds / shares = FHLB and other borrowed funds / Total shares", source: "ARCU FactShareMonthlySnapshot + GL borrowed · FPR" } },
   bsa: { camels: "M",
     bank: { definition: "Average age of open BSA/AML alerts — exam talking point.", formula: "BSA aging = Mean days open for unresolved alerts", source: "AML case system" },
     cu: { definition: "Average age of open BSA/AML alerts.", formula: "BSA aging = Mean days open for unresolved alerts", source: "AML case system" } },
+  runoff: { camels: "L",
+    bank: { definition: "Loan principal that left the book this period (scheduled plus unexpected payoffs) as a share of beginning loans. Pipeline payoffs and servicing / ticketing alerts explain the gap — they are not extra tiles.", formula: "Runoff = Payoffs and curtailments this period / Beginning loans. Monitor: open payoff tickets; LOS pipeline payoffs.", source: "Core / servicing · LOS · ticketing" },
+    cu: { definition: "Member-loan principal that left the book this period (scheduled plus unexpected payoffs) as a share of beginning loans. Pipeline payoffs and servicing / ticketing alerts explain the gap — they are not extra tiles.", formula: "Runoff = Payoffs and curtailments this period / Beginning loans. Monitor: open payoff tickets; LOS pipeline payoffs.", source: "Core / servicing · LOS · ticketing" } },
+  txn_yield: { camels: "E",
+    bank: { definition: "Pricing honesty on the book: weighted-average note rate on new loans minus the weighted-average on renewals. The proving number is the spread. Both rates and volumes sit on drill 1 / 3. L1-5 Yield on new originations stays the production coupon.", formula: "New vs renewal spread (bps) = (WA new-loan rate − WA renewal rate) × 100. Track: WA new; WA renewal; volume mix.", source: "LOS / core · booked principal this period" },
+    cu: { definition: "Pricing honesty on the member book: weighted-average note rate on new loans minus the weighted-average on renewals. The proving number is the spread. Both rates sit on drill 1 / 3. L1-5 stays the production coupon.", formula: "New vs renewal spread (bps) = (WA new-loan rate − WA renewal rate) × 100. Track: WA new; WA renewal; volume mix.", source: "LOS / core · booked member-loan principal this period" } },
+  maturities: { camels: "S",
+    bank: { definition: "Share of the loan book with a contractual maturity inside the next 180 days — the wall that becomes runoff if we do not retain or reprice. Windows are 0–30 / 31–90 / 91–180. Not a full ALM gap report and not jammed into IRR NII shock.", formula: "Maturing (180d) = UPB with contractual maturity ≤ 180 days / Gross loans.", source: "Core / servicing · note maturity date" },
+    cu: { definition: "Share of the member-loan book with a contractual maturity inside the next 180 days. Windows are 0–30 / 31–90 / 91–180. Not a full ALM gap report and not jammed into IRR NII shock.", formula: "Maturing (180d) = UPB with contractual maturity ≤ 180 days / Gross loans.", source: "Core / servicing · note maturity date" } },
   cycle: { camels: "M",
     bank: { definition: "Elapsed days from commercial application to credit decision.", formula: "Decision cycle = Median days (application → decision)", source: "LOS / credit admin" },
     cu: { definition: "Elapsed days from consumer/MBL application to decision.", formula: "Decision cycle = Median days (application → decision)", source: "LOS / credit admin" } },
@@ -961,14 +1344,11 @@ const METRIC_DEFS = {
     bank: { definition: "Share of applications that become booked loans.", formula: "Funnel conversion = Booked loans / Applications", source: "LOS" },
     cu: { definition: "Share of applications that become booked loans.", formula: "Funnel conversion = Booked loans / Applications", source: "LOS" } },
   new_yield: { camels: "E",
-    bank: { definition: "Coupon on newly originated loans vs the existing book.", formula: "New-money yield = Weighted average note rate on originations in period", source: "LOS / core" },
-    cu: { definition: "Coupon on newly originated loans vs member-value pricing.", formula: "New-money yield = Weighted average note rate on originations in period", source: "LOS / core" } },
+    bank: { definition: "Coupon on newly originated loans vs the existing book. The proving number is new loans. The new vs renewal split is an L1-4 proving tile (New vs renewal spread) — not a second L1-5 card.", formula: "New-money yield (proving) = Weighted average note rate on new originations.", source: "LOS / core" },
+    cu: { definition: "Coupon on newly originated loans vs member-value pricing. Proving number is new loans. The new vs renewal split is an L1-4 proving tile — not a second L1-5 card.", formula: "New-money yield (proving) = Weighted average note rate on new originations.", source: "LOS / core" } },
   orig_vol: { camels: "A",
     bank: { definition: "Dollar volume of loans booked in the period.", formula: "Origination volume = Sum of booked principal", source: "LOS" },
     cu: { definition: "Dollar volume of loans booked in the period.", formula: "Origination volume = Sum of booked principal", source: "LOS" } },
-  cpt: { camels: "E",
-    bank: { definition: "Fully loaded cost to process one customer transaction.", formula: "Cost / txn = Transaction-processing expense / Transaction count", source: "Ops / GL" },
-    cu: { definition: "Fully loaded cost to process one member transaction.", formula: "Cost / txn = Transaction-processing expense / Transaction count", source: "Ops / GL" } },
   self_svc: { camels: "M",
     bank: { definition: "Share of eligible transactions completed without a banker (ops lens).", formula: "Self-service = STP / digital txns / Eligible txns", source: "Core / digital ops" },
     cu: { definition: "Share of eligible transactions completed without staff.", formula: "Self-service = STP / digital txns / Eligible txns", source: "Core / digital ops" } },
@@ -976,14 +1356,14 @@ const METRIC_DEFS = {
     bank: { definition: "Commercial pipeline conversion — applications that become booked C&I.", formula: "Pipeline conversion = Booked C&I / Weighted pipeline", source: "LOS / CRM" },
     cu: { definition: "Days to onboard a new member (FOM checks included).", formula: "Onboarding cycle = Median days (application → funded membership)", source: "Core / membership ops" } },
   teller_sla: { camels: "M",
-    bank: { definition: "Time to complete a teller transaction at the window.", formula: "Teller SLA = Average minutes per teller transaction", source: "Branch ops / queue system" },
-    cu: { definition: "Time to complete a teller transaction at the window.", formula: "Teller SLA = Average minutes per teller transaction", source: "Branch ops / queue system" } },
+    bank: { definition: "Teller-line efficiency: deposits per hour at the window, plus procedure adherence and override / opt-out frequency (not lobby wait time).", formula: "Teller Efficiency (proving) = Deposits posted / Teller hours worked. Monitor: SOP adherence %; overrides and policy opt-outs per 100 transactions.", source: "Teller / Vertex · supervisor override log · branch ops" },
+    cu: { definition: "Teller-line efficiency: deposits per hour at the window, plus procedure adherence and override / opt-out frequency (not lobby wait time).", formula: "Teller Efficiency (proving) = Deposits posted / Teller hours worked. Monitor: SOP adherence %; overrides and policy opt-outs per 100 transactions.", source: "Teller · supervisor override log · branch ops" } },
   engagement: { camels: "M",
     bank: { definition: "Associate engagement index (Emplify or successor) in the Engaged band.", formula: "Engagement = Vendor engagement index (participation ≥80%)", source: "HR survey (Emplify)" },
     cu: { definition: "Associate engagement index in the Engaged band.", formula: "Engagement = Vendor engagement index (participation ≥80%)", source: "HR survey" } },
   turnover: { camels: "M",
-    bank: { definition: "Organization-wide voluntary turnover.", formula: "Voluntary turnover = Voluntary separations / Average headcount", source: "HRIS" },
-    cu: { definition: "Organization-wide voluntary turnover.", formula: "Voluntary turnover = Voluntary separations / Average headcount", source: "HRIS" } },
+    bank: { definition: "Organization-wide voluntary turnover. Least Affordable to Lose (LATL) and role split (tellers / bankers / managers) explain the leak — they are not extra tiles. Teller / frontline turnover stays its own proving metric.", formula: "Voluntary turnover = Voluntary separations / Average headcount. Monitor: LATL exits; voluntary turnover by role.", source: "HRIS · talent designation" },
+    cu: { definition: "Organization-wide voluntary turnover. LATL and role split explain the leak — not extra tiles.", formula: "Voluntary turnover = Voluntary separations / Average headcount. Monitor: LATL exits; voluntary turnover by role.", source: "HRIS · talent designation" } },
   teller_to: { camels: "M",
     bank: { definition: "Annualized turnover in the teller / frontline job family.", formula: "Teller turnover = Teller separations / Average teller headcount", source: "HRIS · segment tellers vs rest of staff" },
     cu: { definition: "Annualized frontline turnover.", formula: "Frontline turnover = Frontline separations / Average frontline headcount", source: "HRIS" } },
@@ -993,17 +1373,14 @@ const METRIC_DEFS = {
   training: { camels: "M",
     bank: { definition: "Completion of required risk and compliance modules.", formula: "Training completion = Completed required modules / Assigned modules", source: "LMS" },
     cu: { definition: "Completion of required risk and compliance modules.", formula: "Training completion = Completed required modules / Assigned modules", source: "LMS" } },
-  succession: { camels: "M",
-    bank: { definition: "Ready-now backup coverage for CEO-1, BSA, credit, and CFO.", formula: "Succession coverage = Named ready-now seats / Critical seats", source: "Talent review" },
-    cu: { definition: "Ready-now backup coverage for CEO-1, BSA, credit, and CFO.", formula: "Succession coverage = Named ready-now seats / Critical seats", source: "Talent review" } },
-  skill_board: { camels: "M",
-    bank: { definition: "Share of commercial lenders holding required credentials.", formula: "Skill coverage = Credentialed commercial lenders / Commercial lenders", source: "LMS / credit admin" },
-    cu: { definition: "Volunteer board education hours vs policy.", formula: "Board education = Sum of documented board training hours (YTD)", source: "Board secretary / LMS" } }
+  learning_paths: { camels: "M",
+    bank: { definition: "Unified progress on succession paths (critical seats) and commercial credential paths.", formula: "Learning paths = Weighted % of named paths on plan (succession + commercial credentials)", source: "Talent review · LMS / credit admin" },
+    cu: { definition: "Unified progress on succession, board education, and required credential paths.", formula: "Learning paths = Weighted % of named paths on plan (succession + board education + credentials)", source: "Talent review · board secretary · LMS" } }
 };
 
 const MAP_HOME = {
   "l1-2": { perspective: "Financial", label: "Financial · L1-2" },
-  "l1-3": { perspective: "Customer", label: "Customer / Member · L1-3" },
+  "l1-3": { perspective: "Customer", label: "Customer · L1-3", cuLabel: "Member · L1-3" },
   "l1-4": { perspective: "Risk", label: "Risk / Capital · L1-4" },
   "l1-5": { perspective: "Internal Process", label: "Process / Production · L1-5" },
   "l1-6": { perspective: "Learning Growth", label: "People · L1-6" }
@@ -1011,12 +1388,16 @@ const MAP_HOME = {
 
 const state = {
   charter: "bank",
+  charterLocked: false,
   period: DEFAULT_PERIOD,
   report: "l1-1",
   selectedId: null,
   drillLevel: 1,
   mode: "monitor",
-  editId: null
+  editId: null,
+  peerStat: "median",
+  peerRosterBank: BANK_PEERS.slice(),
+  peerRosterCu: CU_PEERS.slice()
 };
 
 function periodSpec() {
@@ -1095,18 +1476,44 @@ function sliceForPeriod(monthly, priorMonthly) {
   };
 }
 
+function peerValueOf(side) {
+  const median = side.peer;
+  if (state.peerStat === "average") {
+    return side.peerAvg != null ? side.peerAvg : Number((median * 1.02).toFixed(4));
+  }
+  return median;
+}
+
+function peerSourceLine() {
+  const stat = state.peerStat === "average" ? "average" : "median";
+  return state.charter === "cu"
+    ? `FPR peer ${stat}, assets $1B–$3B · session roster (not a locked 80–120% screen)`
+    : `UBPR peer ${stat}, assets $1B–$3B · session roster (not a locked 80–120% screen)`;
+}
+
+function activeRoster() {
+  return state.charter === "cu" ? state.peerRosterCu : state.peerRosterBank;
+}
+
+function availablePeerPool() {
+  const pool = state.charter === "cu" ? CU_PEER_POOL : BANK_PEER_POOL;
+  const roster = activeRoster();
+  return pool.filter((name) => !roster.includes(name));
+}
+
 function viewOf(m) {
   const side = state.charter === "cu" ? m.cu : m.bank;
   const direction = side.direction || m.direction;
   const unit = side.unit || m.unit;
   const sliced = sliceForPeriod(side.series, side.prior);
   const spec = periodSpec();
+  const peer = peerValueOf(side);
   return {
     ...m,
     metric: side.metric,
     objective: side.objective,
     target: side.target,
-    peer: side.peer,
+    peer,
     series: sliced.series,
     prior: sliced.prior,
     band: side.band,
@@ -1117,8 +1524,9 @@ function viewOf(m) {
     labels: sliced.labels,
     comparePrior: Boolean(sliced.comparePrior),
     periodLegend: spec.legend,
-    peerSeries: towardPeer(sliced.series, side.peer, direction),
-    peerSource: state.charter === "cu" ? "FPR peer median, assets $1B–$3B" : "UBPR peer median, assets $1B–$3B"
+    peerSeries: towardPeer(sliced.series, peer, direction),
+    peerSource: peerSourceLine(),
+    perspective: side.perspective || (m.perspective === "Customer" && state.charter === "cu" ? "Member" : m.perspective)
   };
 }
 
@@ -1232,12 +1640,14 @@ function pathTrendChart(mixes, maxN, labels) {
 function formatValue(val, unit) {
   if (unit === "$MM" || unit === "$B") return Number(val).toFixed(2);
   if (unit === "$") return Math.round(val).toString();
-  if (unit === "days" || unit === "min" || unit === "score" || unit === "hrs" || unit === "x") return Number(val).toFixed(1);
+  if (unit === "bps") return String(Math.round(val));
+  if (unit === "days" || unit === "min" || unit === "score" || unit === "hrs" || unit === "x" || unit === "dep/hr") return Number(val).toFixed(1);
   if (unit === "%") return Number(val).toFixed(2);
   return Number(val).toFixed(2);
 }
 
 function gapAmount(v, abs) {
+  if (v.unit === "bps") return Math.round(abs) + " bps";
   if (v.unit === "%") {
     const bps = Math.round(abs * 100);
     return bps >= 100 ? abs.toFixed(2) + " pts" : bps + " bps";
@@ -1314,6 +1724,91 @@ function closeTheGapLine(v) {
   return `Need ${gapAmount(v, Math.abs(v.actual - v.target))} more to reach ${plan}.${clock}`;
 }
 
+function triangulationOf(v) {
+  const s = statusOf(v);
+  const vsT = gapLabel(v, v.target);
+  const vsP = gapLabel(v, v.peer);
+  const vsY = gapLabel(v, v.priorVal);
+  let primary = "plan";
+  let story;
+  if (s === "ok") {
+    if (vsP.favorable && vsY.favorable) {
+      primary = "plan";
+      story = "Winning the set: at or above plan, ahead of peer, and better than last year. Plan stays the score.";
+    } else if (!vsP.favorable) {
+      primary = "peer";
+      story = "On plan, but behind the peer median — peer is context, not the grade. Next conversation is Trend & peers.";
+    } else {
+      primary = "prior";
+      story = "On plan and ahead of peer, but behind last year. Hold the target; check the prior-year curve on drill 2.";
+    }
+  } else if (vsP.favorable) {
+    primary = "plan";
+    story = "Ahead of peers, still short of our own target. Target stays primary — do not celebrate the peer win.";
+  } else {
+    primary = "plan";
+    story = "Behind both plan and peers — priority for attention. Open Drivers & action (3).";
+  }
+  return { s, vsT, vsP, vsY, primary, story };
+}
+
+function nextDrillHint(v) {
+  const s = statusOf(v);
+  if (s !== "ok") return "Next: open 3 · Drivers & action — name the leak and the owner. No fourth drill.";
+  if (!beatsPeer(v)) return "Next: open 2 · Trend & peers — plan is holding; peer is the conversation. No fourth drill.";
+  return "On plan and ahead of peer — no further drill required. Trend (2) is optional.";
+}
+
+function charterSide(m) {
+  return state.charter === "cu" ? m.cu : m.bank;
+}
+
+function driversOf(m) {
+  const side = charterSide(m);
+  return (side && side.drivers) || m.drivers || [];
+}
+
+function actionOf(m) {
+  const side = charterSide(m);
+  return (side && side.action) || m.action || { what: "—", owner: m.owner || "—", due: "—" };
+}
+
+function leadingSignalsOf(m) {
+  const side = charterSide(m);
+  if (state.report === "l1-4" && side && Array.isArray(side.l14Signals) && side.l14Signals.length) {
+    return side.l14Signals.slice(0, 2);
+  }
+  const list = (side && Array.isArray(side.leadingSignals) && side.leadingSignals.length)
+    ? side.leadingSignals
+    : (Array.isArray(m.leadingSignals) ? m.leadingSignals : []);
+  return list.slice(0, 2);
+}
+
+function reportDisplayName(r) {
+  if (!r) return "";
+  return state.charter === "cu" && r.cuName ? r.cuName : r.name;
+}
+
+function leadingSignalsHtml(m) {
+  const list = leadingSignalsOf(m);
+  if (!list.length) return "";
+  return `<h2 class="section">Leading signals</h2>
+    <ul class="driver-list signal-list">
+      ${list.map((d) => `<li><div class="d-title">${d.title}</div><div class="d-meta">${d.meta}</div></li>`).join("")}
+    </ul>
+    <p class="caption">Preview only — full list on drill 3.</p>`;
+}
+
+function compactDeltaRow(tri) {
+  const cell = (label, gap) =>
+    `<span class="delta-cell"><span class="k">${label}</span><span class="v ${gap.favorable ? "ok" : "bad"}">${gap.text}</span></span>`;
+  return `<div class="delta-row" aria-label="Ranked gaps">
+    ${cell("Plan (primary)", tri.vsT)}
+    ${cell("Peer", tri.vsP)}
+    ${cell("Prior year", tri.vsY)}
+  </div>`;
+}
+
 function metricsForReport() {
   if (state.report === "l1-1") return METRICS.filter((m) => m.reports.includes("l1-1"));
   return METRICS.filter((m) => m.reports.includes(state.report));
@@ -1324,12 +1819,16 @@ function processGroup(m) {
   return m.group || "ops";
 }
 
+function peopleGroupOf(m) {
+  return m.peopleGroup || "workforce";
+}
+
 function camelsLetter(id) {
   return (METRIC_DEFS[id] && METRIC_DEFS[id].camels) || "";
 }
 
 function showCamels(m) {
-  return state.report === "l1-4" || (state.report === "l1-1" && (m.id === "capital" || m.id === "past_due"));
+  return Boolean(camelsLetter(m.id));
 }
 
 function whereGrainOf(id) {
@@ -1478,9 +1977,9 @@ function switchReport(id) {
   state.selectedId = null;
   state.drillLevel = 1;
   const r = REPORTS[id];
-  document.title = "Riverbend | " + r.name;
+  document.title = "Riverbend | " + reportDisplayName(r);
   const h1 = document.getElementById("reportTitle");
-  if (h1) h1.textContent = r.name;
+  if (h1) h1.textContent = reportDisplayName(r);
   try {
     const url = new URL(window.location.href);
     url.hash = id;
@@ -1493,9 +1992,18 @@ function renderDefs() {
   const caption = document.getElementById("defsCaption");
   const table = document.getElementById("defsTable");
   if (!caption || !table) return;
-  caption.textContent = state.charter === "cu"
-    ? "Formulas lock for this credit union · FPR / 5300 sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is 5300 via FPR; never mix UBPR and FPR."
-    : "Formulas lock for this bank · UBPR / Call Report sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is Call Report via UBPR; never mix UBPR and FPR.";
+  const base = state.charter === "cu"
+    ? "Formulas lock for this credit union · FPR / 5300 sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is FPR only."
+    : "Formulas lock for this bank · UBPR / Call Report sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is UBPR only.";
+  caption.textContent = state.report === "l1-6"
+    ? base + " HR operational metrics (headcount, absenteeism, DEI, training cost, occupancy) are catalog / drill 3 only — not executive tiles. LATL and role mix sit on voluntary turnover. See HR_METRICS_L1_6_MAPPING.md."
+    : state.report === "l1-4"
+      ? base + (state.charter === "cu"
+        ? " MBL concentration is a proving tile. Liquidity proving number is loans-to-shares (LTS); loans-to-assets is drill context. Net charge-offs replace criticized assets. OpEx / average assets is the L1-2 operating tile. Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles. Courtesy pay / overdraft aging (1–10 / 11–20 / 21–30 / 30+) sits on Past due 30+ drill 1 and 3 — not a second tile and not on L1-1."
+        : " CRE concentration is a proving tile. Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles — not jammed into IRR or Past due. Overdraft aging (1–10 / 11–20 / 21–30 / 30+) sits on Past due 30+ drill 1 and 3 — not a second tile and not on L1-1.")
+      : state.report === "l1-2" && state.charter === "cu"
+        ? base + " Operating load is OpEx / average assets (NCUA / ARCU) — not the bank efficiency ratio. Net income vs plan replaces NOI vs budget."
+        : base;
   const list = metricsForReport();
   table.innerHTML = list.map((m) => {
     const pack = METRIC_DEFS[m.id];
@@ -1668,9 +2176,11 @@ function ensurePlanPanel() {
     }
     if (e.target.id === "planDirection" || e.target.id === "planMap") syncPlanFieldVisibility();
   });
-  el.querySelector("#planMap").innerHTML = Object.keys(MAP_HOME).map((id) =>
-    `<option value="${id}">${MAP_HOME[id].label}</option>`
-  ).join("");
+  el.querySelector("#planMap").innerHTML = Object.keys(MAP_HOME).map((id) => {
+    const pack = MAP_HOME[id];
+    const label = state.charter === "cu" && pack.cuLabel ? pack.cuLabel : pack.label;
+    return `<option value="${id}">${label}</option>`;
+  }).join("");
   el.querySelector("#planOwner").innerHTML = PLAN_OWNERS.map((name) =>
     `<option value="${attrEscape(name)}">${attrEscape(name)}</option>`
   ).join("");
@@ -1922,7 +2432,10 @@ function renderChrome() {
   const r = REPORTS[state.report];
   const spec = periodSpec();
   const fi = state.charter === "cu" ? "Riverbend Community Credit Union" : "Riverbend Community Bank";
-  document.getElementById("brandTitle").textContent = fi + " | " + r.name;
+  document.getElementById("brandTitle").textContent = fi + " | " + reportDisplayName(r);
+  const h1 = document.getElementById("reportTitle");
+  if (h1) h1.textContent = reportDisplayName(r);
+  document.title = "Riverbend | " + reportDisplayName(r);
   document.getElementById("brandSub").textContent = "L1 Balanced Scorecard · " + spec.legend + " · Actual vs Target vs Peer";
   document.getElementById("asof").textContent = spec.asof;
   markNav();
@@ -2253,8 +2766,50 @@ function renderCards(list) {
       </div>
       <div>
         <h2 class="section">Production · sales and business development</h2>
-        <p class="caption">CBO owns pipeline and originations. Loan and deposit growth stay on L1-2. Branch and associate exceptions for production and operations sit under Needs attention.</p>
+        <p class="caption">${state.charter === "cu"
+          ? "CBO owns originations and the consumer funnel. Loan and share growth stay on L1-2. Branch and associate exceptions sit under Needs attention."
+          : "CBO owns pipeline and originations. Loan and deposit growth stay on L1-2. Branch and associate exceptions for production and operations sit under Needs attention."}</p>
         <div class="cards">${prod.map(cardMarkup).join("")}</div>
+      </div>`;
+  } else if (state.report === "l1-4") {
+    const core = list.filter((m) => (m.riskGroup || "core") === "core");
+    const book = list.filter((m) => m.riskGroup === "book");
+    grid.className = "card-stack";
+    grid.innerHTML = `
+      <div>
+        <h2 class="section">Credit, capital, and liquidity</h2>
+        <p class="caption">${state.charter === "cu"
+          ? "Net worth, delinquency, net charge-offs, MBL, allowance / delinquent, loans-to-shares, IRR, borrowed funds / shares, and BSA. Courtesy-pay aging stays on Past due 30+."
+          : "Capital, delinquency, criticized, CRE, ACL, loans-to-assets, IRR, wholesale, and BSA. Overdraft aging stays on Past due 30+."}</p>
+        <div class="cards">${core.map(cardMarkup).join("")}</div>
+      </div>
+      <div>
+        <h2 class="section">Book runoff, pricing, and maturities</h2>
+        <p class="caption">${state.charter === "cu"
+          ? "Member-loan payoffs with ticketing, new vs renewal coupons, and the 180-day maturity wall. Own tiles — not jammed into IRR or Past due."
+          : "Pipeline payoffs with ticketing, new vs renewal coupons, and the 180-day maturity wall. Own tiles — not jammed into IRR or Past due."}</p>
+        <div class="cards">${book.map(cardMarkup).join("")}</div>
+      </div>`;
+  } else if (state.report === "l1-6") {
+    const workforce = list.filter((m) => peopleGroupOf(m) === "workforce");
+    const talent = list.filter((m) => peopleGroupOf(m) === "talent");
+    const learning = list.filter((m) => peopleGroupOf(m) === "learning");
+    grid.className = "card-stack";
+    grid.innerHTML = `
+      <div>
+        <h2 class="section">Workforce health</h2>
+        <p class="caption">Engagement, regretted exits (incl. LATL), and the frontline leak. Role mix is drill 3 — not extra tiles.</p>
+        <div class="cards">${workforce.map(cardMarkup).join("")}</div>
+      </div>
+      <div>
+        <h2 class="section">Talent supply</h2>
+        <p class="caption">Time-to-fill on examiner-sensitive seats. Offer accept and decline reasons preview on drill 1.</p>
+        <div class="cards">${talent.map(cardMarkup).join("")}</div>
+      </div>
+      <div>
+        <h2 class="section">Learning and compliance</h2>
+        <p class="caption">Required modules and unified learning paths (succession + credentials). Session mix is drill 3.</p>
+        <div class="cards">${learning.map(cardMarkup).join("")}</div>
       </div>`;
   } else {
     grid.className = "cards";
@@ -2298,77 +2853,165 @@ function trendSvg(v) {
   <div class="chart-legend">
     <span><i class="dot actual"></i>Actual (${v.periodLegend})</span>
     <span><i class="dot goal"></i>Target</span>
-    <span><i class="dot ${v.comparePrior ? "prior" : "peer"}"></i>${v.comparePrior ? "Prior year" : "Peer median"}</span>
+    <span><i class="dot ${v.comparePrior ? "prior" : "peer"}"></i>${v.comparePrior ? "Prior year" : "Peer " + (state.peerStat === "average" ? "average" : "median")}</span>
   </div>`;
 }
 
 function peerRows(v) {
-  const names = state.charter === "cu" ? CU_PEERS : BANK_PEERS;
+  const names = activeRoster();
   const spread = Math.abs(v.peer) * 0.08 + 0.02;
-  const vals = [v.peer - spread * 1.1, v.peer - spread * 0.3, v.peer + spread * 0.4, v.peer + spread * 1.0];
-  const rows = names.map((name, i) => ({ name, value: Number(vals[i].toFixed(2)), ours: false }));
+  const rows = names.map((name, i) => {
+    const t = names.length <= 1 ? 0 : (i / (names.length - 1)) * 2 - 1;
+    return { name, value: Number((v.peer + spread * t).toFixed(2)), ours: false };
+  });
   rows.push({ name: state.charter === "cu" ? "Riverbend CU (us)" : "Riverbend Bank (us)", value: v.actual, ours: true });
   rows.sort((a, b) => v.direction === "lower" ? a.value - b.value : b.value - a.value);
   return rows;
 }
 
-function renderDrillBody(m, v) {
-  const s = statusOf(v);
-  const vsT = gapLabel(v, v.target);
-  const vsP = gapLabel(v, v.peer);
-  const vsY = gapLabel(v, v.priorVal);
+function setPeerStat(next) {
+  state.peerStat = next === "average" ? "average" : "median";
+  render();
+}
+
+function removeNamedPeer(name) {
+  const key = state.charter === "cu" ? "peerRosterCu" : "peerRosterBank";
+  if (state[key].length <= 2) return;
+  state[key] = state[key].filter((n) => n !== name);
+  render();
+}
+
+function addNamedPeer(name) {
+  if (!name) return;
+  const roster = activeRoster();
+  if (roster.includes(name)) return;
+  roster.push(name);
+  render();
+}
+
+function bindPeerControls() {
   const body = document.getElementById("drillBody");
-  if (state.drillLevel === 1) {
-    const story = s === "ok"
-      ? (beatsPeer(v) ? "Winning both: at/above plan and ahead of peers." : "On plan, but behind the peer median.")
-      : (beatsPeer(v) ? "Ahead of peers, still short of our own target." : "Behind both plan and peers — priority for attention.");
+  if (!body) return;
+  body.querySelectorAll("[data-peer-stat]").forEach((b) => {
+    b.addEventListener("click", () => setPeerStat(b.dataset.peerStat));
+  });
+  body.querySelectorAll("[data-peer-remove]").forEach((b) => {
+    b.addEventListener("click", () => removeNamedPeer(b.dataset.peerRemove));
+  });
+  const addBtn = body.querySelector("[data-peer-add]");
+  const sel = body.querySelector("#peerAddSel");
+  if (addBtn && sel) {
+    addBtn.addEventListener("click", () => addNamedPeer(sel.value));
+  }
+}
+
+function renderDrillBody(m, v) {
+  const body = document.getElementById("drillBody");
+  const level = state.drillLevel === 2 || state.drillLevel === 3 ? state.drillLevel : 1;
+  if (level === 1) {
+    const tri = triangulationOf(v);
     const tt = targetTypeOf(v);
     body.innerHTML = `<div class="detail-grid">
       <div>
         <p class="target-type"><span class="type-chip">${tt.label}</span> ${tt.detail} · ${directionCopy(v)}</p>
-        <div class="gap-card"><div class="k">Vs target (plan)</div><div class="v ${vsT.favorable ? "ok" : "bad"}">${vsT.text}</div>
-          <div class="caption">Actual ${formatValue(v.actual, v.unit)} ${v.unit} · Target ${formatValue(v.target, v.unit)} ${v.unit}</div></div>
-        <div class="gap-card"><div class="k">Vs peer median</div><div class="v ${vsP.favorable ? "ok" : "bad"}">${vsP.text}</div>
-          <div class="caption">${v.peerSource}</div></div>
-        <div class="gap-card"><div class="k">Vs prior year</div><div class="v ${vsY.favorable ? "ok" : "bad"}">${vsY.text}</div>
-          <div class="caption">Prior ${formatValue(v.priorVal, v.unit)} ${v.unit}</div></div>
+        <p class="lede verdict">${tri.story}</p>
+        ${compactDeltaRow(tri)}
         <p class="close-gap"><span class="k">Close the gap</span>${closeTheGapLine(v)}</p>
-        <p class="lede">${story}</p>
-        <p class="hint">Owner: ${v.owner} · ${v.periodLegend}.</p>
+        ${leadingSignalsHtml(m)}
+        <p class="hint">${nextDrillHint(v)}</p>
+        <p class="caption">This drill uses ${v.periodLegend}. Target is primary · peer is context. Owner: ${v.owner}.</p>
       </div>
     </div>`;
-  } else if (state.drillLevel === 2) {
+  } else if (level === 2) {
     const rows = peerRows(v);
+    const pool = availablePeerPool();
+    const canRemove = activeRoster().length > 2;
+    const addOpts = pool.map((n) => `<option value="${n}">${n}</option>`).join("");
     body.innerHTML = `<div class="detail-grid">
       <div class="chart-wrap drill-chart" style="padding:12px">${trendSvg(v)}</div>
       <div>
         <h2 class="section">Named peers (sample)</h2>
+        <div class="peer-controls">
+          <div class="period-picks" role="group" aria-label="Peer statistic">
+            <button class="tab ${state.peerStat === "median" ? "active" : ""}" type="button" data-peer-stat="median" aria-pressed="${state.peerStat === "median"}">Median (default)</button>
+            <button class="tab ${state.peerStat === "average" ? "active" : ""}" type="button" data-peer-stat="average" aria-pressed="${state.peerStat === "average"}">Average</button>
+          </div>
+        </div>
         <table>
-          <thead><tr><th>Institution</th><th>${v.metric}</th></tr></thead>
-          <tbody>${rows.map((r) => `<tr class="${r.ours ? "ours" : ""}"><td>${r.name}</td><td>${formatValue(r.value, v.unit)} ${v.unit}</td></tr>`).join("")}</tbody>
+          <thead><tr><th>Institution</th><th>${v.metric}</th><th></th></tr></thead>
+          <tbody>${rows.map((r) => `<tr class="${r.ours ? "ours" : ""}"><td>${r.name}</td><td>${formatValue(r.value, v.unit)} ${v.unit}</td><td>${r.ours ? "" : `<button class="ghost peer-remove" type="button" data-peer-remove="${r.name}" ${canRemove ? "" : "disabled"}>Remove</button>`}</td></tr>`).join("")}</tbody>
         </table>
-        <p class="caption">${v.peerSource}. Ranked ${v.direction === "lower" ? "low to high" : "high to low"}. Curves stay inside charter.</p>
+        ${pool.length ? `<div class="peer-add"><label for="peerAddSel">Add peer</label><select id="peerAddSel">${addOpts}</select><button class="tab" type="button" data-peer-add>Add</button></div>` : ""}
+        <p class="caption">${v.peerSource}. Ranked ${v.direction === "lower" ? "low to high" : "high to low"}. Target stays primary. Session only — refresh restores the sample four.</p>
       </div>
     </div>`;
+    bindPeerControls();
   } else {
     body.innerHTML = `<div class="detail-grid">
       <div>
         <h2 class="section">Why it moved</h2>
         <ul class="driver-list">
-          ${m.drivers.map((d) => `<li><div class="d-title">${d.title}</div><div class="d-meta">${d.meta}</div></li>`).join("")}
+          ${driversOf(m).map((d) => `<li><div class="d-title">${d.title}</div><div class="d-meta">${d.meta}</div></li>`).join("")}
         </ul>
       </div>
       <div>
         <h2 class="section">Named action</h2>
         <div class="gap-card action-card">
           <div class="k">What we are doing</div>
-          <div class="v">${m.action.what}</div>
-          <div class="caption">Owner: ${m.action.owner} · Due: ${m.action.due}</div>
+          <div class="v">${actionOf(m).what}</div>
+          <div class="caption">Owner: ${actionOf(m).owner} · Due: ${actionOf(m).due}</div>
         </div>
         <p class="hint">Board conversation stops here — no fourth drill.</p>
       </div>
-    </div>${whereTableHtml(m, v)}`;
+    </div>${odAgingHtml(m)}${drillTableHtml(m)}${whereTableHtml(m, v)}`;
   }
+}
+
+function drillTableOf(m) {
+  const side = charterSide(m);
+  return side && side.drillTable && Array.isArray(side.drillTable.rows) ? side.drillTable : null;
+}
+
+function drillTableHtml(m) {
+  const pack = drillTableOf(m);
+  if (!pack) return "";
+  const heads = (pack.columns || []).map((c) => `<th>${c}</th>`).join("");
+  const rows = pack.rows.map((r) => {
+    const cells = (r.cells || []).map((c) => `<td>${c}</td>`).join("");
+    const badge = r.status ? `<td><span class="badge ${r.status}">${statusLabel(r.status)}</span></td>` : "<td>—</td>";
+    return `<tr class="${r.status || ""}">${cells}${badge}</tr>`;
+  }).join("");
+  return `<div class="where-block">
+    <h2 class="section">${pack.title}</h2>
+    <table>
+      <thead><tr>${heads}<th>Status</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="caption">${pack.caption || ""}</p>
+  </div>`;
+}
+
+function odAgingOf(m) {
+  if (state.report !== "l1-4" || !m || m.id !== "past_due") return null;
+  const side = charterSide(m);
+  return side && side.odAging ? side.odAging : null;
+}
+
+function odAgingHtml(m) {
+  const pack = odAgingOf(m);
+  if (!pack || !Array.isArray(pack.buckets)) return "";
+  const shareHead = pack.shareHeader || "Share";
+  const rows = pack.buckets.map((b) =>
+    `<tr class="${b.status}"><td>${b.band}</td><td>${b.share}%</td><td>${b.dollars}</td><td><span class="badge ${b.status}">${statusLabel(b.status)}</span></td></tr>`
+  ).join("");
+  return `<div class="where-block">
+    <h2 class="section">${pack.title}</h2>
+    <table>
+      <thead><tr><th>Days</th><th>${shareHead}</th><th>Balance</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p class="caption">${pack.caption}</p>
+  </div>`;
 }
 
 function whereTableHtml(m, v) {
@@ -2438,17 +3081,25 @@ function render() {
   renderDetail();
 }
 
-function boot(reportId) {
+function boot(reportId, charter) {
   state.period = DEFAULT_PERIOD;
+  if (charter === "cu" || charter === "bank") {
+    state.charter = charter;
+    state.charterLocked = true;
+    document.body.classList.add("charter-locked");
+    document.body.dataset.charter = charter;
+    document.querySelectorAll(".charter").forEach((el) => { el.hidden = true; });
+  }
   const fromHash = (window.location.hash || "").replace("#", "");
   state.report = REPORTS[fromHash] ? fromHash : reportId;
   const start = REPORTS[state.report];
   if (start) {
-    document.title = "Riverbend | " + start.name;
+    document.title = "Riverbend | " + reportDisplayName(start);
     const h1 = document.getElementById("reportTitle");
-    if (h1) h1.textContent = start.name;
+    if (h1) h1.textContent = reportDisplayName(start);
   }
   document.querySelectorAll(".charter button").forEach((b) => {
+    if (state.charterLocked) return;
     b.addEventListener("click", () => { state.charter = b.dataset.charter; render(); });
   });
   document.querySelectorAll(".mode-btn[data-mode]").forEach((b) => {
@@ -2461,7 +3112,11 @@ function boot(reportId) {
     });
   });
   document.querySelectorAll(".level-btn").forEach((b) => {
-    b.addEventListener("click", () => { state.drillLevel = Number(b.dataset.level); render(); });
+    b.addEventListener("click", () => {
+      const n = Number(b.dataset.level);
+      state.drillLevel = n === 2 || n === 3 ? n : 1;
+      render();
+    });
   });
   document.getElementById("closeDetail").addEventListener("click", () => { state.selectedId = null; render(); });
   bindNav();
