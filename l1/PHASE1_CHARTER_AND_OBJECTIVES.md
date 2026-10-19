@@ -70,6 +70,7 @@ Replace names, targets, and owners when a real FI workshop completes.
 |---------|----------------|---------------|---------|
 | Stay well capitalized | Tier 1 / Net worth | Tier 1 leverage 9.5% | Net worth 10.5% |
 | Keep credit inside appetite | Past due 30+ | 1.10% | 0.90% |
+| Hold late overdraft / courtesy-pay balances | Overdraft 21–30 / Courtesy pay 21–30 | 12% of OD | 11% of courtesy pay |
 | Surface problem credits early / hold realized losses | Criticized assets / Net charge-offs | 4.0% | NCO 0.35% of average loans |
 | Stay inside CRE / MBL concentration | CRE / concentration | 300% watch / 400% limit | MBL 10.0% of assets (NCUA 12.25%) |
 | Cover expected loss | ACL / Allowance vs delinquent | 1.25× | 1.20× (allowance / delinquent) |
@@ -83,7 +84,7 @@ Replace names, targets, and owners when a real FI workshop completes.
 
 CU proving names follow ARCU / NCUA Key Ratios: **OpEx / average assets** (not bank efficiency), **loans-to-shares** (not loans-to-assets), **net charge-offs** (not criticized). Loans-to-assets stays drill context on LTS.
 
-Overdraft aging (bank: overdraft; CU: courtesy pay / NSF) in **1–10 / 11–20 / 21–30 / 30+** day buckets sits on **Past due 30+** drill 1 and 3 on L1-4 only — not a second tile and not on L1-1. The proving number stays loan 30+.
+**Past due 30+** is loans (also on L1-1). Drill 1 and 3 show **30 / 60 / 90** day buckets. **Overdraft 21–30** (bank) / **Courtesy pay 21–30** (CU) is a separate L1-4 deposit tile. Drill 1 and 3 show **10 days / 11–20 / 21–30**.
 
 **Book-risk tiles (own cards, not jammed into IRR or Past due):** runoff / payoffs with pipeline + ticketing alerts; new vs renewal weighted-average rates (proving number is the spread); contractual maturities looking ahead 180 days (0–30 / 31–90 / 91–180). L1-5 keeps Yield on new originations as the production coupon.
 

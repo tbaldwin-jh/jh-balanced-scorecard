@@ -167,7 +167,7 @@ const METRICS = [
       action: { what: "Lift fee mix without adding junk fees", owner: "CFO", due: "Q4 2026" } } },
 
   { id: "csi", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "score", direction: "higher", owner: "CMO",
-    bank: { metric: "CSI / NPS", objective: "Keep CSI above the Capstone floor", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95],
+    bank: { metric: "CSI", objective: "Keep CSI above the Capstone floor", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95],
       drivers: [{ title: "Loan decision time", meta: "Top CSI complaint theme" }, { title: "Account opening", meta: "Branch SLA" }],
       action: { what: "Cut commercial cycle time to lift CSI", owner: "CMO / COO", due: "Sep 2026" } },
     cu: { metric: "NPS", objective: "Hold member NPS above 70", target: 70, peer: 68, series: [64, 65, 66, 67, 68, 69], prior: [62, 63, 64, 65, 66, 66],
@@ -201,7 +201,8 @@ const METRICS = [
       action: { what: "Add primary member relationships, not share specials", owner: "CMO", due: "Dec 2026" } } },
   { id: "core_mix", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "Treasurer",
     bank: { metric: "Core funding mix", objective: "Improve funding stickiness", target: 78, peer: 74, series: [73.2, 73.6, 74.0, 74.4, 74.8, 75.2], prior: [72.0, 72.4, 72.8, 73.0, 73.2, 73.4],
-      drivers: [{ title: "DDA + savings + MMDA", meta: "Core definition locked" }, { title: "Brokered / specials", meta: "Pulls mix down" }] },
+      drivers: [{ title: "DDA + savings + MMDA", meta: "Core definition locked" }, { title: "Brokered / specials", meta: "Pulls mix down" }],
+      action: { what: "Shift 200 bps into core deposits before year-end", owner: "Treasurer", due: "Dec 2026" } },
     cu: { metric: "Core share mix", objective: "Grow sticky member shares", target: 80, peer: 77, series: [75.0, 75.4, 75.8, 76.2, 76.6, 77.0], prior: [74.2, 74.5, 74.8, 75.0, 75.2, 75.4],
       drivers: [{ title: "Regular shares + MMDA", meta: "Core definition locked" }, { title: "Specials", meta: "Pulls mix down" }] },
     action: { what: "Shift 200 bps into core before year-end", owner: "Treasurer", due: "Dec 2026" } },
@@ -236,40 +237,90 @@ const METRICS = [
     action: { what: "Keep the capital floor inside the growth plan", owner: "CFO", due: "monthly ALCO" } },
   { id: "past_due", reports: ["l1-1", "l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "CRO",
     bank: { metric: "Past due 30+", objective: "Keep credit inside appetite", target: 1.10, peer: 1.05, series: [1.02, 1.06, 1.10, 1.14, 1.16, 1.18], prior: [0.92, 0.94, 0.96, 0.98, 0.99, 1.00],
-      drivers: [{ title: "30/60/90 mix", meta: "Watch 60+ migration" }, { title: "C&I / CRE watch", meta: "Commercial lead book" }],
-      l14Signals: [
-        { title: "OD 30+ is 12% of overdraft balances", meta: "$0.30MM — charge-off risk. Buckets on drill 3." },
-        { title: "21–30 day OD at 18%", meta: "Migration into 30+ this month" }
+      leadingSignals: [
+        { title: "60-day bucket 0.38% of loans", meta: "$2.1MM — migrating from 30 days" },
+        { title: "90-day bucket 0.22% of loans", meta: "$1.2MM — nearest charge-off" }
       ],
-      odAging: {
-        title: "Overdraft aging",
-        shareHeader: "Share of OD",
-        caption: "Deposit overdraft balances by days negative — not loan past due. Shown on L1-4 only.",
-        buckets: [
-          { band: "1–10 days", share: 42, dollars: "$1.05MM", status: "ok" },
-          { band: "11–20 days", share: 28, dollars: "$0.70MM", status: "watch" },
-          { band: "21–30 days", share: 18, dollars: "$0.45MM", status: "watch" },
-          { band: "30+ days", share: 12, dollars: "$0.30MM", status: "bad" }
+      drivers: [
+        { title: "30 days", meta: "Early delinquency — collections window" },
+        { title: "60 days", meta: "Watch migration from 30" },
+        { title: "90 days", meta: "Charge-off risk" }
+      ],
+      action: { what: "Tighten collections on the 30-day bucket before it rolls to 60", owner: "Chief Credit", due: "Sep 2026" },
+      drillTable: {
+        title: "Past due by days",
+        caption: "Loan unpaid principal by contractual days past due. Not overdraft. 30 + 60 + 90 = the proving 30+ book.",
+        columns: ["Bucket", "Share of loans", "Balance"],
+        rows: [
+          { cells: ["30 days", "0.58%", "$3.2MM"], status: "watch" },
+          { cells: ["60 days", "0.38%", "$2.1MM"], status: "watch" },
+          { cells: ["90 days", "0.22%", "$1.2MM"], status: "bad" }
         ]
       } },
     cu: { metric: "Past due 30+", objective: "Hold consumer delinquency inside limit", target: 0.90, peer: 0.85, series: [0.78, 0.82, 0.86, 0.88, 0.90, 0.93], prior: [0.70, 0.72, 0.74, 0.76, 0.77, 0.78],
-      drivers: [{ title: "30/60/90 mix", meta: "Watch 60+ migration" }, { title: "Consumer auto / card", meta: "Lead book" }],
-      l14Signals: [
-        { title: "Courtesy pay 30+ is 11% of courtesy-pay balances", meta: "$0.22MM — charge-off risk. Buckets on drill 3." },
-        { title: "21–30 day courtesy pay at 17%", meta: "Migration into 30+ this month" }
+      leadingSignals: [
+        { title: "60-day bucket 0.28% of loans", meta: "$0.78MM — migrating from 30 days" },
+        { title: "90-day bucket 0.16% of loans", meta: "$0.45MM — nearest charge-off" }
       ],
+      drivers: [
+        { title: "30 days", meta: "Early delinquency — consumer collections" },
+        { title: "60 days", meta: "Watch auto / card migration" },
+        { title: "90 days", meta: "Charge-off risk" }
+      ],
+      action: { what: "Tighten consumer collections on the 30-day bucket before it rolls to 60", owner: "Chief Credit", due: "Sep 2026" },
+      drillTable: {
+        title: "Past due by days",
+        caption: "Member-loan unpaid principal by contractual days past due. Not courtesy pay. 30 + 60 + 90 = the proving 30+ book.",
+        columns: ["Bucket", "Share of loans", "Balance"],
+        rows: [
+          { cells: ["30 days", "0.49%", "$1.36MM"], status: "watch" },
+          { cells: ["60 days", "0.28%", "$0.78MM"], status: "watch" },
+          { cells: ["90 days", "0.16%", "$0.45MM"], status: "bad" }
+        ]
+      } } },
+  { id: "overdraft", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "CRO",
+    bank: { metric: "Overdraft 21–30", objective: "Hold late overdraft balances inside appetite", target: 12, peer: 10, series: [14.2, 14.8, 15.6, 16.4, 17.2, 18.0], prior: [11.0, 11.4, 11.8, 12.2, 12.6, 13.0],
+      leadingSignals: [
+        { title: "10-day bucket 42% of OD", meta: "$1.05MM — still recoverable" },
+        { title: "11–20 day bucket 28% of OD", meta: "$0.70MM — next migration into 21–30" }
+      ],
+      drivers: [
+        { title: "10 days", meta: "Fresh negatives — cure window" },
+        { title: "11–20 days", meta: "Work list before 21–30" },
+        { title: "21–30 days", meta: "Proving number — charge-off risk" }
+      ],
+      action: { what: "Work 11–20 day overdrafts before they roll into 21–30", owner: "CRO / Deposit ops", due: "Sep 2026" },
       odAging: {
-        title: "Courtesy pay / overdraft aging",
-        shareHeader: "Share of courtesy pay",
-        caption: "Courtesy pay and NSF balances by days negative — not loan delinquency. Shown on L1-4 only.",
+        title: "Overdraft aging",
+        shareHeader: "Share of OD",
+        caption: "Deposit overdraft balances by days negative. Not loan past due.",
         buckets: [
-          { band: "1–10 days", share: 46, dollars: "$0.88MM", status: "ok" },
-          { band: "11–20 days", share: 26, dollars: "$0.50MM", status: "watch" },
-          { band: "21–30 days", share: 17, dollars: "$0.33MM", status: "watch" },
-          { band: "30+ days", share: 11, dollars: "$0.22MM", status: "bad" }
+          { band: "10 days", share: 42, dollars: "$1.05MM", status: "ok" },
+          { band: "11–20 days", share: 28, dollars: "$0.70MM", status: "watch" },
+          { band: "21–30 days", share: 18, dollars: "$0.45MM", status: "bad" }
         ]
       } },
-    action: { what: "Tighten early-stage collections on 30–59", owner: "Chief Credit", due: "Sep 2026" } },
+    cu: { metric: "Courtesy pay 21–30", objective: "Hold late courtesy-pay balances inside appetite", target: 11, peer: 9, series: [13.0, 13.6, 14.2, 15.0, 16.0, 17.0], prior: [10.2, 10.6, 11.0, 11.4, 11.8, 12.2],
+      leadingSignals: [
+        { title: "10-day bucket 46% of courtesy pay", meta: "$0.88MM — still recoverable" },
+        { title: "11–20 day bucket 26%", meta: "$0.50MM — next migration into 21–30" }
+      ],
+      drivers: [
+        { title: "10 days", meta: "Fresh negatives — cure window" },
+        { title: "11–20 days", meta: "Work list before 21–30" },
+        { title: "21–30 days", meta: "Proving number — charge-off risk" }
+      ],
+      action: { what: "Work 11–20 day courtesy pay before it rolls into 21–30", owner: "CRO / Deposit ops", due: "Sep 2026" },
+      odAging: {
+        title: "Courtesy pay aging",
+        shareHeader: "Share of courtesy pay",
+        caption: "Courtesy pay and NSF balances by days negative. Not loan delinquency.",
+        buckets: [
+          { band: "10 days", share: 46, dollars: "$0.88MM", status: "ok" },
+          { band: "11–20 days", share: 26, dollars: "$0.50MM", status: "watch" },
+          { band: "21–30 days", share: 17, dollars: "$0.33MM", status: "bad" }
+        ]
+      } } },
   { id: "criticized", reports: ["l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "Chief Credit",
     bank: { metric: "Criticized assets", objective: "Surface problem credits early", target: 4.0, peer: 3.6, series: [3.4, 3.5, 3.6, 3.7, 3.8, 3.9], prior: [3.1, 3.2, 3.2, 3.3, 3.3, 3.4],
       drivers: [{ title: "Special mention inflows", meta: "Label criticized vs classified" }, { title: "CRE concentration", meta: "Limits live on the CRE tile — not this one" }],
@@ -1278,7 +1329,7 @@ const METRIC_DEFS = {
     bank: { definition: "Share of revenue that is not spread income.", formula: "Fee mix = Noninterest Income / (NII + Noninterest Income)", source: "GL" },
     cu: { definition: "Fee income consistent with member value — do not maximize junk fees.", formula: "Fee mix = Noninterest Income / (NII + Noninterest Income)", source: "GL / 5300" } },
   csi: { camels: "M",
-    bank: { definition: "Customer experience score from the bank’s satisfaction survey (Capstone CSI / NPS).", formula: "CSI = Mean survey score (vendor scale; target > 7.2)", source: "Survey platform · community bank CSAT sample" },
+    bank: { definition: "Customer experience score from the bank’s satisfaction survey (Capstone CSI).", formula: "CSI = Mean survey score (vendor scale; target > 7.2)", source: "Survey platform · community bank CSAT sample" },
     cu: { definition: "Member NPS — cooperative service identity.", formula: "NPS = % Promoters − % Detractors", source: "Survey platform · CU member sample" } },
   retention: { camels: "M",
     bank: { definition: "Share of customer relationships that remain open over the period. Deflection (saves after outreach) and close-reason codes explain the gap — they are not a second tile.", formula: "Retention = 1 − (Closed CIF / Beginning CIF). Monitor: deflected / at-risk outreach; close codes (rate/fees, operations, deceased, out-of-area).", source: "Core CIF · household retention · close-reason codes" },
@@ -1305,8 +1356,11 @@ const METRIC_DEFS = {
     bank: { definition: "Leverage capital adequacy vs PCA / CBLR well-capitalized levels.", formula: "Tier 1 Leverage = Tier 1 Capital / Average Total Assets", source: "Call Report / capital calculator · UBPR" },
     cu: { definition: "Net worth adequacy. NCUA well-capitalized ≥7%; many boards target 10%+.", formula: "Net Worth Ratio = Net Worth / Total Assets", source: "ARCU FactGLMonthlySnapshot · NCUA GL category · FPR · retained earnings only" } },
   past_due: { camels: "A",
-    bank: { definition: "Early asset-quality signal: unpaid loan balance 30 or more days past due. Overdraft aging (1–10 / 11–20 / 21–30 / 30+ days) is L1-4 drill grain — not a second tile and not on L1-1.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor (L1-4): overdraft balances by days negative.", source: "Servicing / core · deposit OD aging" },
-    cu: { definition: "Loan delinquency 30+ as a share of gross loans. Courtesy pay / overdraft aging (1–10 / 11–20 / 21–30 / 30+ days) is L1-4 drill grain — not a second tile and not on L1-1.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor (L1-4): courtesy pay and NSF balances by days negative.", source: "Servicing / core · courtesy pay aging" } },
+    bank: { definition: "Early asset-quality signal: unpaid loan balance 30 or more days past due. Drill 1 and 3 split the book into 30 / 60 / 90 day buckets. Overdraft is a separate L1-4 tile.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor: 30-day, 60-day, and 90-day UPB.", source: "Servicing / core · loan DPD" },
+    cu: { definition: "Loan delinquency 30+ as a share of gross loans. Drill 1 and 3 split the book into 30 / 60 / 90 day buckets. Courtesy pay is a separate L1-4 tile.", formula: "Past Due 30+ = UPB ≥ 30 DPD / Gross Loans. Monitor: 30-day, 60-day, and 90-day UPB.", source: "Servicing / core · loan DPD" } },
+  overdraft: { camels: "A",
+    bank: { definition: "Late deposit overdraft balances. The proving number is the 21–30 day share of overdraft. Drill 1 and 3 show 10-day, 11–20 day, and 21–30 day buckets. Not loan past due.", formula: "Overdraft 21–30 = OD balances 21–30 days negative / Total OD balances", source: "Core / deposit OD aging" },
+    cu: { definition: "Late courtesy-pay and NSF balances. The proving number is the 21–30 day share. Drill 1 and 3 show 10-day, 11–20 day, and 21–30 day buckets. Not loan delinquency.", formula: "Courtesy pay 21–30 = Courtesy-pay balances 21–30 days negative / Total courtesy-pay balances", source: "Core / courtesy pay aging" } },
   criticized: { camels: "A",
     bank: { definition: "Watchlist and classified credits as a share of loans or assets.", formula: "Criticized = (Special mention + Substandard + Doubtful) / Loans", source: "Credit admin / ALLL" },
     cu: { definition: "NCUA / ARCU realized-loss ratio. Delinquency stays on Past due 30+. Not classified / criticized.", formula: "Net charge-offs = (Charge-offs − Recoveries) / Average loans", source: "ARCU collections / NCUA GL · FactLoanMonthlySnapshot · FPR" } },
@@ -1760,7 +1814,8 @@ function nextDrillHint(v) {
 }
 
 function charterSide(m) {
-  return state.charter === "cu" ? m.cu : m.bank;
+  if (state.charter === "cu") return m.cu;
+  return m.bank;
 }
 
 function driversOf(m) {
@@ -1999,8 +2054,8 @@ function renderDefs() {
     ? base + " HR operational metrics (headcount, absenteeism, DEI, training cost, occupancy) are catalog / drill 3 only — not executive tiles. LATL and role mix sit on voluntary turnover. See HR_METRICS_L1_6_MAPPING.md."
     : state.report === "l1-4"
       ? base + (state.charter === "cu"
-        ? " MBL concentration is a proving tile. Liquidity proving number is loans-to-shares (LTS); loans-to-assets is drill context. Net charge-offs replace criticized assets. OpEx / average assets is the L1-2 operating tile. Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles. Courtesy pay / overdraft aging (1–10 / 11–20 / 21–30 / 30+) sits on Past due 30+ drill 1 and 3 — not a second tile and not on L1-1."
-        : " CRE concentration is a proving tile. Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles — not jammed into IRR or Past due. Overdraft aging (1–10 / 11–20 / 21–30 / 30+) sits on Past due 30+ drill 1 and 3 — not a second tile and not on L1-1.")
+        ? " MBL concentration is a proving tile. Liquidity proving number is loans-to-shares (LTS); loans-to-assets is drill context. Net charge-offs replace criticized assets. Past due 30+ is loans (30 / 60 / 90 on drill). Courtesy pay 21–30 is a separate deposit tile (10 / 11–20 / 21–30 on drill). Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles."
+        : " CRE concentration is a proving tile. Past due 30+ is loans (30 / 60 / 90 on drill). Overdraft 21–30 is a separate deposit tile (10 / 11–20 / 21–30 on drill). Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles.")
       : state.report === "l1-2" && state.charter === "cu"
         ? base + " Operating load is OpEx / average assets (NCUA / ARCU) — not the bank efficiency ratio. Net income vs plan replaces NOI vs budget."
         : base;
@@ -2009,7 +2064,10 @@ function renderDefs() {
     const pack = METRIC_DEFS[m.id];
     const side = pack ? (state.charter === "cu" ? pack.cu : pack.bank) : null;
     const v = viewOf(m);
-    const d = side || { definition: "Bind formula in planning.", formula: "TBD", source: "TBD" };
+    const d = Object.assign({ definition: "Bind formula in planning.", formula: "TBD", source: "TBD" }, side || {});
+    if (state.charter !== "cu" && /ARCU|NCUA|FPR|5300/.test(String(d.source || ""))) {
+      d.source = "GL / Call Report · UBPR";
+    }
     return `<tr>
       <td>${v.metric}</td>
       <td>${v.perspective}</td>
@@ -2779,8 +2837,8 @@ function renderCards(list) {
       <div>
         <h2 class="section">Credit, capital, and liquidity</h2>
         <p class="caption">${state.charter === "cu"
-          ? "Net worth, delinquency, net charge-offs, MBL, allowance / delinquent, loans-to-shares, IRR, borrowed funds / shares, and BSA. Courtesy-pay aging stays on Past due 30+."
-          : "Capital, delinquency, criticized, CRE, ACL, loans-to-assets, IRR, wholesale, and BSA. Overdraft aging stays on Past due 30+."}</p>
+          ? "Net worth, loan past due, courtesy pay, net charge-offs, MBL, allowance / delinquent, loans-to-shares, IRR, borrowed funds / shares, and BSA."
+          : "Capital, loan past due, overdraft, criticized, CRE, ACL, loans-to-assets, IRR, wholesale, and BSA."}</p>
         <div class="cards">${core.map(cardMarkup).join("")}</div>
       </div>
       <div>
@@ -2918,6 +2976,7 @@ function renderDrillBody(m, v) {
         ${compactDeltaRow(tri)}
         <p class="close-gap"><span class="k">Close the gap</span>${closeTheGapLine(v)}</p>
         ${leadingSignalsHtml(m)}
+        ${odAgingHtml(m)}${drillTableHtml(m)}
         <p class="hint">${nextDrillHint(v)}</p>
         <p class="caption">This drill uses ${v.periodLegend}. Target is primary · peer is context. Owner: ${v.owner}.</p>
       </div>
@@ -2992,7 +3051,6 @@ function drillTableHtml(m) {
 }
 
 function odAgingOf(m) {
-  if (state.report !== "l1-4" || !m || m.id !== "past_due") return null;
   const side = charterSide(m);
   return side && side.odAging ? side.odAging : null;
 }

@@ -42,8 +42,8 @@ Credit / capital / liquidity tiles are unchanged on the bank book. Three book-ri
 
 | `metric_code` | Display name | Notes |
 |---------------|--------------|--------|
+| `past_due` | Past due 30+ | Loans. Drill 1 / 3: 30 / 60 / 90 day buckets. Also on L1-1. |
+| `overdraft` | Overdraft 21–30 (bank) / Courtesy pay 21–30 (CU) | Deposits. L1-4 only. Drill 1 / 3: 10 days / 11–20 / 21–30. |
 | `runoff` | Runoff / payoffs | Payoffs + pipeline runoff. Ticketing alerts are drill 3 |
 | `txn_yield` | New vs renewal spread | Proving number is new − renewal (bps). Both WA rates on drill 1 / 3. L1-5 keeps the production coupon |
 | `maturities` | Maturing loans (180d) | Contractual maturities 0–30 / 31–90 / 91–180 |
-
-Overdraft aging (bank) / courtesy pay (CU) in 1–10 / 11–20 / 21–30 / 30+ day buckets still lives on **Past due 30+** (`past_due`) drill 1 and 3 on L1-4 only. The proving number stays loan 30+.
