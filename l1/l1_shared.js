@@ -54,7 +54,9 @@ const REPORTS = {
     name: "Customer Franchise",
     cuName: "Member Franchise",
     owner: "CMO (franchise, not marketing-only)",
-    decision: "Franchise value — growth, engagement, and depth — not a marketing-mix score. Are we deepening the relationships that fund the institution, or buying volume?"
+    bankOwner: "CBO / Head of Banking",
+    decision: "Franchise value — growth, engagement, and depth — not a marketing-mix score. Are we deepening the relationships that fund the institution, or buying volume?",
+    bankDecision: "Are we acquiring, retaining, and deepening profitable customer relationships across our markets, and which segments or markets require leadership intervention?"
   },
   "l1-4": {
     file: "l1_4_risk_capital.html",
@@ -65,7 +67,9 @@ const REPORTS = {
   "l1-5": {
     file: "l1_5_process.html",
     name: "Process, Service and Production",
+    bankName: "Operations and Production",
     owner: "COO / CBO",
+    bankOwner: "COO (operations) · CBO (production)",
     decision: "Can operations run the book at acceptable cost and speed — and is production converting the plan?"
   },
   "l1-6": {
@@ -100,6 +104,7 @@ const PLAN_OWNERS = [
   "COO / CBO",
   "COO / Lending",
   "CBO",
+  "CBO / Head of Banking",
   "CMO",
   "CRO",
   "Chief Credit",
@@ -112,7 +117,7 @@ const PLAN_OWNERS = [
 
 const METRICS = [
   { id: "roa", reports: ["l1-1", "l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "CEO / CFO",
-    bank: { metric: "ROA", objective: "Deliver top-quartile peer ROA", target: 1.50, peer: 1.19, series: [1.21, 1.28, 1.32, 1.35, 1.37, 1.39], prior: [1.10, 1.14, 1.18, 1.20, 1.23, 1.26] },
+    bank: { metric: "ROA", objective: "Deliver sustainable financial performance", target: 1.50, peer: 1.19, series: [1.21, 1.28, 1.32, 1.35, 1.37, 1.39], prior: [1.10, 1.14, 1.18, 1.20, 1.23, 1.26] },
     cu: { metric: "ROA", objective: "Earn ROA sufficient to fund net-worth growth", target: 0.75, peer: 0.66, series: [0.58, 0.60, 0.62, 0.64, 0.66, 0.68], prior: [0.52, 0.54, 0.56, 0.58, 0.60, 0.61] },
     drivers: [{ title: "NII run-rate", meta: "Primary earnings driver" }, { title: "Fee income mix", meta: "Below plan" }, { title: "Average assets", meta: "Dilutes ROA if earnings lag" }],
     action: { what: "Close the ROA gap via NII, not asset stretch", owner: "CFO", due: "Sep 2026" } },
@@ -131,7 +136,7 @@ const METRICS = [
       drivers: [{ title: "Cost of funds", meta: "Share specials lifting COF — ARCU WAR on shares" }, { title: "Book loan yield", meta: "ARCU weighted average rate on the loan book" }],
       action: { what: "Reprice share specials; protect regular shares", owner: "Treasurer", due: "Oct 2026" } } },
   { id: "efficiency", reports: ["l1-1", "l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "lower", owner: "CFO / COO",
-    bank: { metric: "Efficiency", objective: "Operate at 52% efficiency or better", target: 52, peer: 63.2, series: [58.4, 57.6, 56.8, 56.1, 55.4, 54.8], prior: [60.1, 59.4, 58.8, 58.2, 57.6, 57.0],
+    bank: { metric: "Efficiency", objective: "Operate inside the efficiency goal", target: 52, peer: 63.2, series: [58.4, 57.6, 56.8, 56.1, 55.4, 54.8], prior: [60.1, 59.4, 58.8, 58.2, 57.6, 57.0],
       drivers: [{ title: "Noninterest expense", meta: "Staff and tech run-rate" }, { title: "Revenue", meta: "NII + fees in the denominator" }],
       action: { what: "Hold OpEx flat through year-end", owner: "COO", due: "Dec 2026" } },
     cu: { metric: "OpEx / average assets", objective: "Hold operating expense inside the FPR load", target: 3.20, peer: 3.40, series: [3.52, 3.48, 3.44, 3.40, 3.36, 3.32], prior: [3.60, 3.56, 3.52, 3.48, 3.44, 3.42],
@@ -153,8 +158,28 @@ const METRICS = [
       action: { what: "Grow consumer originations without lifting the past-due or MBL limit", owner: "Chief Credit", due: "Sep 2026" } } },
   { id: "dep_growth", reports: ["l1-2"], perspective: "Financial", map: "l1-2", unit: "%", direction: "higher", owner: "Treasurer",
     bank: { metric: "Deposit growth", objective: "Grow the funding book", target: 6.0, peer: 4.2, series: [3.8, 4.1, 4.5, 4.8, 5.2, 5.5], prior: [3.4, 3.6, 3.8, 4.0, 4.1, 4.2],
-      drivers: [{ title: "Core DDA", meta: "Stickiness over specials" }, { title: "Outflows by tier", meta: "Watch rate-sensitive money" }],
-      action: { what: "Add core balances; no wholesale substitution", owner: "Treasurer", due: "Dec 2026" } },
+      leadingSignals: [
+        { title: "New operating accounts 118 vs 140 plan", meta: "Forward book — not the YoY outcome" },
+        { title: "Expected new core $4.1MM vs $5.0MM", meta: "Relationship teams, not wholesale substitution" }
+      ],
+      drivers: [
+        { title: "New operating-account opportunities", meta: "Primary-relationship adds in the pipeline" },
+        { title: "Expected new core deposits", meta: "Forward funding vs the remaining deposit plan" },
+        { title: "Deposit attrition / runoff risk", meta: "Large-relationship renewals and rate-sensitive outflows" },
+        { title: "Market vs plan", meta: "Client-mapped markets — enterprise average can hide a weak market" }
+      ],
+      drillTable: {
+        title: "Deposit execution · forward book",
+        caption: "Outcome stays YoY deposit growth. This table is execution — whether relationship teams are building future funding. Markets are a client-mapped grain, not a fixed geography list.",
+        columns: ["Signal", "This period", "Vs plan"],
+        rows: [
+          { cells: ["New operating-account opportunities", "118", "140 plan"], status: "watch" },
+          { cells: ["Expected new core deposits", "$4.1MM", "$5.0MM plan"], status: "watch" },
+          { cells: ["Large-relationship runoff at risk", "$2.4MM", "Inside limit"], status: "ok" },
+          { cells: ["South metro deposit growth", "2.8%", "6.0% plan"], status: "bad" }
+        ]
+      },
+      action: { what: "Add core balances from new operating accounts; no wholesale substitution", owner: "Treasurer", due: "Dec 2026", status: "open" } },
     cu: { metric: "Share growth", objective: "Grow member shares", target: 5.5, peer: 4.0, series: [3.4, 3.7, 4.0, 4.3, 4.6, 4.9], prior: [3.1, 3.3, 3.5, 3.6, 3.7, 3.8],
       drivers: [{ title: "Core shares", meta: "Stickiness over specials" }, { title: "Outflows by tier", meta: "Watch rate-sensitive money" }],
       action: { what: "Add core member shares; do not substitute borrowed funds", owner: "Treasurer", due: "Dec 2026" } } },
@@ -167,18 +192,19 @@ const METRICS = [
       action: { what: "Lift fee mix without adding junk fees", owner: "CFO", due: "Q4 2026" } } },
 
   { id: "csi", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "score", direction: "higher", owner: "CMO",
-    bank: { metric: "CSI", objective: "Keep CSI above the Capstone floor", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95],
+    bank: { metric: "CSI", objective: "Protect the customer experience", target: 7.2, peer: 7.0, series: [6.8, 6.9, 7.0, 7.05, 7.08, 7.10], prior: [6.6, 6.7, 6.8, 6.85, 6.9, 6.95],
       drivers: [{ title: "Loan decision time", meta: "Top CSI complaint theme" }, { title: "Account opening", meta: "Branch SLA" }],
-      action: { what: "Cut commercial cycle time to lift CSI", owner: "CMO / COO", due: "Sep 2026" } },
+      action: { what: "Cut commercial cycle time to lift CSI", owner: "CMO / COO", due: "Sep 2026", status: "open" } },
     cu: { metric: "NPS", objective: "Hold member NPS above 70", target: 70, peer: 68, series: [64, 65, 66, 67, 68, 69], prior: [62, 63, 64, 65, 66, 66],
       drivers: [{ title: "Loan decision time", meta: "Top NPS complaint theme" }, { title: "Account opening", meta: "Branch service" }],
       action: { what: "Cut consumer cycle time to lift NPS", owner: "CMO / COO", due: "Sep 2026" } } },
   { id: "retention", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
-    bank: { metric: "Retention", objective: "Hold household retention at 92%", target: 92, peer: 90, series: [90.2, 90.5, 90.8, 91.0, 91.2, 91.4], prior: [89.6, 89.8, 90.0, 90.2, 90.3, 90.4],
+    bank: { metric: "Retention", objective: "Build primary customer relationships", owner: "CBO / Head of Banking", target: 92, peer: 90, series: [90.2, 90.5, 90.8, 91.0, 91.2, 91.4], prior: [89.6, 89.8, 90.0, 90.2, 90.3, 90.4],
       leadingSignals: [
         { title: "Deflection 64% of at-risk", meta: "Saved 41 of 64 households after outreach" },
-        { title: "Top close reason: Rate / fees", meta: "Operations · deceased · out-of-area on drill 3" }
-      ] },
+        { title: "South metro retention 89.6%", meta: "Enterprise 91.4% hides a weak market" }
+      ],
+      action: { what: "Outreach on rate-shoppers before they close", owner: "CBO / Head of Banking", due: "Oct 2026", status: "open" } },
     cu: { metric: "Retention", objective: "Hold member retention at 93%", target: 93, peer: 91, series: [91.4, 91.6, 91.8, 92.0, 92.1, 92.3], prior: [90.8, 91.0, 91.2, 91.3, 91.4, 91.5],
       leadingSignals: [
         { title: "Deflection 64% of at-risk", meta: "Saved 41 of 64 members after outreach" },
@@ -193,23 +219,27 @@ const METRICS = [
     ],
     action: { what: "Outreach on rate-shoppers before they close", owner: "CMO", due: "Oct 2026" } },
   { id: "hh_growth", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
-    bank: { metric: "Customer growth", objective: "Grow households, not account records", target: 4.0, peer: 2.8, series: [2.4, 2.6, 2.8, 3.0, 3.2, 3.4], prior: [2.1, 2.2, 2.3, 2.4, 2.5, 2.6],
-      drivers: [{ title: "Net new CIF", meta: "Adds minus closes" }, { title: "Market", meta: "Primary-household growth, not account records" }],
-      action: { what: "Add primary relationships, not CD specials", owner: "CMO", due: "Dec 2026" } },
+    bank: { metric: "Customer growth", objective: "Grow households, not account records", owner: "CBO / Head of Banking", target: 4.0, peer: 2.8, series: [2.4, 2.6, 2.8, 3.0, 3.2, 3.4], prior: [2.1, 2.2, 2.3, 2.4, 2.5, 2.6],
+      leadingSignals: [
+        { title: "South metro HH growth 1.4%", meta: "Enterprise 3.4% hides a weak market" },
+        { title: "Commercial line +1.1%", meta: "Retail +4.6% — line grain on drill 3" }
+      ],
+      drivers: [{ title: "Net new CIF", meta: "Adds minus closes" }, { title: "Market / line", meta: "Client-mapped markets and business lines — not account records" }],
+      action: { what: "Add primary relationships, not CD specials", owner: "CBO / Head of Banking", due: "Dec 2026", status: "open" } },
     cu: { metric: "Member growth", objective: "Grow net members inside FOM", target: 3.5, peer: 2.5, series: [2.1, 2.3, 2.5, 2.7, 2.8, 3.0], prior: [1.8, 1.9, 2.0, 2.1, 2.2, 2.3],
       drivers: [{ title: "Net new members", meta: "Adds minus closes" }, { title: "Field of membership", meta: "Growth inside FOM" }],
       action: { what: "Add primary member relationships, not share specials", owner: "CMO", due: "Dec 2026" } } },
   { id: "core_mix", reports: ["l1-1", "l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "Treasurer",
-    bank: { metric: "Core funding mix", objective: "Improve funding stickiness", target: 78, peer: 74, series: [73.2, 73.6, 74.0, 74.4, 74.8, 75.2], prior: [72.0, 72.4, 72.8, 73.0, 73.2, 73.4],
+    bank: { metric: "Core funding mix", objective: "Maintain a resilient funding base", target: 78, peer: 74, series: [73.2, 73.6, 74.0, 74.4, 74.8, 75.2], prior: [72.0, 72.4, 72.8, 73.0, 73.2, 73.4],
       drivers: [{ title: "DDA + savings + MMDA", meta: "Core definition locked" }, { title: "Brokered / specials", meta: "Pulls mix down" }],
       action: { what: "Shift 200 bps into core deposits before year-end", owner: "Treasurer", due: "Dec 2026" } },
     cu: { metric: "Core share mix", objective: "Grow sticky member shares", target: 80, peer: 77, series: [75.0, 75.4, 75.8, 76.2, 76.6, 77.0], prior: [74.2, 74.5, 74.8, 75.0, 75.2, 75.4],
       drivers: [{ title: "Regular shares + MMDA", meta: "Core definition locked" }, { title: "Specials", meta: "Pulls mix down" }] },
     action: { what: "Shift 200 bps into core before year-end", owner: "Treasurer", due: "Dec 2026" } },
   { id: "depth", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "n", direction: "higher", owner: "CMO",
-    bank: { metric: "Products per household", objective: "Deepen the household franchise", target: 3.10, peer: 2.85, series: [2.72, 2.76, 2.80, 2.84, 2.88, 2.92], prior: [2.64, 2.66, 2.68, 2.70, 2.72, 2.74],
+    bank: { metric: "Products per household", objective: "Deepen the household franchise", owner: "CBO / Head of Banking", target: 3.10, peer: 2.85, series: [2.72, 2.76, 2.80, 2.84, 2.88, 2.92], prior: [2.64, 2.66, 2.68, 2.70, 2.72, 2.74],
       drivers: [{ title: "Cross-sell conversion", meta: "Second product attach" }, { title: "Primary-FI share", meta: "Loan + deposit in same CIF" }],
-      action: { what: "Campaign households with deposits only", owner: "CMO", due: "Nov 2026" } },
+      action: { what: "Campaign households with deposits only", owner: "CBO / Head of Banking", due: "Nov 2026", status: "open" } },
     cu: { metric: "AMR", objective: "Deepen average member relationship", target: 18.5, peer: 16.8, series: [16.2, 16.5, 16.8, 17.1, 17.3, 17.6], prior: [15.4, 15.6, 15.8, 16.0, 16.1, 16.2],
       drivers: [{ title: "Cross-sell conversion", meta: "Second product attach" }, { title: "Primary relationship", meta: "Loan + share in the same membership" }],
       action: { what: "Campaign members with shares only", owner: "CMO", due: "Nov 2026" } } },
@@ -219,7 +249,8 @@ const METRICS = [
     drivers: [{ title: "Enrollment vs eligible", meta: "Denominator locked" }, { title: "Mobile logins", meta: "Active = 90-day use" }],
     action: { what: "Activate 4 pts of enrolled-but-inactive users", owner: "Digital", due: "Oct 2026" } },
   { id: "cross_sell", reports: ["l1-3"], perspective: "Customer", map: "l1-3", unit: "%", direction: "higher", owner: "CMO",
-    bank: { metric: "Cross-sell", objective: "Increase wallet share", target: 18, peer: 15, series: [13.2, 13.6, 14.0, 14.4, 14.8, 15.1], prior: [12.4, 12.6, 12.8, 13.0, 13.1, 13.2] },
+    bank: { metric: "Cross-sell", objective: "Increase wallet share", owner: "CBO / Head of Banking", target: 18, peer: 15, series: [13.2, 13.6, 14.0, 14.4, 14.8, 15.1], prior: [12.4, 12.6, 12.8, 13.0, 13.1, 13.2],
+      action: { what: "Stand up a weekly referral huddle", owner: "CBO / Head of Banking", due: "Sep 2026", status: "open" } },
     cu: { metric: "Cross-sell", objective: "Lift products per member via referrals", target: 16, peer: 14, series: [12.0, 12.3, 12.6, 12.9, 13.1, 13.4], prior: [11.4, 11.6, 11.8, 12.0, 12.1, 12.2] },
     drivers: [{ title: "Referral conversion", meta: "Branch + banker" }, { title: "Digital offers", meta: "Attach at login" }],
     action: { what: "Stand up a weekly referral huddle", owner: "CMO", due: "Sep 2026" } },
@@ -231,12 +262,12 @@ const METRICS = [
     action: { what: "Shift 15% of acquisition spend to digital", owner: "CMO", due: "Oct 2026" } },
 
   { id: "capital", reports: ["l1-1", "l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "higher", owner: "CFO",
-    bank: { metric: "Tier 1 leverage", objective: "Stay well capitalized", target: 9.5, peer: 9.8, series: [9.10, 9.14, 9.18, 9.22, 9.26, 9.30], prior: [8.90, 8.95, 9.00, 9.04, 9.08, 9.10] },
+    bank: { metric: "Tier 1 leverage", objective: "Operate safely and soundly — capital", target: 9.5, peer: 9.8, series: [9.10, 9.14, 9.18, 9.22, 9.26, 9.30], prior: [8.90, 8.95, 9.00, 9.04, 9.08, 9.10] },
     cu: { metric: "Net worth ratio", objective: "Hold well-capitalized net worth", target: 10.5, peer: 10.8, series: [10.10, 10.16, 10.22, 10.28, 10.32, 10.36], prior: [9.90, 9.96, 10.00, 10.04, 10.08, 10.10] },
     drivers: [{ title: "Retained earnings", meta: "ROA is the fuel" }, { title: "Asset growth", meta: "Dilutes the ratio" }],
     action: { what: "Keep the capital floor inside the growth plan", owner: "CFO", due: "monthly ALCO" } },
   { id: "past_due", reports: ["l1-1", "l1-4"], perspective: "Risk", map: "l1-4", unit: "%", direction: "lower", owner: "CRO",
-    bank: { metric: "Past due 30+", objective: "Keep credit inside appetite", target: 1.10, peer: 1.05, series: [1.02, 1.06, 1.10, 1.14, 1.16, 1.18], prior: [0.92, 0.94, 0.96, 0.98, 0.99, 1.00],
+    bank: { metric: "Past due 30+", objective: "Operate safely and soundly — asset quality", target: 1.10, peer: 1.05, series: [1.02, 1.06, 1.10, 1.14, 1.16, 1.18], prior: [0.92, 0.94, 0.96, 0.98, 0.99, 1.00],
       leadingSignals: [
         { title: "60-day bucket 0.38% of loans", meta: "$2.1MM — migrating from 30 days" },
         { title: "90-day bucket 0.22% of loans", meta: "$1.2MM — nearest charge-off" }
@@ -584,9 +615,29 @@ const METRICS = [
     drivers: [{ title: "Deposit / transfer STP", meta: "Ops lens, not franchise adoption" }, { title: "Core availability", meta: "Blocks self-service" }],
     action: { what: "Turn on more deposit STP paths", owner: "COO", due: "Oct 2026" } },
   { id: "pipeline", reports: ["l1-5"], perspective: "Internal Process", map: "l1-5", group: "prod", unit: "mixed", direction: "higher", owner: "CBO",
-    bank: { metric: "Commercial pipeline", objective: "Convert C&I pipeline", target: 32, peer: 28, series: [24, 25, 26, 27, 27.5, 28], prior: [22, 23, 23.5, 24, 24.5, 25], unit: "%",
-      drivers: [{ title: "C&I conversion", meta: "Learning paths on L1-6" }, { title: "Credit box", meta: "Do not loosen to buy volume" }],
-      action: { what: "Lift commercial pipeline conversion", owner: "CBO", due: "Oct 2026" } },
+    bank: { metric: "Commercial pipeline", objective: "Hold a qualified commercial book that covers the remaining production goal", target: 42, peer: 38, series: [34, 35, 36, 37.5, 38.5, 40], prior: [30, 31, 32, 33, 34, 35], unit: "$MM",
+      leadingSignals: [
+        { title: "Coverage 0.92× remaining goal", meta: "Weighted qualified $ / leftover production plan" },
+        { title: "Conversion 28%", meta: "Driver — not the proving number" }
+      ],
+      drivers: [
+        { title: "Pipeline coverage", meta: "Weighted qualified pipeline / remaining production goal" },
+        { title: "Conversion rate", meta: "Booked C&I / weighted pipeline — a rate, not the stock" },
+        { title: "Stage aging / expected close", meta: "30 / 60 / 90 day close windows" },
+        { title: "Credit box", meta: "Do not loosen to buy volume" }
+      ],
+      drillTable: {
+        title: "Pipeline quality · stock, not conversion",
+        caption: "Proving number is weighted qualified dollars. Conversion, coverage, and close windows explain the gap — they are not extra tiles.",
+        columns: ["Signal", "This period", "Note"],
+        rows: [
+          { cells: ["Weighted qualified pipeline", "$40MM", "Proving number"], status: "watch" },
+          { cells: ["Coverage of remaining goal", "0.92×", "Target ≥ 1.00×"], status: "watch" },
+          { cells: ["Conversion (booked / weighted)", "28%", "Driver only"], status: "watch" },
+          { cells: ["Expected close 30 / 60 / 90", "$8 / $14 / $18MM", "Timing of the stock"], status: "ok" }
+        ]
+      },
+      action: { what: "Rebuild qualified pipeline dollars to cover the remaining production goal", owner: "CBO", due: "Oct 2026", status: "overdue" } },
     cu: { metric: "Onboarding cycle", objective: "Same-week member onboarding", target: 1.2, peer: 1.6, series: [2.1, 1.9, 1.8, 1.7, 1.6, 1.55], prior: [2.4, 2.3, 2.2, 2.1, 2.0, 1.95], unit: "days", direction: "lower",
       drivers: [{ title: "FOM checks", meta: "Onboarding quality" }, { title: "Membership ops", meta: "Same-week funded membership" }],
       action: { what: "Cut onboarding to 1.2 days", owner: "CBO", due: "Oct 2026" } } },
@@ -605,7 +656,7 @@ const METRICS = [
     action: { what: "Coach Oak Street on overrides and recover deposits per hour", owner: "COO", due: "Sep 2026" } },
 
   { id: "engagement", reports: ["l1-1", "l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "score", direction: "higher", owner: "CHRO", peopleGroup: "workforce",
-    bank: { metric: "Engagement", objective: "Keep Emplify in the Engaged band", target: 74, peer: 70, series: [69, 70, 70.5, 71, 71.5, 72], prior: [67, 67.5, 68, 68.5, 69, 69] },
+    bank: { metric: "Engagement", objective: "Build organizational capacity", target: 74, peer: 70, series: [69, 70, 70.5, 71, 71.5, 72], prior: [67, 67.5, 68, 68.5, 69, 69] },
     cu: { metric: "Engagement", objective: "Keep engagement in the Engaged band", target: 76, peer: 72, series: [71, 72, 72.5, 73, 73.5, 74], prior: [69, 69.5, 70, 70.5, 71, 71] },
     leadingSignals: [
       { title: "Survey participation 77%", meta: "Floor is 80% — sample is not yet a valid index" },
@@ -676,16 +727,17 @@ const METRICS = [
     ],
     action: { what: "Close the last 2 pts before exam window", owner: "CHRO", due: "Oct 2026" } },
   { id: "learning_paths", reports: ["l1-6"], perspective: "Learning Growth", map: "l1-6", unit: "%", direction: "higher", owner: "CHRO", peopleGroup: "learning",
-    bank: { metric: "Learning paths", objective: "Succession and commercial credential paths on plan", target: 75, peer: 66, series: [58, 61, 64, 67, 70, 72], prior: [54, 56, 58, 60, 62, 64],
+    bank: { metric: "Succession coverage", objective: "Keep ready-now backups on critical seats", target: 75, peer: 66, series: [58, 61, 64, 67, 70, 72], prior: [54, 56, 58, 60, 62, 64],
       leadingSignals: [
-        { title: "Succession ready-now 70%", meta: "CEO-1, BSA, credit, CFO — still short of 75% on-plan" },
-        { title: "Commercial credentials 63%", meta: "C&I bench feeds pipeline conversion" }
+        { title: "Ready-now 70% of critical seats", meta: "CEO-1, BSA, credit, CFO — proving number" },
+        { title: "Commercial credentials 63%", meta: "C&I bench — drill, not a second tile" }
       ],
       drivers: [
-        { title: "Succession ready-now", meta: "Named backups for CEO-1, BSA, credit, CFO" },
-        { title: "Commercial credentials", meta: "C&I bench feeds L1-5 pipeline conversion" },
-        { title: "Performance stack (context)", meta: "Contributor 12 · Top 14 — talent review, not L1 tiles" }
-      ] },
+        { title: "Ready-now backups", meta: "Named backups for CEO-1, BSA, credit, CFO" },
+        { title: "Leadership bench / vacancy", meta: "Open examiner-sensitive seats sit on time-to-fill" },
+        { title: "Commercial credentials", meta: "C&I bench feeds L1-5 pipeline — not the proving number" }
+      ],
+      action: { what: "Name ready-now backups for BSA and credit before year-end talent review", owner: "CHRO", due: "Dec 2026", status: "open" } },
     cu: { metric: "Learning paths", objective: "Succession, board education, and credential paths on plan", target: 75, peer: 66, series: [56, 59, 62, 65, 68, 70], prior: [52, 54, 56, 58, 60, 62],
       leadingSignals: [
         { title: "Succession ready-now 70%", meta: "CEO-1, BSA, credit, CFO — still short of 75% on-plan" },
@@ -823,17 +875,27 @@ const WHERE_GRAIN = {
   },
   pipeline: {
     bank: {
-      unit: "%",
+      unit: "$MM",
       role: "RMs",
       branches: [
-        { name: "Downtown commercial", value: 34.0, status: "ok" },
-        { name: "Oak Street", value: 29.0, status: "watch" },
-        { name: "Riverside", value: 24.0, status: "bad" },
-        { name: "Northside", value: 22.0, status: "bad" }
+        { name: "Downtown commercial", value: 16.4, status: "ok" },
+        { name: "Oak Street", value: 9.2, status: "watch" },
+        { name: "Riverside", value: 7.8, status: "bad" },
+        { name: "Northside", value: 6.6, status: "bad" }
       ],
       associates: [
-        { name: "M. Chen · C&I RM", value: 18.0, status: "bad", coach: "CBO" },
-        { name: "S. Okonkwo · C&I RM", value: 25.0, status: "watch", coach: "CBO" }
+        { name: "M. Chen · C&I RM", value: 4.2, status: "bad", coach: "CBO" },
+        { name: "S. Okonkwo · C&I RM", value: 6.8, status: "watch", coach: "CBO" }
+      ],
+      markets: [
+        { name: "North metro", value: 18.6, status: "ok" },
+        { name: "South metro", value: 12.4, status: "watch" },
+        { name: "Rural / other", value: 9.0, status: "bad" }
+      ],
+      lines: [
+        { name: "Commercial", value: 28.0, status: "watch" },
+        { name: "Retail / consumer", value: 8.4, status: "ok" },
+        { name: "Mortgage", value: 3.6, status: "ok" }
       ]
     },
     cu: {
@@ -862,8 +924,17 @@ const WHERE_GRAIN = {
         { name: "Northside", value: 92.8, status: "ok" }
       ],
       associates: [
-        { name: "A. Ruiz · Downtown platform", value: 88.5, status: "bad", coach: "CMO / branch manager" },
-        { name: "D. Hale · Oak Street platform", value: 90.1, status: "watch", coach: "CMO / branch manager" }
+        { name: "A. Ruiz · Downtown platform", value: 88.5, status: "bad", coach: "CBO / branch manager" },
+        { name: "D. Hale · Oak Street platform", value: 90.1, status: "watch", coach: "CBO / branch manager" }
+      ],
+      markets: [
+        { name: "North metro", value: 92.6, status: "ok" },
+        { name: "South metro", value: 89.6, status: "bad" },
+        { name: "Rural / other", value: 91.0, status: "watch" }
+      ],
+      lines: [
+        { name: "Retail", value: 92.1, status: "ok" },
+        { name: "Commercial", value: 90.2, status: "watch" }
       ]
     },
     cu: {
@@ -892,8 +963,17 @@ const WHERE_GRAIN = {
         { name: "Northside", value: 4.2, status: "ok" }
       ],
       associates: [
-        { name: "S. Cole · Oak Street banker", value: 1.2, status: "bad", coach: "CMO" },
-        { name: "A. Ruiz · Downtown platform", value: 2.1, status: "watch", coach: "CMO / branch manager" }
+        { name: "S. Cole · Oak Street banker", value: 1.2, status: "bad", coach: "CBO / Head of Banking" },
+        { name: "A. Ruiz · Downtown platform", value: 2.1, status: "watch", coach: "CBO / branch manager" }
+      ],
+      markets: [
+        { name: "North metro", value: 4.6, status: "ok" },
+        { name: "South metro", value: 1.4, status: "bad" },
+        { name: "Rural / other", value: 2.8, status: "watch" }
+      ],
+      lines: [
+        { name: "Retail", value: 4.6, status: "ok" },
+        { name: "Commercial", value: 1.1, status: "bad" }
       ]
     },
     cu: {
@@ -1014,6 +1094,15 @@ const WHERE_GRAIN = {
       associates: [
         { name: "N. Ortiz · Oak Street BM", value: 2.8, status: "bad", coach: "Treasurer" },
         { name: "P. Singh · Riverside BM", value: 4.0, status: "watch", coach: "Treasurer" }
+      ],
+      markets: [
+        { name: "North metro", value: 6.2, status: "ok" },
+        { name: "South metro", value: 2.8, status: "bad" },
+        { name: "Rural / other", value: 4.6, status: "watch" }
+      ],
+      lines: [
+        { name: "Retail deposits", value: 6.4, status: "ok" },
+        { name: "Commercial deposits", value: 3.1, status: "watch" }
       ]
     },
     cu: {
@@ -1407,7 +1496,7 @@ const METRIC_DEFS = {
     bank: { definition: "Share of eligible transactions completed without a banker (ops lens).", formula: "Self-service = STP / digital txns / Eligible txns", source: "Core / digital ops" },
     cu: { definition: "Share of eligible transactions completed without staff.", formula: "Self-service = STP / digital txns / Eligible txns", source: "Core / digital ops" } },
   pipeline: { camels: "A",
-    bank: { definition: "Commercial pipeline conversion — applications that become booked C&I.", formula: "Pipeline conversion = Booked C&I / Weighted pipeline", source: "LOS / CRM" },
+    bank: { definition: "Weighted qualified commercial pipeline — the stock that must cover the remaining production goal. Conversion is a driver, not the proving number.", formula: "Commercial pipeline = Σ (qualified opportunity $ × win probability). Monitor: coverage = pipeline / remaining production goal; conversion = booked C&I / weighted pipeline.", source: "LOS / CRM" },
     cu: { definition: "Days to onboard a new member (FOM checks included).", formula: "Onboarding cycle = Median days (application → funded membership)", source: "Core / membership ops" } },
   teller_sla: { camels: "M",
     bank: { definition: "Teller-line efficiency: deposits per hour at the window, plus procedure adherence and override / opt-out frequency (not lobby wait time).", formula: "Teller Efficiency (proving) = Deposits posted / Teller hours worked. Monitor: SOP adherence %; overrides and policy opt-outs per 100 transactions.", source: "Teller / Vertex · supervisor override log · branch ops" },
@@ -1428,7 +1517,7 @@ const METRIC_DEFS = {
     bank: { definition: "Completion of required risk and compliance modules.", formula: "Training completion = Completed required modules / Assigned modules", source: "LMS" },
     cu: { definition: "Completion of required risk and compliance modules.", formula: "Training completion = Completed required modules / Assigned modules", source: "LMS" } },
   learning_paths: { camels: "M",
-    bank: { definition: "Unified progress on succession paths (critical seats) and commercial credential paths.", formula: "Learning paths = Weighted % of named paths on plan (succession + commercial credentials)", source: "Talent review · LMS / credit admin" },
+    bank: { definition: "Ready-now succession coverage on examiner-sensitive and CEO-1 seats. Commercial credentials stay a drill — they are not a second proving tile.", formula: "Succession coverage = Named ready-now backups / Critical seats", source: "Talent review · HRIS" },
     cu: { definition: "Unified progress on succession, board education, and required credential paths.", formula: "Learning paths = Weighted % of named paths on plan (succession + board education + credentials)", source: "Talent review · board secretary · LMS" } }
 };
 
@@ -1436,9 +1525,17 @@ const MAP_HOME = {
   "l1-2": { perspective: "Financial", label: "Financial · L1-2" },
   "l1-3": { perspective: "Customer", label: "Customer · L1-3", cuLabel: "Member · L1-3" },
   "l1-4": { perspective: "Risk", label: "Risk / Capital · L1-4" },
-  "l1-5": { perspective: "Internal Process", label: "Process / Production · L1-5" },
+  "l1-5": { perspective: "Internal Process", label: "Process / Production · L1-5", bankLabel: "Ops & Production · L1-5", bankPerspective: "Ops & Production" },
   "l1-6": { perspective: "Learning Growth", label: "People · L1-6" }
 };
+
+const ROLES = [
+  { id: "monitor", label: "Monitor — view only" },
+  { id: "planner", label: "Planner — wording" },
+  { id: "alco", label: "ALCO — earnings / franchise targets" },
+  { id: "board", label: "Board — risk / capital targets" },
+  { id: "catalog", label: "Catalog — add tiles" }
+];
 
 const state = {
   charter: "bank",
@@ -1448,6 +1545,7 @@ const state = {
   selectedId: null,
   drillLevel: 1,
   mode: "monitor",
+  role: "monitor",
   editId: null,
   peerStat: "median",
   peerRosterBank: BANK_PEERS.slice(),
@@ -1580,7 +1678,8 @@ function viewOf(m) {
     periodLegend: spec.legend,
     peerSeries: towardPeer(sliced.series, peer, direction),
     peerSource: peerSourceLine(),
-    perspective: side.perspective || (m.perspective === "Customer" && state.charter === "cu" ? "Member" : m.perspective)
+    owner: side.owner || m.owner,
+    perspective: side.perspective || (m.perspective === "Customer" && state.charter === "cu" ? "Member" : m.perspective === "Internal Process" && state.charter === "bank" ? "Ops & Production" : m.perspective)
   };
 }
 
@@ -1841,7 +1940,98 @@ function leadingSignalsOf(m) {
 
 function reportDisplayName(r) {
   if (!r) return "";
-  return state.charter === "cu" && r.cuName ? r.cuName : r.name;
+  if (state.charter === "cu" && r.cuName) return r.cuName;
+  if (state.charter === "bank" && r.bankName) return r.bankName;
+  return r.name;
+}
+
+function reportOwnerOf(r) {
+  if (!r) return "";
+  return state.charter === "bank" && r.bankOwner ? r.bankOwner : r.owner;
+}
+
+function reportDecisionOf(r) {
+  if (!r) return "";
+  return state.charter === "bank" && r.bankDecision ? r.bankDecision : r.decision;
+}
+
+function tileTrustMeta(m) {
+  const quarterly = { roa: 1, roe_nwg: 1, nim: 1, efficiency: 1, fee_mix: 1, capital: 1, past_due: 1, acl: 1, loan_assets: 1, wholesale: 1, cre_conc: 1, loan_growth: 1, dep_growth: 1 };
+  const survey = { csi: 1, engagement: 1 };
+  const board = { capital: 1, past_due: 1, overdraft: 1, criticized: 1, cre_conc: 1, acl: 1, loan_assets: 1, irr: 1, wholesale: 1, bsa: 1, runoff: 1, txn_yield: 1, maturities: 1 };
+  let cadence;
+  let refresh;
+  if (quarterly[m.id]) {
+    cadence = state.charter === "cu" ? "Quarterly · 5300 / FPR" : "Quarterly · Call / GL";
+    refresh = "30 Jun 2026";
+  } else if (survey[m.id]) {
+    cadence = "Survey cycle";
+    refresh = "31 Jul 2026";
+  } else {
+    cadence = state.charter === "cu" ? "Monthly · core / ARCU" : "Monthly · core / ops";
+    refresh = "31 Jul 2026";
+  }
+  return {
+    cadence,
+    refresh,
+    approved: board[m.id] ? "Board" : "ALCO",
+    effective: "1 Jan 2026"
+  };
+}
+
+function roleOf() {
+  return ROLES.some((r) => r.id === state.role) ? state.role : "monitor";
+}
+
+function tileApprover(m) {
+  return tileTrustMeta(m).approved;
+}
+
+function canEditWording() {
+  const role = roleOf();
+  return role === "planner" || role === "alco" || role === "board" || role === "catalog";
+}
+
+function canEditTarget(m) {
+  if (roleOf() === "catalog") return true;
+  if (!m) return false;
+  const who = tileApprover(m);
+  if (roleOf() === "alco") return who === "ALCO";
+  if (roleOf() === "board") return who === "Board";
+  return false;
+}
+
+function canAddTile() {
+  return roleOf() === "catalog";
+}
+
+function canUseMode(mode) {
+  if (mode === "add") return canAddTile();
+  if (mode === "edit") return canEditWording();
+  return true;
+}
+
+function denyWriteReason(kind, m) {
+  if (kind === "add") return "Adding a proving tile needs Catalog. Monitor, Planner, ALCO, and Board cannot invent L1 metrics mid-year.";
+  if (kind === "wording") return "Wording, owner, and action need Planner, ALCO, Board, or Catalog.";
+  if (kind === "target") {
+    const who = m ? tileApprover(m) : "ALCO";
+    return "Target changes go through " + who + " (earnings / franchise via ALCO; risk / capital via the board). Effective date stamps on publish.";
+  }
+  return "This session role cannot publish that change.";
+}
+
+function tileTrustLine(m) {
+  if (state.charter !== "bank") return "";
+  const t = tileTrustMeta(m);
+  return "Last refresh " + t.refresh + " (sample) · " + t.cadence + " · Confidence: sample · Target approved: " + t.approved + " · Effective " + t.effective;
+}
+
+function actionStatusHtml(act) {
+  if (state.charter !== "bank" || !act || !act.status) return "";
+  const tone = act.status === "overdue" || act.status === "escalated" ? "bad" : act.status === "completed" ? "ok" : "watch";
+  const label = act.status === "overdue" ? "Overdue" : act.status === "escalated" ? "Escalated" : act.status === "completed" ? "Completed" : "Open";
+  return `<span class="badge ${tone} action-status">${label}</span>`;
 }
 
 function leadingSignalsHtml(m) {
@@ -2044,26 +2234,27 @@ function switchReport(id) {
 }
 
 function renderDefs() {
-  const caption = document.getElementById("defsCaption");
   const table = document.getElementById("defsTable");
-  if (!caption || !table) return;
-  const base = state.charter === "cu"
-    ? "Formulas lock for this credit union · FPR / 5300 sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is FPR only."
-    : "Formulas lock for this bank · UBPR / Call Report sample. CAMELS letters are tags, not weights — the score is still Actual vs your target. Peer context is UBPR only.";
-  caption.textContent = state.report === "l1-6"
-    ? base + " HR operational metrics (headcount, absenteeism, DEI, training cost, occupancy) are catalog / drill 3 only — not executive tiles. LATL and role mix sit on voluntary turnover. See HR_METRICS_L1_6_MAPPING.md."
-    : state.report === "l1-4"
-      ? base + (state.charter === "cu"
-        ? " MBL concentration is a proving tile. Liquidity proving number is loans-to-shares (LTS); loans-to-assets is drill context. Net charge-offs replace criticized assets. Past due 30+ is loans (30 / 60 / 90 on drill). Courtesy pay 21–30 is a separate deposit tile (10 / 11–20 / 21–30 on drill). Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles."
-        : " CRE concentration is a proving tile. Past due 30+ is loans (30 / 60 / 90 on drill). Overdraft 21–30 is a separate deposit tile (10 / 11–20 / 21–30 on drill). Runoff / payoffs, new vs renewal spread, and 180-day maturities are book-risk tiles.")
-      : state.report === "l1-2" && state.charter === "cu"
-        ? base + " Operating load is OpEx / average assets (NCUA / ARCU) — not the bank efficiency ratio. Net income vs plan replaces NOI vs budget."
-        : base;
+  if (!table) return;
   const list = metricsForReport();
+  const head = table.closest("table") && table.closest("table").querySelector("thead tr");
+  if (head) {
+    head.innerHTML = `
+      <th>Metric</th>
+      <th>Perspective</th>
+      <th>CAMELS</th>
+      <th>Definition</th>
+      <th>Formula</th>
+      <th>Source</th>
+      <th>Cadence</th>
+      <th>Last refresh</th>
+      <th>Effective date</th>`;
+  }
   table.innerHTML = list.map((m) => {
     const pack = METRIC_DEFS[m.id];
     const side = pack ? (state.charter === "cu" ? pack.cu : pack.bank) : null;
     const v = viewOf(m);
+    const t = tileTrustMeta(m);
     const d = Object.assign({ definition: "Bind formula in planning.", formula: "TBD", source: "TBD" }, side || {});
     if (state.charter !== "cu" && /ARCU|NCUA|FPR|5300/.test(String(d.source || ""))) {
       d.source = "GL / Call Report · UBPR";
@@ -2075,22 +2266,38 @@ function renderDefs() {
       <td>${d.definition}</td>
       <td class="formula">${d.formula}</td>
       <td>${d.source}</td>
+      <td class="defs-meta">${t.cadence}</td>
+      <td class="defs-meta">${t.refresh}</td>
+      <td class="defs-meta">${t.effective}</td>
     </tr>`;
   }).join("");
 }
 
 function applySessionVisibility() {
+  if (!canUseMode(state.mode)) state.mode = "monitor";
   const defs = state.mode === "defs";
   const adding = state.mode === "add";
   const session = document.getElementById("monitorSession");
   const panel = document.getElementById("defsPanel");
   const plan = ensurePlanPanel();
   document.body.classList.toggle("mode-edit", state.mode === "edit");
+  document.body.classList.toggle("mode-defs", state.mode === "defs");
   if (session) session.hidden = defs || adding;
   if (panel) panel.hidden = !defs;
   if (plan) plan.hidden = !adding;
   document.querySelectorAll(".mode-btn[data-mode]").forEach((b) => {
-    b.classList.toggle("active", b.dataset.mode === state.mode);
+    const mode = b.dataset.mode;
+    const allowed = canUseMode(mode);
+    b.classList.toggle("active", mode === state.mode);
+    b.disabled = !allowed;
+    b.classList.toggle("is-locked", !allowed);
+    if (!allowed) {
+      b.title = denyWriteReason(mode === "add" ? "add" : "wording");
+      b.setAttribute("aria-disabled", "true");
+    } else {
+      b.removeAttribute("title");
+      b.removeAttribute("aria-disabled");
+    }
   });
   syncModeHint();
   if (defs) renderDefs();
@@ -2110,7 +2317,14 @@ function syncModeHint() {
   }
   if (state.mode === "edit") {
     hint.hidden = false;
-    hint.textContent = "Edit title, objective, owner, and target on the cards. Status and trend update immediately (session only — refresh restores the sample).";
+    hint.textContent = canEditWording()
+      ? "Edit allowed fields on the cards. Actual, peer, and formula stay locked. Target is writable only on tiles your role approves. Session only — refresh restores the sample."
+      : "Edit is locked for this role. Switch to Planner, ALCO, Board, or Catalog to publish wording or targets.";
+  } else if (state.mode === "add") {
+    hint.hidden = false;
+    hint.textContent = canAddTile()
+      ? "Catalog can add a proving tile. Session only — refresh restores the sample catalog."
+      : denyWriteReason("add");
   } else {
     hint.hidden = true;
   }
@@ -2118,7 +2332,8 @@ function syncModeHint() {
 
 function setMode(next) {
   const allowed = { monitor: 1, defs: 1, add: 1, edit: 1 };
-  state.mode = allowed[next] ? next : "monitor";
+  if (!allowed[next] || !canUseMode(next)) return;
+  state.mode = next;
   if (state.mode === "add") {
     const plan = document.getElementById("planPanel");
     if (plan) delete plan.dataset.seedReport;
@@ -2236,7 +2451,7 @@ function ensurePlanPanel() {
   });
   el.querySelector("#planMap").innerHTML = Object.keys(MAP_HOME).map((id) => {
     const pack = MAP_HOME[id];
-    const label = state.charter === "cu" && pack.cuLabel ? pack.cuLabel : pack.label;
+    const label = state.charter === "bank" && pack.bankLabel ? pack.bankLabel : (state.charter === "cu" && pack.cuLabel ? pack.cuLabel : pack.label);
     return `<option value="${id}">${label}</option>`;
   }).join("");
   el.querySelector("#planOwner").innerHTML = PLAN_OWNERS.map((name) =>
@@ -2269,9 +2484,35 @@ function syncPlanFieldVisibility() {
   planEl("planTitle").textContent = adding ? "Add a proving metric" : "Edit a proving metric";
   const r = REPORTS[state.report];
   const fi = state.charter === "cu" ? "credit union" : "bank";
+  const m = METRICS.find((x) => x.id === state.editId);
+  const allowAdd = canAddTile();
+  const allowWords = canEditWording();
+  const allowTarget = adding ? allowAdd : canEditTarget(m);
+  const lockAdd = adding && !allowAdd;
+  const lockWords = !adding && !allowWords;
+  [
+    "planMetric", "planObjective", "planOwner", "planFormula", "planUnit",
+    "planDirection", "planGroup", "planBandLo", "planBandHi", "planMap",
+    "planAlsoL1", "planPeer", "planActual"
+  ].forEach((id) => {
+    const field = planEl(id);
+    if (field) field.disabled = lockAdd || lockWords;
+  });
+  const target = planEl("planTarget");
+  if (target) target.disabled = lockAdd || !allowTarget;
+  const save = planEl("planSave");
+  if (save) {
+    const canSave = adding ? allowAdd : (allowWords || allowTarget);
+    save.disabled = !canSave;
+    save.title = canSave ? "" : (adding ? denyWriteReason("add") : denyWriteReason("wording"));
+  }
   planEl("planCaption").textContent = adding
-    ? `New tile on ${r.name} · ${fi} · session only — refresh restores the sample catalog.`
-    : `Edit the ${fi} side of a tile on ${r.name}. Session only — refresh restores the sample catalog.`;
+    ? (allowAdd
+      ? `New tile on ${r.name} · ${fi} · session only — refresh restores the sample catalog.`
+      : denyWriteReason("add"))
+    : (allowWords || allowTarget
+      ? `Edit the ${fi} side of a tile on ${r.name}. Session only — refresh restores the sample catalog.`
+      : denyWriteReason("wording"));
 }
 
 function defaultPlanOwner() {
@@ -2342,6 +2583,12 @@ function renderPlanPanel() {
     el.dataset.seedReport = state.report;
   }
   syncPlanFieldVisibility();
+  if (state.mode === "add" && !canAddTile()) planError(denyWriteReason("add"));
+  else if (state.mode === "edit" && !canEditWording() && !canEditTarget(METRICS.find((x) => x.id === state.editId))) {
+    planError(denyWriteReason("wording"));
+  } else {
+    planError("");
+  }
 }
 
 function planError(msg) {
@@ -2420,6 +2667,17 @@ function writeSide(side, vals, series, prior) {
 }
 
 function savePlanForm() {
+  if (state.mode === "add" && !canAddTile()) {
+    planError(denyWriteReason("add"));
+    return;
+  }
+  if (state.mode === "edit") {
+    const pending = METRICS.find((x) => x.id === state.editId);
+    if (!canEditWording() && !canEditTarget(pending)) {
+      planError(denyWriteReason("wording"));
+      return;
+    }
+  }
   const vals = readPlanValues();
   if (!vals) return;
   if (state.mode === "edit") {
@@ -2429,11 +2687,20 @@ function savePlanForm() {
       return;
     }
     const side = state.charter === "cu" ? m.cu : m.bank;
-    writeSide(side, vals);
-    m.owner = vals.owner;
-    m.direction = vals.direction;
-    m.unit = vals.unit;
-    if (m.map === "l1-5") m.group = vals.group;
+    if (canEditWording()) {
+      side.metric = vals.metric;
+      side.objective = vals.objective;
+      m.owner = vals.owner;
+      side.owner = vals.owner;
+    }
+    if (canEditTarget(m)) {
+      side.target = vals.target;
+      if (vals.band) side.band = vals.band;
+      else delete side.band;
+      m.direction = vals.direction;
+      m.unit = vals.unit;
+    }
+    if (canEditWording() && m.map === "l1-5") m.group = vals.group;
     state.selectedId = m.id;
     setMode("monitor");
     openDetail(m.id);
@@ -2454,7 +2721,7 @@ function savePlanForm() {
   const rec = {
     id,
     reports,
-    perspective: pack.perspective,
+    perspective: state.charter === "bank" && pack.bankPerspective ? pack.bankPerspective : pack.perspective,
     map: home,
     unit: vals.unit,
     direction: vals.direction,
@@ -2486,6 +2753,34 @@ function bindNav() {
   });
 }
 
+function ensureRolePicker() {
+  let el = document.getElementById("rolePicker");
+  if (!el) {
+    el = document.createElement("label");
+    el.id = "rolePicker";
+    el.className = "role-picker";
+    const modes = document.querySelector(".modes");
+    if (modes) modes.insertAdjacentElement("afterend", el);
+    else {
+      const bar = document.querySelector(".topbar");
+      if (bar) bar.appendChild(el);
+    }
+  }
+  if (!el.querySelector("#roleSelect")) {
+    el.className = "role-picker";
+    el.innerHTML = `<span class="role-picker-label">Role</span>
+      <select id="roleSelect" aria-label="Session role — writes are gated">
+        ${ROLES.map((r) => `<option value="${r.id}">${r.label}</option>`).join("")}
+      </select>`;
+    el.querySelector("#roleSelect").addEventListener("change", (e) => {
+      state.role = e.target.value;
+      render();
+    });
+  }
+  const sel = el.querySelector("#roleSelect");
+  if (sel) sel.value = roleOf();
+}
+
 function renderChrome() {
   const r = REPORTS[state.report];
   const spec = periodSpec();
@@ -2497,11 +2792,12 @@ function renderChrome() {
   document.getElementById("brandSub").textContent = "L1 Balanced Scorecard · " + spec.legend + " · Actual vs Target vs Peer";
   document.getElementById("asof").textContent = spec.asof;
   markNav();
-  document.getElementById("reportDecision").textContent = r.decision;
-  document.getElementById("reportOwner").textContent = "Owner: " + r.owner + " · scored as " + spec.label;
+  document.getElementById("reportDecision").textContent = reportDecisionOf(r);
+  document.getElementById("reportOwner").textContent = "Owner: " + reportOwnerOf(r) + " · scored as " + spec.label;
   document.querySelectorAll(".charter button").forEach((b) => {
     b.classList.toggle("active", b.dataset.charter === state.charter);
   });
+  ensureRolePicker();
   const periodGroup = document.querySelector(".period-picks");
   if (periodGroup) {
     periodGroup.setAttribute("aria-label", "Time frame · Month is default on entry");
@@ -2595,19 +2891,30 @@ function renderBriefing(list) {
     box.innerHTML = `<h2 class="section">Needs attention</h2><p class="hint">All objectives on this report are on track this period.</p>`;
     return;
   }
-  const kpiHtml = ex.length
-    ? `<h2 class="section">Needs attention</h2>` + ex.map((v) => {
-      const s = statusOf(v);
-      const vsT = gapLabel(v, v.target);
-      const vsP = gapLabel(v, v.peer);
-      return `<button class="ex-row ${s}" type="button" data-id="${v.id}">
+  const exRow = (v) => {
+    const s = statusOf(v);
+    const vsT = gapLabel(v, v.target);
+    const vsP = gapLabel(v, v.peer);
+    return `<button class="ex-row ${s}" type="button" data-id="${v.id}">
         <span><strong>${v.metric}</strong> · ${v.owner}</span>
         <span class="badge ${s}">${statusLabel(s)}</span>
         <span>${vsT.text} vs plan</span>
         <span>${vsP.text} vs peer</span>
       </button>`;
-    }).join("")
-    : `<h2 class="section">Needs attention</h2><p class="hint">All objectives on this report are on track this period.</p>`;
+  };
+  let kpiHtml;
+  if (state.charter === "bank" && state.report === "l1-5") {
+    const opsEx = ex.filter((v) => processGroup(v) === "ops");
+    const prodEx = ex.filter((v) => processGroup(v) === "prod");
+    const block = (title, rows, empty) =>
+      `<h2 class="section">${title}</h2>` + (rows.length ? rows.map(exRow).join("") : `<p class="hint">${empty}</p>`);
+    kpiHtml = block("Needs attention · Operational Execution", opsEx, "Operations is on track this period.")
+      + block("Needs attention · Growth and Production Execution", prodEx, "Production is on track this period.");
+  } else {
+    kpiHtml = ex.length
+      ? `<h2 class="section">Needs attention</h2>` + ex.map(exRow).join("")
+      : `<h2 class="section">Needs attention</h2><p class="hint">All objectives on this report are on track this period.</p>`;
+  }
   box.innerHTML = kpiHtml + l2Html;
   box.querySelectorAll("[data-id]").forEach((el) => {
     el.addEventListener("click", () => openDetail(el.dataset.id, el.dataset.level ? Number(el.dataset.level) : 1));
@@ -2624,7 +2931,7 @@ function renderMap() {
   wrap.style.display = "block";
   const boxes = [
     { id: "l1-6", tier: "Leading", name: state.charter === "cu" ? "People" : "People" },
-    { id: "l1-5", tier: "Leading", name: "Process / Production" },
+    { id: "l1-5", tier: "Leading", name: state.charter === "bank" ? "Ops & Production" : "Process / Production" },
     { id: "l1-3", tier: "Leading", name: state.charter === "cu" ? "Member" : "Customer" },
     { id: "l1-2", tier: "Lagging", name: "Financial" }
   ];
@@ -2655,7 +2962,7 @@ function renderMap() {
   });
   document.getElementById("mapCaption").textContent = state.charter === "cu"
     ? "People → Process → Member → Financial (member value + net worth). Risk constrains. Bars are that report’s proving-metric mix."
-    : "People → Process → Customer → Financial (shareholder value). Risk constrains. Bars are that report’s proving-metric mix.";
+    : "People → Ops & Production → Customer → Financial (shareholder value). Risk constrains. Bars are that report’s proving-metric mix.";
   document.getElementById("mapCausal").textContent = state.charter === "cu"
     ? "Sample chain: efficiency → capital retention → net worth"
     : "Sample chain: credit quality → provision → ROA";
@@ -2680,7 +2987,7 @@ function renderEnterpriseGlance(list) {
   }, { plan: 0, peer: 0, year: 0 });
   const spines = [
     { id: "l1-6", name: state.charter === "cu" ? "People" : "People" },
-    { id: "l1-5", name: "Process" },
+    { id: "l1-5", name: state.charter === "bank" ? "Ops & Production" : "Process" },
     { id: "l1-3", name: state.charter === "cu" ? "Member" : "Customer" },
     { id: "l1-2", name: "Financial" },
     { id: "l1-4", name: "Risk / Capital" }
@@ -2728,16 +3035,17 @@ function applyCardEdit(input) {
   if (!m) return;
   const side = state.charter === "cu" ? m.cu : m.bank;
   const field = input.dataset.field;
-  if (field === "metric") {
-    const name = input.value.trim();
-    if (name) side.metric = name;
-  } else if (field === "objective") {
+  if (field === "metric" || field === "objective" || field === "owner") {
+    if (!canEditWording()) return;
     const text = input.value.trim();
-    if (text) side.objective = text;
-  } else if (field === "owner") {
-    const owner = input.value.trim();
-    if (owner) m.owner = owner;
-  } else if (field === "target") {
+    if (!text) return;
+    if (field === "metric") side.metric = text;
+    else if (field === "objective") side.objective = text;
+    else side.owner = text;
+    return;
+  }
+  if (field === "target") {
+    if (!canEditTarget(m)) return;
     const n = Number(input.value);
     if (!Number.isNaN(n)) side.target = n;
   }
@@ -2764,20 +3072,22 @@ function cardMarkup(m) {
     ? `<span class="camels-chip" title="CAMELS tag, not a weight">${letter}</span>`
     : "";
   const editing = state.mode === "edit";
+  const wordLock = editing && !canEditWording() ? ` disabled title="${attrEscape(denyWriteReason("wording"))}"` : "";
+  const targetLock = editing && !canEditTarget(m) ? ` disabled title="${attrEscape(denyWriteReason("target", m))}"` : "";
   const title = editing
-    ? `<input class="card-title-input" data-field="metric" data-id="${m.id}" value="${attrEscape(v.metric)}" aria-label="Metric title" />`
+    ? `<input class="card-title-input" data-field="metric" data-id="${m.id}" value="${attrEscape(v.metric)}" aria-label="Metric title"${wordLock} />`
     : `<h3>${v.metric}</h3>`;
   const meta = editing
     ? `<div class="meta">${v.perspective} · ${v.periodLegend}</div>
        <label class="card-owner-field">Owner
-         <input class="card-owner-input" data-field="owner" data-id="${m.id}" value="${attrEscape(v.owner)}" aria-label="Owner" />
+         <input class="card-owner-input" data-field="owner" data-id="${m.id}" value="${attrEscape(v.owner)}" aria-label="Owner"${wordLock} />
        </label>`
     : `<div class="meta">${v.perspective} · ${v.periodLegend} · ${v.owner}</div>`;
   const objective = editing
-    ? `<input class="obj-input" data-field="objective" data-id="${m.id}" value="${attrEscape(v.objective)}" aria-label="Objective" />`
+    ? `<input class="obj-input" data-field="objective" data-id="${m.id}" value="${attrEscape(v.objective)}" aria-label="Objective"${wordLock} />`
     : `<div class="objective">${v.objective}</div>`;
   const target = editing
-    ? `<input class="card-target-input" data-field="target" data-id="${m.id}" type="number" step="any" value="${v.target}" aria-label="Your target" />`
+    ? `<input class="card-target-input" data-field="target" data-id="${m.id}" type="number" step="any" value="${v.target}" aria-label="Your target"${targetLock} />`
     : `<div class="v">${formatValue(v.target, v.unit)} ${v.unit}</div>`;
   const gapCompare = v.comparePrior ? v.priorVal : v.target;
   const gap = gapLabel(v, gapCompare);
@@ -2814,19 +3124,19 @@ function renderCards(list) {
   if (state.report === "l1-5") {
     const ops = list.filter((m) => processGroup(m) === "ops");
     const prod = list.filter((m) => processGroup(m) === "prod");
-    const opsLabel = state.charter === "cu" ? "Operations · COO (includes member onboarding)" : "Operations · COO";
+    const opsLabel = state.charter === "cu" ? "Operations · COO (includes member onboarding)" : "COO owns cost, speed, and service. A green ops stack does not hide a red production stack.";
     grid.className = "card-stack";
     grid.innerHTML = `
       <div>
-        <h2 class="section">Operations · cost, speed, service</h2>
+        <h2 class="section">${state.charter === "bank" ? "Operational Execution" : "Operations · cost, speed, service"}</h2>
         <p class="caption">${opsLabel}</p>
         <div class="cards">${ops.map(cardMarkup).join("")}</div>
       </div>
       <div>
-        <h2 class="section">Production · sales and business development</h2>
+        <h2 class="section">${state.charter === "bank" ? "Growth and Production Execution" : "Production · sales and business development"}</h2>
         <p class="caption">${state.charter === "cu"
           ? "CBO owns originations and the consumer funnel. Loan and share growth stay on L1-2. Branch and associate exceptions sit under Needs attention."
-          : "CBO owns pipeline and originations. Loan and deposit growth stay on L1-2. Branch and associate exceptions for production and operations sit under Needs attention."}</p>
+          : "CBO owns the qualified pipeline and originations. Loan and deposit growth stay on L1-2. A green production stack does not hide a red ops stack."}</p>
         <div class="cards">${prod.map(cardMarkup).join("")}</div>
       </div>`;
   } else if (state.report === "l1-4") {
@@ -2866,7 +3176,7 @@ function renderCards(list) {
       </div>
       <div>
         <h2 class="section">Learning and compliance</h2>
-        <p class="caption">Required modules and unified learning paths (succession + credentials). Session mix is drill 3.</p>
+        <p class="caption">${state.charter === "bank" ? "Required modules stay the compliance constraint. Succession coverage is the proving number — credentials sit on drill." : "Required modules and unified learning paths (succession + credentials). Session mix is drill 3."}</p>
         <div class="cards">${learning.map(cardMarkup).join("")}</div>
       </div>`;
   } else {
@@ -2979,6 +3289,7 @@ function renderDrillBody(m, v) {
         ${odAgingHtml(m)}${drillTableHtml(m)}
         <p class="hint">${nextDrillHint(v)}</p>
         <p class="caption">This drill uses ${v.periodLegend}. Target is primary · peer is context. Owner: ${v.owner}.</p>
+        ${tileTrustLine(m) ? `<p class="caption tile-trust">${tileTrustLine(m)}</p>` : ""}
       </div>
     </div>`;
   } else if (level === 2) {
@@ -3014,11 +3325,11 @@ function renderDrillBody(m, v) {
         </ul>
       </div>
       <div>
-        <h2 class="section">Named action</h2>
+        <h2 class="section">Named action ${actionStatusHtml(actionOf(m))}</h2>
         <div class="gap-card action-card">
           <div class="k">What we are doing</div>
           <div class="v">${actionOf(m).what}</div>
-          <div class="caption">Owner: ${actionOf(m).owner} · Due: ${actionOf(m).due}</div>
+          <div class="caption">Owner: ${actionOf(m).owner} · Due: ${actionOf(m).due}${actionOf(m).status && state.charter === "bank" ? " · Status: " + actionOf(m).status : ""}</div>
         </div>
         <p class="hint">Board conversation stops here — no fourth drill.</p>
       </div>
@@ -3083,18 +3394,32 @@ function whereTableHtml(m, v) {
   const peopleRows = people.map((a) =>
     `<tr class="${a.status || ""}"><td>${a.name}</td><td>${formatValue(a.value, unit)} ${unit}</td><td>${a.coach}</td><td>${a.status ? `<span class="badge ${a.status}">${statusLabel(a.status)}</span>` : "—"}</td></tr>`
   ).join("");
+  const extraTable = (title, items, col) => {
+    if (!items || !items.length) return "";
+    const body = items.map((b) =>
+      `<tr class="${b.status}"><td>${b.name}</td><td>${formatValue(b.value, unit)} ${unit}</td><td><span class="badge ${b.status}">${statusLabel(b.status)}</span></td></tr>`
+    ).join("");
+    return `<h2 class="section" style="margin-top:12px">${title}</h2>
+    <table>
+      <thead><tr><th>${col}</th><th>${v.metric}</th><th>Status</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table>`;
+  };
+  const marketHtml = extraTable("Market grain · client-mapped", grain.markets, "Market");
+  const lineHtml = extraTable("Business-line grain", grain.lines, "Line");
   return `<div class="where-block">
     <h2 class="section">Where it is · sample L2 grain</h2>
     <table>
       <thead><tr><th>Branch</th><th>${v.metric}</th><th>Status</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
+    ${marketHtml}${lineHtml}
     <h2 class="section" style="margin-top:12px">Associates to coach</h2>
     <table>
       <thead><tr><th>Associate</th><th>${v.metric}</th><th>Coach</th><th>Status</th></tr></thead>
       <tbody>${peopleRows}</tbody>
     </table>
-    <p class="caption">Exception branches and 1–2 associates for the named action. Sample L2 grain — not a seventh L1 report or a full roster.</p>
+    <p class="caption">Exception branches${grain.markets ? ", markets, and lines" : ""} and 1–2 associates for the named action. Markets are a client-mapped grain — not a fixed geography list. Sample L2 — not a seventh L1 report.</p>
   </div>`;
 }
 
