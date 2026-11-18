@@ -28,7 +28,7 @@
     <button type="button" data-go="l1-2" onclick="switchReport('l1-2')">L1-2 Financial</button>
     <button type="button" data-go="l1-3" onclick="switchReport('l1-3')">L1-3 Franchise</button>
     <button type="button" data-go="l1-4" onclick="switchReport('l1-4')">L1-4 Risk</button>
-    <button type="button" data-go="l1-5" onclick="switchReport('l1-5')">L1-5 Process</button>
+    <button type="button" data-go="l1-5" onclick="switchReport('l1-5')">L1-5 Ops &amp; Production</button>
     <button type="button" data-go="l1-6" onclick="switchReport('l1-6')">L1-6 People</button>
   </nav>
   <div class="wrap">
@@ -87,8 +87,7 @@
     </div>
     </div>
     <div class="defs-panel" id="defsPanel" hidden>
-      <h2 class="section" style="margin-bottom:6px">Metric formulas &amp; definitions</h2>
-      <p class="caption" id="defsCaption">Formulas lock for this bank · UBPR / Call Report sample</p>
+      <h2 class="section">Metric formulas &amp; definitions</h2>
       <table>
         <thead>
           <tr>
@@ -98,6 +97,9 @@
             <th>Definition</th>
             <th>Formula</th>
             <th>Source</th>
+            <th>Cadence</th>
+            <th>Last refresh</th>
+            <th>Effective date</th>
           </tr>
         </thead>
         <tbody id="defsTable"></tbody>
