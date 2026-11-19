@@ -8,6 +8,20 @@ This dictionary now lives as a Cursor plan (same family as the public-data-sourc
 
 Open that plan for the Field / Description / Type tables (shared header, KPI observation, L2 grain, and each L1 report).
 
+## Role permissions
+
+Add and Edit stay visible. Controls the role cannot use are greyed out. The top-bar **Role** dropdown gates who can publish. Default is **Monitor**. Actual, peer, formula, CAMELS, cadence, and last refresh are never writable. Session only — live Gold writes must enforce the same rules.
+
+| Role | Can publish |
+|------|-------------|
+| Monitor | Nothing. Add and Edit stay visible but greyed out. |
+| Planner | Wording and owner |
+| ALCO | Wording, owner, and targets on ALCO-approved tiles (earnings / franchise) |
+| Board | Wording, owner, and targets on Board-approved tiles (risk / capital) |
+| Catalog | Add a proving tile, plus all wording and targets |
+
+See also [`PHASE1_CHARTER_AND_OBJECTIVES.md`](./PHASE1_CHARTER_AND_OBJECTIVES.md) and [`bank/PHASE1_CHARTER_AND_OBJECTIVES.md`](./bank/PHASE1_CHARTER_AND_OBJECTIVES.md).
+
 ## L1-6 People (current proving tiles)
 
 Six executive tiles — not the 24-tile HR operations board:

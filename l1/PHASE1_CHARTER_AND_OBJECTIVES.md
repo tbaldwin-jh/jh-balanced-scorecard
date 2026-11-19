@@ -16,7 +16,7 @@ Replace names, targets, and owners when a real FI workshop completes.
 | Peer band | Assets $1B–$3B. Bank pack: UBPR median. Credit union pack: FPR / same size band. Never mix. |
 | As-of | 31 July 2026 (sample month, matches seed) |
 | Periods on L1-1 / L1-2 | Month (default), Quarter, YTD, vs prior year |
-| Who may change a target mid-year | Earnings and franchise goals: ALCO. Risk limits and capital floors: board. No owner-only edits after publish. |
+| Who may change a target mid-year | See **Role permissions** below. Earnings and franchise: ALCO. Risk limits and capital floors: board. No owner-only edits after publish. |
 | Peer vs target | Peers pressure-test the plan. They do not replace the bank target. Never mix UBPR and FPR. |
 | L1-1 size | 9 objective tiles (within 8–12). ELT + board pack = this page only (CEO chairs). |
 
@@ -143,6 +143,18 @@ These are the only tiles on the ELT open (CEO chairs). Capital is on this page (
 |--------|------|
 | Bank pack (UBPR) | [`bank/l1_1_enterprise_strategy.html`](./bank/l1_1_enterprise_strategy.html) |
 | Credit union pack (FPR / ARCU) | [`credit_union/l1_1_enterprise_strategy.html`](./credit_union/l1_1_enterprise_strategy.html) |
+
+## Role permissions
+
+Add and Edit stay visible on every L1 report. Controls the role cannot use are greyed out. The top-bar **Role** dropdown gates who can publish. Default is **Monitor**. Actual, peer, formula, CAMELS, cadence, and last refresh are never writable. Session only — refresh restores the sample. Live Gold writes must enforce the same rules server-side.
+
+| Role | Can publish |
+|------|-------------|
+| Monitor | Nothing. Add and Edit stay visible but greyed out. |
+| Planner | Wording and owner |
+| ALCO | Wording, owner, and targets on ALCO-approved tiles (earnings / franchise) |
+| Board | Wording, owner, and targets on Board-approved tiles (risk / capital) |
+| Catalog | Add a proving tile, plus all wording and targets |
 
 ## Workshop still required (not claimed as done)
 
